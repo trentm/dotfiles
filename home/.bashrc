@@ -13,15 +13,14 @@ if test `uname -s` != "HP-UX"; then
 fi
 
 # Setup my (Trent's) typical environment settings.
-if test -f $HOME/.bash_env; then
+if test -f $HOME/tm/dotfiles/bash/env; then
     #echo .bashrc: sourcing $HOME/.bash_env
-    . $HOME/.bash_env
+    . $HOME/tm/dotfiles/bash/env
 fi
 
 
 # If not running interactively, don't bother setting up the rest.
 if tm_is_interactive_shell; then
-
     umask 022
 
     # Don't put duplicate lines in the history. See bash(1) for more options.
@@ -68,18 +67,9 @@ if tm_is_interactive_shell; then
     esac
 
     # Define your own aliases here ...
-    if test -f $HOME/.bash_aliases; then
-        . $HOME/.bash_aliases
+    if test -f $HOME/tm/dotfiles/bash/aliases; then
+        . $HOME/tm/dotfiles/bash/aliases
     fi
-
-
-    # Enable programmable completion features (you don't need to enable this,
-    # if it's already enabled in /etc/bash.bashrc and /etc/profile sources
-    # /etc/bash.bashrc).
-    #if test -f /etc/bash_completion; then
-    #    . /etc/bash_completion
-    #fi
-
 fi # tm_is_interactive_shell
 
 
@@ -97,6 +87,5 @@ fi
 #   be trampled when you switch rubies." 
 # - self-update periodically via: `rvm update --head && rvm reload`
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
 
 
