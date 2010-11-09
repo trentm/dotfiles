@@ -1,0 +1,38 @@
+# -*- mode: Python -*-
+
+import codecs
+import os
+import re
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import md5
+import sys
+import time
+from os.path import (abspath, dirname, basename, exists, join,
+                     expanduser, realpath, normpath, normcase,
+                     isdir, isfile, lexists)
+from pprint import pprint, pformat
+from glob import glob
+import subprocess
+import datetime
+
+# For pretty-printing by default.
+#sys.displayhook = pprint
+
+# Current work.
+#sys.path.insert(0, expanduser("~/as/openkomodo/src/python-sitelib"))
+#import textinfo
+#import langinfo
+
+#print "Python %s in '%s'" % (sys.version.split(None, 1)[0], sys.executable)
+
+# Tab completion.  # <http://code.activestate.com/lists/python-list/584649/>
+try:
+    import readline
+except ImportError:
+    pass
+else:
+    import rlcompleter
+    readline.parse_and_bind("tab: complete")
+

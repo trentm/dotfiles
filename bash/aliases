@@ -1,0 +1,192 @@
+# General
+# TODO: add --color when appropriate
+if [ `uname -s` = "Linux" ]; then
+    alias l='ls -AlFh'
+else
+    # No "ls -h" on Solaris 8, at least, and Mac OS X's implementation screws
+    # up column alignment with it on.
+    alias l='ls -AlF'
+fi
+alias dir='l'
+#alias rm='rm -i'  # just annoying
+alias sidediff='diff --side-by-side --left-column --width=166'
+is_on_path vim && alias vi='vim'
+
+if [ `uname -s` = "Linux" ]; then
+    # See http://ubuntuforums.org/showthread.php?t=90910
+    # I found I've needed this on skink (Ubuntu box), at least.
+    alias screen='TERM=screen screen'
+fi
+
+alias pics='python $HOME/tm/pics/bin/pics'
+
+is_on_path curl && alias download='curl -O' \
+    || (is_on_path wget && alias download='wget')
+
+
+# Perforce, Subversion, CVS
+alias ss='svn status -q --ignore-externals'
+alias vc='python ~/tm/sandbox/tools/vc.py'
+#XXX Disabled for now b/c general probs and py2.6 probs.
+#complete -C 'python ~/tm/cmdln/cmdln.py ~/tm/sandbox/tools/vc.py VCShell' vc
+alias svn_add_ignore='python ~/tm/sandbox/tools/svn_add_ignore.py'
+alias svnmerge='python ~/src/svnmerge/svnmerge.py'
+alias sux='svn up --ignore-externals'
+
+
+# My build and other stuff
+alias build='python build.py'
+alias configure='python configure.py'
+alias setup='python setup.py'
+#XXX Should also add to PYTHONPATH for "python Makefile.py" use case.
+alias bbq="bk build quick && bk run -v"
+alias bb="bk build && bk run -v"
+alias djadmin="python ~/src/django/django/bin/django-admin.py"
+alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
+alias m2="python ~/tm/python-markdown2/lib/markdown2.py"
+alias mozmake="python ~/tm/sandbox/tools/mozmake.py"
+alias g="python ~/Dropbox/gtd/bin/gtd.py"
+alias n="python ~/Dropbox/gtd/bin/gtd.py note"
+alias mtime="python -c 'import os,sys; print os.stat(sys.argv[1]).st_mtime'"
+alias platinfo="python $HOME/tm/platinfo/lib/platinfo.py"
+alias listadmin="perl $HOME/tm/listadmin/listadmin.pl"
+alias eol="python $HOME/tm/eol/lib/eol.py"
+alias fab="python2.6 $HOME/tm/sandbox/fab/bin/fab"
+if test `uname -s` == "Darwin"; then
+    alias k='open -a "Komodo IDE"'
+    alias firefoxp='/Applications/Firefox.app/Contents/MacOS/firefox -ProfileManager'
+    alias chrome='open -a "Google Chrome"'
+else
+    alias k='$HOME/opt/Komodo-IDE-5.2/bin/komodo'
+fi
+alias cpmtime="python $HOME/tm/sandbox/tools/cpmtime.py"
+alias httplog="python $HOME/as/httplog/bin/httplog"
+alias mq='python $HOME/as/svnusers/trentm/activestuff/bin/mq.py'
+alias activestate='/etc/sysconfig/activestate/scripts/activestate'
+alias asalert='python $HOME/as/svnusers/trentm/asalert/asalert.py'
+
+alias igrep='grep -i'
+
+# Start Canon LiDE scanner.
+# This is here to avoid having the painful "N*_ButtonManager.app" processes
+# running all the time. See
+# <http://forums.macnn.com/57/consumer-hardware-and-components/132661/attn-canon-lide-owners/>
+# for details.
+if test `uname -s` == "Darwin"; then
+    alias scanner-start='open /Library/CFMSupport/N067U_ButtonManager.app && open /Library/CFMSupport/N124U_ButtonManager.app'
+fi
+
+
+# Development tools
+if test `uname -s` == "Darwin"; then
+    alias ldd='otool -L'
+fi
+alias ps1='ps -wwx'
+alias ps2='ps -wwux'
+
+# http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
+alias crontab='VIM_CRONTAB=true crontab'
+
+#alias check='python $HOME/tm/check/bin/check.py'
+#alias ck='python $HOME/tm/check/bin/check.py'
+alias check='python $HOME/src/check/check.py'
+
+alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
+alias unpickle='python -c "import sys,pprint,cPickle; pprint.pprint(cPickle.load(open(sys.argv[1], \"r\")))"'
+#alias tsk='python2.6 ~/as/komodo/src/tasks/bin/tsk.py'
+
+# From MySQL setup on Mac OS X. Don't know if this install path is
+# Mac-specific.
+alias mysql-start="sudo /usr/local/mysql/support-files/mysql.server start"
+alias mysql-stop="sudo /usr/local/mysql/support-files/mysql.server stop"
+
+alias nose='nosetests'
+
+
+# Trac
+# TODO: see if `which` usage breaks on old Unices and fix
+is_on_path trac-admin && alias ta='trac-admin ~/data/trac'
+
+
+# Some functions
+function go {
+    export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
+    python -m go $*
+    if [ -f $GO_SHELL_SCRIPT ] ; then
+        source $GO_SHELL_SCRIPT
+    fi
+    unset GO_SHELL_SCRIPT
+}
+
+function f() {
+    frep -r /$1/i .
+}
+
+function sd() {
+    svn diff --diff-cmd diff -x -U10 $* | less
+}
+
+function hd() {
+    hg diff $* | less
+}
+function hs() {
+    hg st $*
+}
+
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gs='git status'
+alias gb='git branch'
+alias gc='git checkout'
+
+function di() {
+    vc diff $* | less
+}
+
+function st() {
+    vc st $*
+}
+
+
+#---- Encryption with GPG.
+
+function enc() {
+    # Encrypt a file.
+    # Usage: `enc PATH` with create `PATH.asc` and remove `PATH`.
+    
+    for ARG in $*
+    do
+        export ASC_PATH=$ARG.asc
+        rm -f "$ASC_PATH"
+        # '--armor' is to encrypt to ascii format (good for source control)
+        gpg --encrypt --armor --output "$ASC_PATH" --recipient 'Trent Mick' "$ARG" \
+            && rm "$ARG"
+        unset ASC_PATH
+    done
+}
+function dec() {
+    # Decrypt a file.
+    # Usage: `dec PATH.asc` will create `PATH`.
+    for ARG in $*
+    do
+        gpg --output "${ARG%.*}" --decrypt "$ARG"
+    done
+}
+function vienc() {
+    # Edit an encrypted file in vi.
+    # Usage: `vienc PATH.asc` will decrypt to `PATH`, edit that file in
+    # vi, then re-encrypt to `PATH.asc`.
+    dec "$1"
+    vi "${1%.*}"
+    enc "${1%.*}"
+}
+function catenc() {
+    # Cat an encrypted file.
+    # Usage: `catenc PATH.asc` will decrypt and cat the contents of `PATH.asc`.
+    gpg --decrypt "$1"
+}
+
+
+
+. $HOME/src/resty/resty
+

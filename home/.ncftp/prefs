@@ -1,0 +1,20 @@
+anonopen 1
+anonpass joe@aol.com
+blank-lines 1
+ftp-mode 0
+logsize 10240
+maxbookmarks 0
+pager more
+progress-meter 2
+remote-msgs 0
+startup-lcwd 
+startup-msgs 3
+timeout 30
+trace 0
+utime 1
+visual 1
+show-trailing-space 0
+total-runs 11
+total-xfer-hundredths-of-seconds 333633
+total-xfer-kbytes 596704
+confirm-close no

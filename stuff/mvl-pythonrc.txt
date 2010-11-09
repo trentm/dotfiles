@@ -1,0 +1,78 @@
+On a thread on python-list, MvL described his pythonrc, shell, readline
+usage:
+
+Subject: Re: how do "real" python programmers work?
+Date: Fri, 13 Jan 2006 01:13:08 +0100
+
+[Martin v. Loewis wrote]
+> bblais wrote:
+> > In Python, there seems to be a couple ways of doing things.   I could
+> > write it in one window, and from a Unix shell call
+> >                            python myscript.py
+> > and be like C++, but then I lose the interactiveness which makes
+> > prototyping easier.  If I use the python shell, I can use import (and
+> > reload), or execfile perhaps.
+>
+> For programs, I usually have two shells: one interactive shell where
+> I test fragments (usually to find out how some library call needs to
+> be spelled); and another shell to run the program in.
+>
+> For libraries, I typically reload the library module in a single
+> interactive shell.
+>
+> I often want to do sequences of actions. I first type them one
+> by one, e.g.
+>
+> py> import httplib
+> py> httplib=httplib.HTTP("localhost")
+> py> import httplib
+> py> h=httplib.HTTP("localhost")
+> py> h.connect()
+> py>
+>
+> Then, I get tired of fetching all the lines from the history
+> again and again, and rephrase it (through cut-n-paste) as
+>
+> py> import httplib;h=httplib.HTTP("localhost");h.connect()
+>
+> Then I only need to fetch a single line from the history
+> to redo all the initialization.
+>
+> I set-up readline so the history survives the end of
+> the interpreter. I quit the interpreter, restart it,
+> and immediately have the last command I typed available, see
+> my attached .pythonrc.
+>
+> Regards,
+> Martin
+>
+> # -*- python -*-
+> #from __future__ import division
+> import os, sys
+> sys.ps1 = 'py> '
+> histfile = os.path.join(os.environ["HOME"], ".pyhist")
+> try:
+>     import readline, rlcompleter
+>     if os.path.exists(histfile):
+>         readline.read_history_file(histfile)
+>     readline.parse_and_bind("tab: complete")
+>
+>     import atexit
+>     atexit.register(readline.write_history_file, histfile)
+>
+>     del readline, rlcompleter, atexit
+>
+> except ImportError:
+>     pass
+>
+> del os,histfile
+>
+>
+> try:
+>     help
+> except NameError:
+>     try:
+>         from pydoc import help
+>     except ImportError:
+>         pass
+

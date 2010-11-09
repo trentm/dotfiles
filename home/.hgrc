@@ -1,0 +1,16 @@
+[ui]
+username = Trent Mick <trentm@gmail.com>
+editor = vim
+
+[extensions]
+fetch =
+hgext.graphlog =
+hgext.mq =
+hgext.convert =
+hgk =
+
+[diff]
+git = 1
+
+#[hgk]
+#path=~/.dotfiles/stuff/hgk.tcl

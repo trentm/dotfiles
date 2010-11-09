@@ -1,0 +1,21 @@
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+[user]
+	name = Trent Mick
+	email = trentm@gmail.com
+[core]
+	autocrlf = input
+[alias]
+	unstage = reset HEAD
+	st = status
+	di = diff
+	ci = commit
+    loggraph = log --oneline --graph
+[difftool]
+	prompt = false
+[diff]
+	tool = Kaleidoscope
+[branch]
+	autosetupmerge = true

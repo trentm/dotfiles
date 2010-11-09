@@ -1,0 +1,18 @@
+# Good intro to screen: http://www.kuro5hin.org/story/2004/3/9/16838/14935
+# Recipes:
+# - To attach to another already attached screen:
+#       screen -rd   # -r: reattach, -d: detach the other guy
+# - To detach from inside screen:
+#       C-a d
+# - To create a new window inside screen:
+#       C-a c     # Create new window
+# - To access scrollback (via entering copy mode):
+#       C-a ESC   or   C-a [
+
+startup_message off
+
+autodetach on           # default: on
+defscrollback 1000      # default: 100
+
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{=kw}%?%-Lw%?%{r}(%{W}%n*%f%t%? (%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B}%Y-%m-%d %{W}%c % {g}]'
