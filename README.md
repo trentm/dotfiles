@@ -4,8 +4,8 @@ free to steal ideas tho.
 
 # Setup on a new box
 
-    git clone git@github.com:trentm/dotfiles.git ~/.dotfiles
-    .dotfiles/linkup
+    git clone git@github.com:trentm/dotfiles.git ~/tm/dotfiles
+    ~/tm/dotfiles/linkup
 
 
 # Inspiration
