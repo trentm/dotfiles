@@ -8,11 +8,10 @@ __version__ = '.'.join(map(str, __version_info__))
 import os
 from os.path import join, dirname, isdir, basename, isfile, isabs, \
                     expanduser, exists, islink, normpath, normcase, \
-                    abspath
+                    abspath, lexists
 import sys
-import getopt
-import stat
 import logging
+import optparse
 import shutil
 try:
     from hashlib import md5
@@ -30,7 +29,9 @@ log = logging.getLogger("linkup")
 log.setLevel(logging.INFO)
 
 SRC_DIR = join(dirname(abspath(__file__)), "home")
-DST_DIR = join(normpath(os.environ["HOME"]), "tmp", "home")
+DST_DIR = normpath(os.environ["HOME"])
+#DST_DIR = join(normpath(os.environ["HOME"]), "tmp", "home")
+BAK_DIR = expanduser("~/tmp/olddotfiles")
 
 
 
@@ -39,339 +40,44 @@ DST_DIR = join(normpath(os.environ["HOME"]), "tmp", "home")
 def linkup(src_dir=SRC_DIR, dst_dir=DST_DIR, dry_run=False):
     if sys.platform == "win32":
         raise Error("require symlinks, no workie on Windows for now")
-    if not exists(dst_dir):
-        raise Error("destination dir '%s' does not exist" % dst_dir)
 
-    XXX
-
-    _update_home_from_dir(join(tmconf_dir, "home"), dry_run=dry_run)
-    plat = {"win32": "win"}.get(sys.platform, "unix")
-    _update_home_from_dir(join(tmconf_dir, "home-"+plat), dry_run=dry_run)
-
-
-
-
-def _update_home_from_dir(src_dir, dry_run=False):
-    """update $HOME from files in the given base dir."""
-    mode = (sys.platform == "win32" and "copying" or "linking")
     norm_src_dir = normpath(expanduser(src_dir))
+    norm_dst_dir = normpath(expanduser(dst_dir))
     if not exists(norm_src_dir):
-        raise Error("`%s' does not exist" % norm_src_dir)
+        raise Error("'%s' does not exist" % norm_src_dir)
     norm_home_dir = expanduser("~")
     if not exists(norm_home_dir):
-        raise Error("`%s' does not exist" % norm_home_dir)
-    log.debug("update home from `%s'", src_dir)
+        raise Error("'%s' does not exist" % norm_home_dir)
+    log.debug("linkup '%s' -> '%s'", dst_dir, src_dir)
 
-    for dirpath, dirs, files in os.walk(norm_src_dir):
-        if ".svn" in dirs: # skip SVN control dirs
-            dirs.remove(".svn")
+    # fresh backup dir
+    log.info("backup old dotfiles to '%s'", BAK_DIR)
+    if exists(BAK_DIR):
+        shutil.rmtree(BAK_DIR)
 
-        if mode == "linking":
-            # Check for marker file to linkup this *dir* rather than
-            # files under it.
-            dirs_to_remove = []
-            for dir in dirs:
-                if exists(join(dirpath, dir, ".tm-linkup-dir")):
-                    path = join(dirpath, dir)
-                    _linkup(path, norm_src_dir)
-                    dirs_to_remove.append(dir)
-            for dir in dirs_to_remove:
-                dirs.remove(dir)
-        else: # mode == "copying"
-            if ".tm-linkup-dir" in files:
-                files.remove(".tm-linkup-dir")
-
-        files.sort()
-        for file in files:
-            if file.endswith(".orig"):
-                continue
-            subpath = _relpath(join(dirpath, file), norm_src_dir)
-            #log.info("update `~/%s' from `%s/%s'",
-            #         subpath.replace(os.sep, '/'), src_dir, 
-            #         subpath.replace(os.sep, '/'))
-            if dry_run:
-                pass
-            elif mode == "linking":
-                #TODO: Switch this over to using similar API to
-                #      _update_path_with_copy().
-                path = join(dirpath, file)
-                _linkup(path, norm_src_dir)
-            else:
-                _update_path_with_copy(subpath, norm_home_dir, norm_src_dir)
-
-
-def _update_path_with_copy(subpath, dst_dir, src_dir):
-    """update the given path (using copy)
-
-    - If '$src_dir/foo' exists, but '$dst_dir/foo' does not, it is copied
-      over.
-    - If '$src_dir/foo' and '$dst_dir/foo' are the same, do nothing.
-    - If '$src_dir/foo' and '$dst_dir/foo' differ:
-      - if only '$src_dir/foo' changed, then copy it over
-      - if only '$dst_dir/foo' changed, then copy it over
-      - if both changed, then print an warning message and leave it alone
-    
-    Note: pristine copies of files from the last update are stored under
-    '~/.tmconf'. If no pristine copy -- first time or it got deleted --
-    then XXX:
-    - presume that it has changed? yes, but pain. Show diff? Do
-      "p4 resolve"-like cmdln UI resolve?
-    """
-    dst_path = join(dst_dir, subpath)
-    src_path = join(src_dir, subpath)
-    assert isfile(src_path)
-    log.debug("update (cp) `%s' from `%s'", dst_path, src_path)
-
-    if not exists(dst_path):
-        _cp(src_path, dst_path)
-    elif _path_contents_are_same(src_path, dst_path):
-        pass
-    else:
-        src_has_changed = _path_has_changed(src_path)
-        dst_has_changed = _path_has_changed(dst_path)
-        if not src_has_changed and not dst_has_changed:
-            raise Error("neither `%s' nor `%s' has changed: some "
-                        "internal processing has gone wrong"
-                        % (src_path, dst_path))
-        elif src_has_changed and not dst_has_changed:
-            _cp(src_path, dst_path)
-        elif not src_has_changed and dst_has_changed:
-            _cp(dst_path, src_path)
-        else:  # both changed
-            #TODO: merge cmdln UI a la 'p4 resolve' (black book p157)
-            log.warn("conflict: both `%s' and `%s' have changed (skipping)",
-                     src_path, dst_path)
-
-def _cp(s, d):
-    if not exists(dirname(d)):
-        log.info("mkdir %s", dirname(d))
-        os.makedirs(dirname(d))
-    log.info("cp `%s' `%s'", s, d)
-    shutil.copy(s, d)
-    _update_cache_from_path(s)
-    _update_cache_from_path(d)
-
-def _path_contents_are_same(path_a, path_b):
-    content_a = open(path_a, 'rb').read()
-    content_b = open(path_b, 'rb').read()
-    return content_a == content_b
-
-def _update_cache_from_path(path):
-    cache_dir = normpath(expanduser("~/.tmconf/cache"))
-    if not exists(cache_dir):
-        os.makedirs(cache_dir)
-    norm_path = normcase(normpath(expanduser(path)))
-    path_hash = md5(norm_path).hexdigest()
-    cache_path = join(cache_dir, path_hash)
-    if exists(cache_path):
-        os.remove(cache_path)
-    shutil.copy(norm_path, cache_path)
-
-def _path_has_changed(path):
-    """Return True iff the given path has changed since we last
-    checked. Returns True if we don't know: no record of this file
-    in the cache.
-    """
-    cache_dir = normpath(expanduser("~/.tmconf/cache"))
-    norm_path = normcase(normpath(expanduser(path)))
-    path_hash = md5(norm_path).hexdigest()
-    cache_path = join(cache_dir, path_hash)
-    if not exists(cache_path):
-        return True # we don't know, ensure conservative guess
-    
-    cache_content = open(cache_path, 'rb').read()
-    curr_content = open(path, 'rb').read()
-    return cache_content != curr_content
-
-def _update_home_with_symlink(dry_run=False):
-    assert sys.platform != "win32", "symlinks not supported on win32"
-    tmconf_home = join(tmconf_dir, "home")
-    if not exists(tmconf_home):
-        raise Error("no 'tmconf' home dir found: '%s'" % tmconf_home)
-    home = expanduser("~")
-    if not exists(home):
-        raise Error("can't find home dir: '%s'" % home)
-
-    for dirpath, dirs, files in os.walk(tmconf_home):
-        if ".svn" in dirs: # skip SVN control dirs
-            dirs.remove(".svn")
-        dirs_to_remove = []
-        for dir in dirs:
-            # Check for marker file to linkup this *dir* rather than
-            # files under it.
-            if exists(join(dirpath, dir, ".tm-linkup-dir")):
-                path = join(dirpath, dir)
-                _linkup(path, tmconf_home)
-                dirs_to_remove.append(dir)
-        for dir in dirs_to_remove:
-            dirs.remove(dir)
-
-        files.sort()
-        for file in files:
-            path = join(dirpath, file)
-            _linkup(path, tmconf_home)
-
+    dir_skips = [".svn", ".hg", ".git"]
+    for f in os.listdir(src_dir):
+        from_path = join(dst_dir, f)
+        to_path = join(src_dir, f)
+        if not dry_run:
+            _symlink(from_path, to_path)
+        else:
+            log.info("symlink '%s' -> '%s' (dry-run)", from_path, to_path)
 
 
 #---- internal support stuff
 
-def _linkup(path, tmconf_home, dry_run=False):
-    dry_run_str = (dry_run and " (dry-run)" or "")
-    log.debug("linkup(%r, %r, dry_run=%r)", path, tmconf_home, dry_run)
-    homepath = "~/" + path[len(tmconf_home)+1:]
-    xhomepath = expanduser(homepath)
-    home = os.environ.get("HOME")
-
-    if islink(xhomepath) and os.readlink(xhomepath) == path:
-        log.info("`%s' already linked up", homepath)
-
-    else:
-        if islink(xhomepath):
-            log.info("rm `%s' link to `%s'", homepath, os.readlink(xhomepath))
-            os.remove(xhomepath)
-
-        # Backup, if necessary.
-        if exists(xhomepath):
-            backup_dir = join(home, "backup", "olddotfiles")
-            if not exists(backup_dir):
-                log.info("making backup dir `%s'%s", backup_dir, dry_run_str)
-                if not dry_run:
-                    os.makedirs(backup_dir)
-            log.info("moving existing `%s' to `%s'%s",
-                     xhomepath, backup_dir, dry_run_str)
-            if not dry_run:
-                os.rename(xhomepath,
-                          join(backup_dir, basename(xhomepath)))
-
-        # Linkup.
-        log.info("linkup `%s' to `%s'%s" , homepath, path, dry_run_str)
-        assert ' ' not in path, "can't handle space in '%s'" % path
-        if not dry_run:
-            if not exists(dirname(xhomepath)):
-                os.makedirs(dirname(xhomepath))
-            _run("ln -s %s %s" % (path, xhomepath))
-
-# Recipe: splitall (0.2)
-def _splitall(path):
-    allparts = []
-    while 1:
-        parts = os.path.split(path)
-        if parts[0] == path:  # sentinel for absolute paths
-            allparts.insert(0, parts[0])
-            break
-        elif parts[1] == path: # sentinel for relative paths
-            allparts.insert(0, parts[1])
-            break
-        else:
-            path = parts[0]
-            allparts.insert(0, parts[1])
-    allparts = [p for p in allparts if p] # drop empty strings 
-    return allparts
-
-# Recipe: relpath (0.2)
-def _relpath(path, relto=None):
-    """Relativize the given path to another (relto).
-
-    "relto" indicates a directory to which to make "path" relative.
-        It default to the cwd if not specified.
-    """
-    if not os.path.isabs(path):
-        path = os.path.abspath(path)
-    if relto is None:
-        relto = os.getcwd()
-    else:
-        relto = os.path.abspath(relto)
-
-    if sys.platform.startswith("win"):
-        def _equal(a, b): return a.lower() == b.lower()
-    else:
-        def _equal(a, b): return a == b
-
-    pathDrive, pathRemainder = os.path.splitdrive(path)
-    if not pathDrive:
-        pathDrive = os.path.splitdrive(os.getcwd())[0]
-    relToDrive, relToRemainder = os.path.splitdrive(relto)
-    if not _equal(pathDrive, relToDrive):
-        # Which is better: raise an exception or return ""?
-        return ""
-        #raise OSError("Cannot make '%s' relative to '%s'. They are on "\
-        #              "different drives." % (path, relto))
-
-    pathParts = _splitall(pathRemainder)[1:] # drop the leading root dir
-    relToParts = _splitall(relToRemainder)[1:] # drop the leading root dir
-    #print "_relpath: pathPaths=%s" % pathParts
-    #print "_relpath: relToPaths=%s" % relToParts
-    for pathPart, relToPart in zip(pathParts, relToParts):
-        if _equal(pathPart, relToPart):
-            # drop the leading common dirs
-            del pathParts[0]
-            del relToParts[0]
-    #print "_relpath: pathParts=%s" % pathParts
-    #print "_relpath: relToParts=%s" % relToParts
-    # Relative path: walk up from "relto" dir and walk down "path".
-    relParts = [os.curdir] + [os.pardir]*len(relToParts) + pathParts
-    #print "_relpath: relParts=%s" % relParts
-    relPath = os.path.normpath( os.path.join(*relParts) )
-    return relPath
-
-
-# Recipe: run (0.5.3) in /home/trentm/tm/recipes/cookbook
-_RUN_DEFAULT_LOGSTREAM = ("RUN", "DEFAULT", "LOGSTREAM")
-def __run_log(logstream, msg, *args, **kwargs):
-    if not logstream:
-        pass
-    elif logstream is _RUN_DEFAULT_LOGSTREAM:
-        try:
-            log
-        except NameError:
-            pass
-        else:
-            if hasattr(log, "debug"):
-                log.debug(msg, *args, **kwargs)
-    else:
-        logstream(msg, *args, **kwargs)
-
-def _run(cmd, logstream=_RUN_DEFAULT_LOGSTREAM):
-    """Run the given command.
-
-        "cmd" is the command to run
-        "logstream" is an optional logging stream on which to log the 
-            command. If None, no logging is done. If unspecifed, this 
-            looks for a Logger instance named 'log' and logs the command 
-            on log.debug().
-
-    Raises OSError is the command returns a non-zero exit status.
-    """
-    __run_log(logstream, "running '%s'", cmd)
-    retval = os.system(cmd)
-    if hasattr(os, "WEXITSTATUS"):
-        status = os.WEXITSTATUS(retval)
-    else:
-        status = retval
-    if status:
-        #TODO: add std OSError attributes or pick more approp. exception
-        raise OSError("error running '%s': %r" % (cmd, status))
-
-def _run_in_dir(cmd, cwd, logstream=_RUN_DEFAULT_LOGSTREAM):
-    """Run the given command in the given working directory.
-
-        "cmd" is the command to run
-        "cwd" is the directory in which the commmand is run.
-        "logstream" is an optional logging stream on which to log the 
-            command. If None, no logging is done. If unspecifed, this 
-            looks for a Logger instance named 'log' and logs the command 
-            on log.debug().
-
-    Raises OSError is the command returns a non-zero exit status.
-    """
-    old_dir = os.getcwd()
-    try:
-        os.chdir(cwd)
-        __run_log(logstream, "running '%s' in '%s'", cmd, cwd)
-        _run(cmd, logstream=None)
-    finally:
-        os.chdir(old_dir)
-
+def _symlink(from_path, to_path):
+    """'to_path' is the one that should exist already."""
+    # Backup, if necessary.
+    if lexists(from_path):
+        if not exists(BAK_DIR):
+            os.makedirs(BAK_DIR)
+        bak_path = join(BAK_DIR, basename(from_path))
+        #log.info("backing up '%s' to '%s'", from_path, bak_path)
+        os.rename(from_path, bak_path)
+    log.info("symlink '%s' -> '%s'", from_path, to_path)
+    os.symlink(to_path, from_path)
 
 # Recipe: pretty_logging (0.1) in C:\trentm\tm\recipes\cookbook
 class _PerLevelFormatter(logging.Formatter):
@@ -410,20 +116,40 @@ def _setup_logging():
                               fmtFromLevel={logging.INFO: infoFmt})
     hdlr.setFormatter(fmtr)
     logging.root.addHandler(hdlr)
-    log.setLevel(logging.INFO)
-    #log.setLevel(logging.DEBUG)
+
+class _NoReflowFormatter(optparse.IndentedHelpFormatter):
+    """An optparse formatter that does NOT reflow the description."""
+    def format_description(self, description):
+        return description or ""
+
 
 
 #---- mainline
 
-def main():
-    linkup(dry_run=False)
+def main(argv=sys.argv):
+    # Parse options.
+    parser = optparse.OptionParser(prog="linkup", usage='',
+        version="%prog " + __version__, description=__doc__,
+        formatter=_NoReflowFormatter())
+    parser.add_option("-v", "--verbose", dest="log_level",
+        action="store_const", const=logging.DEBUG,
+        help="more verbose output")
+    parser.add_option("-q", "--quiet", dest="log_level",
+        action="store_const", const=logging.WARNING,
+        help="quieter output (just warnings and errors)")
+    parser.set_default("log_level", logging.INFO)
+    parser.add_option("-n", "--dry-run", action="store_true",
+        help="dry-run")
+    opts, args = parser.parse_args()
+    log.setLevel(opts.log_level)
+
+    return linkup(dry_run=opts.dry_run)
 
 if __name__ == "__main__":
     if sys.version_info[:2] <= (2,2): __file__ = sys.argv[0]
     _setup_logging() # defined in recipe:pretty_logging
     try:
-        retval = main()
+        retval = main(sys.argv)
     except KeyboardInterrupt:
         sys.exit(1)
     except:
