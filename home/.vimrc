@@ -206,6 +206,8 @@ if has("autocmd") && !exists("autocommands_loaded")
   " is typical.
   "autocmd BufEnter		*.sh,*.pl	set tabstop=8 shiftwidth=8 noexpandtab
   "autocmd BufLeave		*.sh,*.pl	set tabstop=4 shiftwidth=4 expandtab
+
+  autocmd BufEnter		Rakefile,Capfile,*.rb	set tabstop=2 shiftwidth=2 expandtab
 endif
 
 

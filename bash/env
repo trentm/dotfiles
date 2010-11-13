@@ -1,6 +1,6 @@
 #!/bin/sh
-# ~/.bash_env: My generally generic (i.e. not host-specific) environment
-# changes.
+# ~/.bash_env: My generally generic (i.e. not host-specific) environment changes.
+#echo dotfiles/bash/env: start
 
 function is_on_path() {
     # Return 0 if the command is found on the PATH, non-zero otherwise.

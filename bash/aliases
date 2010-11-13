@@ -1,3 +1,5 @@
+#echo dotfiles/bash/aliases: start
+
 # General
 # TODO: add --color when appropriate
 if [ `uname -s` = "Linux" ]; then
