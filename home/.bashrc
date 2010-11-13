@@ -144,9 +144,24 @@ prompt_compact() {
     PS2="> "
 }
 
+__prompt_rvm() {
+    #TODO: just "rvm-prompt" works, but with 'g' option it does not to show gemset. I don't know why
+    test -x "$HOME/.rvm/bin/rvm-prompt" && {
+        source $HOME/.rvm/scripts/rvm && $HOME/.rvm/bin/rvm-prompt
+        #gemset=`"$HOME/.rvm/bin/rvm-prompt" g`
+        #test -n "$gemset" && echo " $gemset"
+    }
+}
+__prompt_git() {
+    __git_ps1 " (%s)"
+}
+
 prompt_color() {
-    PS1="${COLOR2}[\t ${COLOR1}\u${COLOR2}@\h:\w]\n$P${PS_CLEAR} "
-    PS2="\[[33;1m\]continue \[[0m[1m\]> "
+    #PS1="${COLOR2}[\t ${COLOR1}\u${COLOR2}@\h:\w$(__prompt_rvm)]\n$P${PS_CLEAR} "
+    PS1="${COLOR2}[\t ${COLOR1}\u${COLOR2}@\h:\w"
+    PS1+='$(__git_ps1 " (%s)")'
+    PS1+="]\n$P${PS_CLEAR} "
+    PS2="${COLOR2}>${PS_CLEAR} "
 }
 
 # ----------------------------------------------------------------------
@@ -154,8 +169,8 @@ prompt_color() {
 # ----------------------------------------------------------------------
 
 if [ "$UNAME" = Darwin ]; then
-    alias k='open -a "Komodo IDE 6"'
-    alias komodo='open -a "Komodo IDE 6"'
+    alias k='open -a "Komodo IDE"'
+    alias komodo=k
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
     alias vlc='open -a VLC'
@@ -254,6 +269,17 @@ alias crontab='VIM_CRONTAB=true crontab'
 # Resty <https://github.com/micha/resty>
 test -r "$HOME/src/resty/resty" && . "$HOME/src/resty/resty"
 
+# Bash shell driver for 'go' (http://code.google.com/p/go-tool/).
+export PATH=$HOME/tm/go/lib:$PATH
+function go {
+    export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
+    python -m go $*
+    if [ -f $GO_SHELL_SCRIPT ] ; then
+        source $GO_SHELL_SCRIPT
+    fi
+    unset GO_SHELL_SCRIPT
+}
+
 
 # ----------------------------------------------------------------------
 # GPG
@@ -300,6 +326,7 @@ function catenc() {
 # BASH COMPLETION
 # ----------------------------------------------------------------------
 
+#TODO: set this up
 test -z "$BASH_COMPLETION" && {
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
     test -n "$PS1" && test $bmajor -gt 1 && {
@@ -317,6 +344,9 @@ test -z "$BASH_COMPLETION" && {
     }
     unset bash bmajor bminor
 }
+
+test -n "$PS1" && source "$DOTFILES/bash/git-completion.bash"
+
 
 # override and disable tilde expansion
 _expand() {
@@ -404,7 +434,6 @@ test -r $HOME/.bash_localenv && . $HOME/.bash_localenv
 #   be trampled when you switch rubies." 
 # - self-update periodically via: `rvm update --head && rvm reload`
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
 
 # -------------------------------------------------------------------
 # MOTD / FORTUNE
