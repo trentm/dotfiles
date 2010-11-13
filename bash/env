@@ -111,18 +111,8 @@ export CVS_RSH=ssh
 #    then only do `keychain --quick --quiet` for subsequent shells.
 if tm_is_interactive_shell; then
 if test -f $HOME/.ssh/trusted; then
-    # id_rsa.* and identity.* files
     if is_on_path keychain; then
-        # Only some OS' find seems to support -maxdepth.
-        if test `uname -s` = "Linux" -o `uname -s` = "Darwin"; then
-            # Only search one dir deep to allow moving unwanted ones out of the
-            # way.
-            FIND_ARGS='-maxdepth 1'
-        fi
-        find $HOME/.ssh $FIND_ARGS \
-            -name "id*.*" \
-            -a ! -name "*.pub" \
-            -a ! -name "*.ppk" \
+        ls -1 $HOME/.ssh/id_* | grep -v '\.pub' | grep -v '\.ppk' \
             | xargs keychain --quick --quiet --lockwait 120
         unset FIND_ARGS
         [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
