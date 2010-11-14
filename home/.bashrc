@@ -103,7 +103,7 @@ export EDITOR
 
 # PAGER
 if test -n "$(command -v less)" ; then
-    PAGER="less -irSwX"
+    PAGER="less -iRSwX"
     MANPAGER="less -iRswX"
 else
     PAGER=more
@@ -144,22 +144,25 @@ prompt_compact() {
     PS2="> "
 }
 
-__prompt_rvm() {
-    #TODO: just "rvm-prompt" works, but with 'g' option it does not to show gemset. I don't know why
-    test -x "$HOME/.rvm/bin/rvm-prompt" && {
-        source $HOME/.rvm/scripts/rvm && $HOME/.rvm/bin/rvm-prompt
-        #gemset=`"$HOME/.rvm/bin/rvm-prompt" g`
-        #test -n "$gemset" && echo " $gemset"
-    }
-}
-__prompt_git() {
-    __git_ps1 " (%s)"
+__prompt_extra_info() {
+    local branch=`__git_ps1 "%s"`
+
+    local gemset
+    if test -x "$HOME/.rvm/bin/rvm-prompt"; then
+        source $HOME/.rvm/scripts/rvm && gemset=`$HOME/.rvm/bin/rvm-prompt g`
+    fi
+
+    if test -n "$branch" -o -n "$gemset"; then
+        echo -n " ("
+        test -n "$branch" && echo -n $branch
+        test -n "$gemset" && echo -n $gemset
+        echo -n ")"
+    fi
 }
 
 prompt_color() {
-    #PS1="${COLOR2}[\t ${COLOR1}\u${COLOR2}@\h:\w$(__prompt_rvm)]\n$P${PS_CLEAR} "
     PS1="${COLOR2}[\t ${COLOR1}\u${COLOR2}@\h:\w"
-    PS1+='$(__git_ps1 " (%s)")'
+    PS1+='$(__prompt_extra_info)'
     PS1+="]\n$P${PS_CLEAR} "
     PS2="${COLOR2}>${PS_CLEAR} "
 }
