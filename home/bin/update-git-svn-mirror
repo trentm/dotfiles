@@ -1,0 +1,19 @@
+#!/bin/sh
+# Update a git svn mirror.
+#
+# Usage: update-git-svn-mirror DIRECTORY
+#
+# See http://www.fnokd.com/2008/08/20/mirroring-svn-repository-to-github/
+
+if test -z "$1"; then
+  echo "error: no DIRECTORY given, use 'update-git-svn-mirror DIRECTORY'"
+  exit 1
+fi
+
+export GIT=/opt/local/bin/git
+
+echo
+echo "--" `date`
+echo update-git-svn-mirror $1
+cd $1 && $GIT svn rebase && $GIT push origin master
+

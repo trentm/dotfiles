@@ -1,0 +1,2 @@
+#!/bin/sh
+python $HOME/tm/sandbox/tools/linefilter.py "$@"
