@@ -348,8 +348,6 @@ test -z "$BASH_COMPLETION" && {
     unset bash bmajor bminor
 }
 
-test -n "$PS1" && source "$DOTFILES/bash/git-completion.bash"
-
 
 # override and disable tilde expansion
 _expand() {
