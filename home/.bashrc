@@ -147,9 +147,10 @@ __prompt_extra_info() {
     local branch=`__git_ps1 "%s"`
 
     local gemset
-    if test -x "$HOME/.rvm/bin/rvm-prompt"; then
-        source $HOME/.rvm/scripts/rvm && gemset=`$HOME/.rvm/bin/rvm-prompt g`
-    fi
+    # Too slow. Causes bash output problems.
+    #if test -x "$HOME/.rvm/bin/rvm-prompt"; then
+    #    source $HOME/.rvm/scripts/rvm && gemset=`$HOME/.rvm/bin/rvm-prompt g`
+    #fi
 
     if test -n "$branch" -o -n "$gemset"; then
         echo -n " ("
@@ -251,15 +252,18 @@ alias igrep='grep -i'
 alias check='python $HOME/src/check/check.py'
 alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 alias sources="python $HOME/tm/sources/lib/sources.py"
+alias jsonpp="python -m json.tool"
 
 # GTD
 alias g="python ~/Dropbox/gtd/bin/gtd.py"
 alias n="python ~/Dropbox/gtd/bin/gtd.py note"
 
-# Development tools
+# Dev and system tools
 [ "$UNAME" = "Darwin" ] && alias ldd='otool -L'
 alias ps1='ps -wwx'
 alias ps2='ps -wwux'
+alias dir='l'
+alias fn='find . -name'
 
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
 alias crontab='VIM_CRONTAB=true crontab'
@@ -328,7 +332,6 @@ function catenc() {
 # BASH COMPLETION
 # ----------------------------------------------------------------------
 
-#TODO: set this up
 test -z "$BASH_COMPLETION" && {
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
     test -n "$PS1" && test $bmajor -gt 1 && {

@@ -9,8 +9,10 @@
 
 git log "$1" |
   grep Author: |
-  sed 's/Author: \(.*\) <.*/\1/' |
+  sed 's/Author: \(.*\)/\1/' |     # with email
+  #sed 's/Author: \(.*\) <.*/\1/' |    # without email
   sort |
   uniq -c |
-  sort -rn |
+  sort -n |
   sed 's/ *\([0-9]\{1,\}\) \(.*\)/\2 (\1)/'
+
