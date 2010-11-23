@@ -12,7 +12,7 @@
 	st = status
 	di = diff
 	ci = commit
-    loggraph = log --oneline --graph
+	log1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 [difftool]
 	prompt = false
 [diff]
