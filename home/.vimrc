@@ -96,18 +96,6 @@ if has("autocmd") && !exists("autocommands_loaded")
   autocmd BufLeave		*		vunmap ,tounix
   autocmd BufEnter		*		vnoremap ,todos :!linefilter todos
   autocmd BufLeave		*		vunmap ,todos
-  " colors that I suspect only look nice for black terms
-  " TODO: have black-on-white.vim and which-on-black.vim color scheme configs
-  "       and load the right one with :colorscheme {name}
-  "autocmd BufEnter		*		highlight Statement cterm=bold
-  autocmd BufEnter		*		highlight Comment ctermfg=1 cterm=NONE
-  autocmd BufEnter		*		highlight PreProc cterm=bold
-  autocmd BufEnter		*		highlight Constant cterm=bold
-  autocmd BufEnter		*		highlight Search ctermbg=3 cterm=standout
-  autocmd BufEnter		*		highlight SpecialKey ctermfg=7 cterm=bold
-  autocmd BufEnter		*		highlight Special cterm=bold
-  autocmd BufEnter		*		highlight StatusLine cterm=reverse ctermbg=DarkBlue ctermfg=White cterm=bold
-  autocmd BufEnter		*		highlight Directory ctermfg=7 cterm=bold
   
   " When editing a file, always jump to the last cursor position
   autocmd BufReadPost	*		if line("'\"") | exe "'\"" | endif
@@ -264,84 +252,6 @@ endif
 
 
 
-"---- configuration stuff to look at
-
-"set nowrap
-
-""map! <kDivide> /
-""map! <kMultiply> *
-""map! <kMinus> -
-""map! <kPlus> +
-
-"" make tab in v mode work like I think it should (keep highlighting):
-"vmap <tab> >gv
-"vmap <s-tab> <gv
-
-"" Date/Time stamps
-"iab xstamp  <C-R>=strftime("%a %b %d %H:%M:%S %Y")<CR>
-"iab lastmod  <C-R>="Last Modified: " . strftime("%a %b %d %H:%M:%S
-"%Y")<CR>
-
-"" When starting to edit a file:
-""   For *.c and *.h files set formatting of comments and set
-""   C-indenting on
-""   For other files switch it off
-""   Don't change the sequence, it's important that the line with *
-"comes first.
-"autocmd BufRead * set formatoptions=tcql nocindent comments&
-"autocmd BufRead *.c,*.ec,*.cpp,*.h,*.pl,*.pm set sm
-"formatoptions=croql cindent
-"comments=sr:/*,mb:*,el:*/,://
-
-
-
-"if has("autocmd")
-" augroup cprog
-"  " Remove all cprog autocommands
-"  au!
-"
-"  " When starting to edit a file:
-"  "   For C and C++ files set formatting of comments and set
-"  C-indenting on.
-"  "   For other files switch it off.
-"  "   Don't change the order, it's important that the line with *
-"  comes first.
-"  autocmd FileType *      set formatoptions=tcql nocindent comments&
-"  autocmd FileType c,cpp  set formatoptions=croql cindent
-"  comments=sr:/*,mb:*,el:*/,://
-" augroup END
-"
-" augroup gzip
-"  " Remove all gzip autocommands
-"  au!
-"
-"  " Enable editing of gzipped files
-"  "       read: set binary mode before reading the file
-"  "             uncompress text in buffer after reading
-"  "      write: compress file after writing
-"  "     append: uncompress file, append, compress file
-"  autocmd BufReadPre,FileReadPre        *.gz set bin
-"  autocmd BufReadPost,FileReadPost      *.gz let ch_save = &ch|set
-"  ch=2
-"  autocmd BufReadPost,FileReadPost      *.gz '[,']!gunzip
-"  autocmd BufReadPost,FileReadPost      *.gz set nobin
-"  autocmd BufReadPost,FileReadPost      *.gz let &ch = ch_save|unlet
-"  ch_save
-"  autocmd BufReadPost,FileReadPost      *.gz execute ":doautocmd
-"  BufReadPost " . expand
-"("%:r")
-"
-"  autocmd BufWritePost,FileWritePost    *.gz !mv <afile> <afile>:r
-"  autocmd BufWritePost,FileWritePost    *.gz !gzip <afile>:r
-"
-"  autocmd FileAppendPre                 *.gz !gunzip <afile>
-"  autocmd FileAppendPre                 *.gz !mv <afile>:r <afile>
-"  autocmd FileAppendPost                *.gz !mv <afile> <afile>:r
-"  autocmd FileAppendPost                *.gz !gzip <afile>:r
-" augroup END
-"endif
-
-
 
 "---- http://vim.sourceforge.net/tips/tip.php?tip_id=102
 " Note: I reversed the mappings because IMO <tab> should search _backwards_ by
@@ -361,3 +271,25 @@ endfunction
 inoremap <tab> <c-r>=InsertTabWrapper ("backward")<cr>
 inoremap <s-tab> <c-r>=InsertTabWrapper ("forward")<cr>
 
+
+
+" ---------------------------------------------------------------------------
+" Colors / Theme
+" ---------------------------------------------------------------------------
+
+if &t_Co > 2 || has("gui_running")
+  if has("terminfo")
+    set t_Co=16
+    set t_AB=[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm
+    set t_AF=[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm
+  else
+    set t_Co=16
+    set t_Sf=[3%dm
+    set t_Sb=[4%dm
+  endif
+  syntax on
+  set hlsearch
+  " So far for a *light* scheme, I've found whatever is the default to
+  " be the best. For dark, slate2 is nice.
+  "colorscheme slate2
+endif
