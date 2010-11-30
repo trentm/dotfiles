@@ -52,9 +52,11 @@ PATH="/usr/local/bin:$PATH"
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/as/mk/bin:$PATH"
 PATH="$HOME/tm/vimfluence:$PATH"
-PATH="$HOME/opt/node/bin:$PATH"
+PATH="$HOME/opt/node-0.2/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
+
+MANPATH="$HOME/opt/node-0.2/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -297,7 +299,7 @@ function go {
 function enc() {
     # Encrypt a file.
     # Usage: `enc PATH` with create `PATH.asc` and remove `PATH`.
-    
+
     for ARG in $*
     do
         export ASC_PATH=$ARG.asc
@@ -437,7 +439,7 @@ test -r $HOME/.bash_localenv && . $HOME/.bash_localenv
 #   "Ensure that rvm is the last thing sourced in all of your shell
 #   profiles - e.g. it is sourced in the user specific profile after any
 #   environment variables, especially PATH are set. Otherwise, the values you set
-#   be trampled when you switch rubies." 
+#   be trampled when you switch rubies."
 # - self-update periodically via: `rvm update --head && rvm reload`
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
