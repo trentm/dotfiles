@@ -291,6 +291,8 @@ function go {
     unset GO_SHELL_SCRIPT
 }
 
+test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
+
 
 # ----------------------------------------------------------------------
 # GPG
