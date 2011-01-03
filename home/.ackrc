@@ -1,3 +1,4 @@
 -a
 --ignore-dir=build
+--ignore-dir=*.vmwarevm
 --pager=less -R
