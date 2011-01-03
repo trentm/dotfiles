@@ -35,14 +35,16 @@ set ic					" ignore case in searching (by default)
 
 set scrolloff=10		" keep a number of lines above/below cursor
 
-"set fileformats=unix,dos	" prefer UNIX fileformat (i.e. no CR, just LF)
-
 set selectmode=key		" MS Windows style shifted-movement SELECT mode
 set keymodel=startsel
 
 set noic                " case-sensitive searching
 
-"filetype plugin on
+set modeline
+set modelines=5
+filetype on
+filetype plugin on
+
 
 
 " Sarathy's 'search' output with -n option
@@ -293,3 +295,4 @@ if &t_Co > 2 || has("gui_running")
   " be the best. For dark, slate2 is nice.
   "colorscheme slate2
 endif
+
