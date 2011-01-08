@@ -1,0 +1,5 @@
+#!/bin/sh
+# A 'git' that imports ssh agent settings so a console-less script can
+# call this.
+[[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
+/usr/local/git/bin/git $*
