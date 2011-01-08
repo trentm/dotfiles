@@ -277,9 +277,6 @@ alias crontab='VIM_CRONTAB=true crontab'
 # I found I've needed this on skink (Ubuntu box), at least.
 [ "$UNAME" = "Linux" ] && alias screen='TERM=screen screen'
 
-# Resty <https://github.com/micha/resty>
-test -r "$HOME/src/resty/resty" && . "$HOME/src/resty/resty"
-
 # Bash shell driver for 'go' (http://code.google.com/p/go-tool/).
 export PATH=$HOME/tm/go/lib:$PATH
 function go {
@@ -292,6 +289,10 @@ function go {
 }
 
 test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
+
+# Resty <https://github.com/micha/resty>.
+export RESTY_PATH=$HOME/src/resty/resty
+test -r "$RESTY_PATH" && . "$RESTY_PATH"
 
 
 # ----------------------------------------------------------------------
