@@ -52,11 +52,11 @@ PATH="/usr/local/bin:$PATH"
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/as/mk/bin:$PATH"
 PATH="$HOME/tm/vimfluence:$PATH"
-PATH="$HOME/opt/node-0.2/bin:$PATH"
+PATH="$HOME/opt/node-0.4/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
-MANPATH="$HOME/opt/node-0.2/share/man:$MANPATH"
+MANPATH="$HOME/opt/node-0.4/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ export EDITOR
 
 # PAGER
 if test -n "$(command -v less)" ; then
-    PAGER="less -iRSwX"
+    PAGER="less -iRwX"
     MANPAGER="less -iRswX"
 else
     PAGER=more
@@ -255,6 +255,8 @@ alias check='python $HOME/src/check/check.py'
 alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 alias sources="python $HOME/tm/sources/lib/sources.py"
 alias jsonpp="python -m json.tool"
+# I just can't type that word.
+alias j=jekyll
 
 alias r='rabbitmqctl'
 alias chromium='/Applications/Chromium.app/Contents/MacOS/Chromium --enable-webgl'

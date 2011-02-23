@@ -1,4 +1,8 @@
 -a
+--ignore-dir=log
+--ignore-dir=tmp
+--ignore-dir=cache
 --ignore-dir=build
+--ignore-dir=.cache
 --ignore-dir=*.vmwarevm
 --pager=less -R
