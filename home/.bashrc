@@ -254,9 +254,9 @@ alias igrep='grep -i'
 alias check='python $HOME/src/check/check.py'
 alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 alias sources="python $HOME/tm/sources/lib/sources.py"
-alias jsonpp="python -m json.tool"
 # I just can't type that word.
 alias j=jekyll
+export PATH=$HOME/tm/json:$PATH
 
 alias r='rabbitmqctl'
 alias chromium='/Applications/Chromium.app/Contents/MacOS/Chromium --enable-webgl'
