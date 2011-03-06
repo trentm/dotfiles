@@ -245,6 +245,7 @@ alias gds='git diff --staged'
 alias gs='git status'
 alias gb='git branch'
 alias gc='git checkout'
+alias gl='git log'
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
@@ -260,6 +261,7 @@ export PATH=$HOME/tm/json:$PATH
 
 alias r='rabbitmqctl'
 alias chromium='/Applications/Chromium.app/Contents/MacOS/Chromium --enable-webgl'
+alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
 
 # GTD
 alias g="python ~/Dropbox/gtd/bin/gtd.py"
