@@ -258,14 +258,26 @@ alias sources="python $HOME/tm/sources/lib/sources.py"
 # I just can't type that word.
 alias j=jekyll
 export PATH=$HOME/tm/json:$PATH
+export PATH=$HOME/tm/restdown/bin:$PATH
 
-alias r='rabbitmqctl'
+function staticserve() {
+    # https://github.com/remiprev/annyong
+    for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do
+        echo "# ${ip}:9292"
+    done
+    #annyong
+    python -m SimpleHTTPServer
+}
+
+alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo -n "date " && date -u "+%m%d%H%M%Y.%S"'
+
+alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 alias chromium='/Applications/Chromium.app/Contents/MacOS/Chromium --enable-webgl'
 alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
 
 # GTD
-alias g="python ~/Dropbox/gtd/bin/gtd.py"
-alias n="python ~/Dropbox/gtd/bin/gtd.py note"
+alias gtd="python ~/Dropbox/gtd/bin/gtd.py"
+alias note="python ~/Dropbox/gtd/bin/gtd.py note"
 
 # Dev and system tools
 [ "$UNAME" = "Darwin" ] && alias ldd='otool -L'
@@ -397,11 +409,11 @@ alias l="ls -lFA"
 # MISC COMMANDS
 # --------------------------------------------------------------------
 
-# use gem-man(1) if available:
-man () {
-    gem man -s "$@" 2>/dev/null ||
-    command man "$@"
-}
+## use gem-man(1) if available:
+#man () {
+#    gem man -s "$@" 2>/dev/null ||
+#    command man "$@"
+#}
 
 # Usage: pls [<var>]
 # List path entries of PATH or environment variable <var>.
