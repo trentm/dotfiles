@@ -1,4 +1,6 @@
 -a
+#--ignore-dir=node_modules
+--ignore-dir=deps
 --ignore-dir=log
 --ignore-dir=tmp
 --ignore-dir=cache

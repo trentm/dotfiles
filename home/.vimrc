@@ -296,3 +296,9 @@ if &t_Co > 2 || has("gui_running")
   "colorscheme slate2
 endif
 
+
+
+" Disable jslint plugin for now.
+let g:JSLintHighlightErrorLine = 0
+
+

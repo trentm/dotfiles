@@ -1,0 +1,2 @@
+#!/bin/sh
+node $HOME/tm/json/lib/jsontool.js "$@"

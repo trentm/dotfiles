@@ -247,6 +247,8 @@ alias gb='git branch'
 alias gc='git checkout'
 alias gl='git log'
 
+alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
+
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
 alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
@@ -257,7 +259,7 @@ alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 alias sources="python $HOME/tm/sources/lib/sources.py"
 # I just can't type that word.
 alias j=jekyll
-export PATH=$HOME/tm/json:$PATH
+alias json=$HOME/tm/json/lib/jsontool.js
 export PATH=$HOME/tm/restdown/bin:$PATH
 
 function staticserve() {
