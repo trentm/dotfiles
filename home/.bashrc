@@ -259,7 +259,6 @@ alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 alias sources="python $HOME/tm/sources/lib/sources.py"
 # I just can't type that word.
 alias j=jekyll
-alias json=$HOME/tm/json/lib/jsontool.js
 export PATH=$HOME/tm/restdown/bin:$PATH
 
 function staticserve() {
