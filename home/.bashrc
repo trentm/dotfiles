@@ -256,7 +256,6 @@ alias eol="python $HOME/tm/eol/lib/eol.py"
 alias igrep='grep -i'
 alias check='python $HOME/src/check/check.py'
 alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
-alias sources="python $HOME/tm/sources/lib/sources.py"
 # I just can't type that word.
 alias j=jekyll
 export PATH=$HOME/tm/restdown/bin:$PATH
