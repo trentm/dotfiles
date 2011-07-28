@@ -52,11 +52,11 @@ PATH="/usr/local/bin:$PATH"
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/as/mk/bin:$PATH"
 PATH="$HOME/tm/vimfluence:$PATH"
-PATH="$HOME/opt/node-0.4/bin:$PATH"
+PATH="$HOME/opt/node-0.4.9/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
-MANPATH="$HOME/opt/node-0.4/share/man:$MANPATH"
+MANPATH="$HOME/opt/node-0.4.9/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -248,6 +248,7 @@ alias gc='git checkout'
 alias gl='git log'
 
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
+alias ackless='ack --pager="less -R"'
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
@@ -261,11 +262,9 @@ alias j=jekyll
 export PATH=$HOME/tm/restdown/bin:$PATH
 
 function staticserve() {
-    # https://github.com/remiprev/annyong
     for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do
-        echo "# ${ip}:9292"
+        echo "# http://${ip}:8000"
     done
-    #annyong
     python -m SimpleHTTPServer
 }
 
@@ -304,11 +303,17 @@ function go {
     unset GO_SHELL_SCRIPT
 }
 
-test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
 
-# Resty <https://github.com/micha/resty>.
-export RESTY_PATH=$HOME/src/resty/resty
-test -r "$RESTY_PATH" && . "$RESTY_PATH"
+# From Pedro (https://gist.github.com/c19e71b17ca1de05000f)
+# `brew install rlwrap` to get `rlwrap`.
+function parse_git_branch {
+   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+   echo "("${ref#refs/heads/}")"
+}
+alias noderepl='env NODE_NO_READLINE=1 rlwrap -p Red -S "$(parse_git_branch) node> " node'
+
+
+test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
 
 
 # ----------------------------------------------------------------------

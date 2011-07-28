@@ -7,4 +7,4 @@
 --ignore-dir=build
 --ignore-dir=.cache
 --ignore-dir=*.vmwarevm
---pager=less -R
+#--pager=less -R
