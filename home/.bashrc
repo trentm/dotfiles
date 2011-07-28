@@ -390,7 +390,11 @@ _expand() {
 # ----------------------------------------------------------------------
 
 # we always pass these to ls(1)
-LS_COMMON="-hBG"
+LS_COMMON="-h"
+if [[ `uname` == "Darwin" ]]; then
+    # Color support not reliably there, e.g. on Illumos.
+    LS_COMMON="-hBG"
+fi
 
 # if the dircolors utility is available, set that up to
 dircolors="$(type -P gdircolors dircolors | head -1)"
@@ -424,17 +428,25 @@ alias l="ls -lFA"
 # List path entries of PATH or environment variable <var>.
 pls () { eval echo \$${1:-PATH} |tr : '\n'; }
 
-# Usage: puniq [<path>]
-# Remove duplicate entries from a PATH style value while retaining
-# the original order. Use PATH if no <path> is given.
-#
-# Example:
-#   $ puniq /usr/bin:/usr/local/bin:/usr/bin
-#   /usr/bin:/usr/local/bin
-puniq () {
-    echo "$1" |tr : '\n' |nl |sort -u -k 2,2 |sort -n |
-    cut -f 2- |tr '\n' : |sed -e 's/:$//' -e 's/^://'
-}
+if [[ `uname` == "Darwin" ]]; then
+    # Usage: puniq [<path>]
+    # Remove duplicate entries from a PATH style value while retaining
+    # the original order. Use PATH if no <path> is given.
+    #
+    # Example:
+    #   $ puniq /usr/bin:/usr/local/bin:/usr/bin
+    #   /usr/bin:/usr/local/bin
+    puniq () {
+        # Some stupid breakage in non-GNU `sed` on some systems
+        # such that it returns empty string.
+        [[ `(gsed --version 2>/dev/null || true) | grep "GNU sed"` ]] && SED=gsed || SED=sed
+        echo "$1" |tr : '\n' |nl |sort -u -k 2,2 |sort -n | cut -f 2- |tr '\n' : | $SED -e 's/:$//' -e 's/^://'
+    }
+else
+    puniq () {
+        echo "$1"
+    }
+fi
 
 
 # -------------------------------------------------------------------
@@ -446,7 +458,11 @@ PATH=$(puniq $PATH)
 MANPATH=$(puniq $MANPATH)
 
 # Use the color prompt by default when interactive
-test -n "$PS1" && prompt_color
+if [[ `uname` == "Darwin" ]]; then
+    test -n "$PS1" && prompt_color
+else
+    test -n "$PS1" && prompt_simple
+fi
 
 # Python
 test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
