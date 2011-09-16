@@ -40,6 +40,11 @@ set keymodel=startsel
 
 set noic                " case-sensitive searching
 
+if version >= 730
+    set colorcolumn=80,120
+endif
+
+
 set modeline
 set modelines=5
 filetype on
@@ -295,10 +300,5 @@ if &t_Co > 2 || has("gui_running")
   " be the best. For dark, slate2 is nice.
   "colorscheme slate2
 endif
-
-
-
-" Disable jslint plugin for now.
-let g:JSLintHighlightErrorLine = 0
 
 
