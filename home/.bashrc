@@ -52,11 +52,11 @@ PATH="/usr/local/bin:$PATH"
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/as/mk/bin:$PATH"
 PATH="$HOME/tm/vimfluence:$PATH"
-PATH="$HOME/opt/node-0.4.9/bin:$PATH"
+PATH="$HOME/opt/node-0.4/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
-MANPATH="$HOME/opt/node-0.4.9/share/man:$MANPATH"
+MANPATH="$HOME/opt/node-0.4/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -245,7 +245,7 @@ alias gds='git diff --staged'
 alias gs='git status'
 alias gb='git branch'
 alias gc='git checkout'
-alias gl='git log'
+alias gl='git log --stat'
 
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
