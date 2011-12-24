@@ -268,6 +268,11 @@ function staticserve() {
     python -m SimpleHTTPServer
 }
 
+#highlight
+function hi() {
+    perl -pe "s/$1/\e[1;31;43m$&\e[0m/g"
+}
+
 alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo -n "date " && date -u "+%m%d%H%M%Y.%S"'
 
 alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
