@@ -52,11 +52,12 @@ PATH="/usr/local/bin:$PATH"
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/as/mk/bin:$PATH"
 PATH="$HOME/tm/vimfluence:$PATH"
-PATH="$HOME/opt/node-0.4/bin:$PATH"
+#PATH="$HOME/opt/node-0.4/bin:$PATH"
+PATH="$HOME/opt/node-0.6/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
-MANPATH="$HOME/opt/node-0.4/share/man:$MANPATH"
+MANPATH="$HOME/opt/node-0.6/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -260,6 +261,7 @@ alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 # I just can't type that word.
 alias j=jekyll
 export PATH=$HOME/tm/restdown/bin:$PATH
+export PATH=$HOME/tm/node-bunyan/bin:$PATH
 
 function staticserve() {
     for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do
