@@ -250,6 +250,7 @@ alias gl='git log --stat'
 
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
+alias by='bunyan'
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'

@@ -3,3 +3,4 @@ tmp
 home/.subversion/README.txt
 home/.subversion/servers
 home/.subversion/auth
+home/.vim/.netrwhist
