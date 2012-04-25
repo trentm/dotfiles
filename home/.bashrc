@@ -373,6 +373,9 @@ test -z "$BASH_COMPLETION" && {
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
     test -n "$PS1" && test $bmajor -gt 1 && {
         # search for a bash_completion file to source
+        # Note for Mac: `brew install bash-completion` to get bash completion
+        # bits installed. Symptom of not having this:
+        #   -bash: __git_ps1: command not found
         for f in /usr/local/etc/bash_completion \
                  /usr/pkg/etc/bash_completion \
                  /opt/local/etc/bash_completion \
