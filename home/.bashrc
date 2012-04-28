@@ -137,13 +137,13 @@ fi
 prompt_simple() {
     unset PROMPT_COMMAND
     PS1="[\u@\h:\w]\$ "
-    PS2="> "
+    PS2=""
 }
 
 prompt_compact() {
     unset PROMPT_COMMAND
     PS1="${COLOR1}${P}${PS_CLEAR} "
-    PS2="> "
+    PS2=""
 }
 
 __prompt_extra_info() {
@@ -167,7 +167,7 @@ prompt_color() {
     PS1="${COLOR2}[\t ${COLOR1}\u${COLOR2}@\h:\w"
     PS1+='$(__prompt_extra_info)'
     PS1+="]\n$P${PS_CLEAR} "
-    PS2="${COLOR2}>${PS_CLEAR} "
+    PS2=""
 }
 
 # ----------------------------------------------------------------------
@@ -179,7 +179,7 @@ if [ "$UNAME" = Darwin ]; then
     alias komodo=k
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
-    alias vlc='open -a VLC'
+    alias vlc='open -a /Applications/VLC.app'
 
     # Start Canon LiDE scanner.
     # This is here to avoid having the painful "N*_ButtonManager.app" processes
@@ -251,6 +251,7 @@ alias gl='git log --stat'
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
 alias by='bunyan'
+alias spot='/Users/trentm/src/spot/spot.sh'
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
@@ -326,6 +327,9 @@ test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
 
 # ----------------------------------------------------------------------
 # GPG
+#
+# XXX:TODO: update vienc to use a temporary path in TMPDIR to be outside
+# of dropbox area. See this: http://nibble.develsec.org/hg/toys/file/ddaf55c59fc7/passman
 # ----------------------------------------------------------------------
 
 function enc() {

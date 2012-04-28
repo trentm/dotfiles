@@ -7,4 +7,5 @@
 --ignore-dir=build
 --ignore-dir=.cache
 --ignore-dir=*.vmwarevm
+--type-set=log=.log
 #--pager=less -R
