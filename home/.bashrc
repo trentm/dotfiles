@@ -50,9 +50,6 @@ umask 0022
 PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 PATH="/usr/local/bin:$PATH"
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
-PATH="$HOME/as/mk/bin:$PATH"
-PATH="$HOME/tm/vimfluence:$PATH"
-#PATH="$HOME/opt/node-0.4/bin:$PATH"
 PATH="$HOME/opt/node-0.6/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
@@ -248,10 +245,6 @@ alias gb='git branch'
 alias gc='git checkout'
 alias gl='git log --stat'
 
-alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
-alias ackless='ack --pager="less -R"'
-alias by='bunyan'
-alias spot='/Users/trentm/src/spot/spot.sh'
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
@@ -262,8 +255,16 @@ alias check='python $HOME/src/check/check.py'
 alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 # I just can't type that word.
 alias j=jekyll
-export PATH=$HOME/tm/restdown/bin:$PATH
-export PATH=$HOME/tm/node-bunyan/bin:$PATH
+alias restdown=$HOME/tm/restdown/bin/restdown
+alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
+alias ackless='ack --pager="less -R"'
+alias spot='/Users/trentm/src/spot/spot.sh'
+alias bunyan=$HOME/tm/node-bunyan/bin/bunyan
+alias by='bunyan'
+alias vimfluence=$HOME/tm/vimfluence/vimfluence
+
+#export PATH=$HOME/tm/restdown/bin:$PATH
+#export PATH=$HOME/tm/node-bunyan/bin:$PATH
 
 function staticserve() {
     for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do
@@ -302,7 +303,7 @@ alias crontab='VIM_CRONTAB=true crontab'
 [ "$UNAME" = "Linux" ] && alias screen='TERM=screen screen'
 
 # Bash shell driver for 'go' (http://code.google.com/p/go-tool/).
-export PATH=$HOME/tm/go/lib:$PATH
+#export PATH=$HOME/tm/go/lib:$PATH
 function go {
     export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
     python -m go $*
