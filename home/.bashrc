@@ -246,6 +246,9 @@ alias gb='git branch'
 alias gc='git checkout'
 alias gl='git log --stat'
 
+alias ..='cd ..'
+alias ...='cd ../..'
+
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
@@ -255,7 +258,7 @@ alias igrep='grep -i'
 alias check='python $HOME/src/check/check.py'
 alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 # I just can't type that word.
-alias j=jekyll
+alias j="jekyll && (cd _site && staticserve)"
 alias restdown=$HOME/tm/restdown/bin/restdown
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
@@ -282,7 +285,6 @@ function hi() {
 alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo -n "date " && date -u "+%m%d%H%M%Y.%S"'
 
 alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
-alias chromium='/Applications/Chromium.app/Contents/MacOS/Chromium --enable-webgl'
 alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
 
 # GTD
