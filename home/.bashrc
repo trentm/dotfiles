@@ -55,6 +55,7 @@ PATH="$HOME/opt/node-0.6/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
+[[ $(uname -s) = "SunOS" ]] && MANPATH="/opt/local/man:$MANPATH" # smartos pkgsrc
 MANPATH="$HOME/opt/node-0.6/share/man:$MANPATH"
 
 
