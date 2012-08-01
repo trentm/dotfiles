@@ -310,7 +310,7 @@ alias crontab='VIM_CRONTAB=true crontab'
 #export PATH=$HOME/tm/go/lib:$PATH
 function go {
     export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
-    python -m go $*
+    PYTHONPATH=$HOME/tm/go/lib:$PYTHONPATH python -m go $*
     if [ -f $GO_SHELL_SCRIPT ] ; then
         source $GO_SHELL_SCRIPT
     fi
