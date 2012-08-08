@@ -179,6 +179,7 @@ if [ "$UNAME" = Darwin ]; then
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
     alias vlc='open -a /Applications/VLC.app'
+    alias vlc0.9='open -a /Applications/VLC-0.9.app'
 
     # Start Canon LiDE scanner.
     # This is here to avoid having the painful "N*_ButtonManager.app" processes

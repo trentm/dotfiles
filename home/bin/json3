@@ -5,7 +5,7 @@
 // See <https://github.com/trentm/json>.
 //
 
-var VERSION = "3.0.2";
+var VERSION = "3.2.0";
 
 var util = require('util');
 var pathlib = require('path');
@@ -68,6 +68,44 @@ function objCopy(obj) {
   return copy;
 }
 
+if (util.format) {
+  format = util.format;
+} else {
+  // From <https://github.com/joyent/node/blob/master/lib/util.js#L22>:
+  var formatRegExp = /%[sdj%]/g;
+  function format(f) {
+    if (typeof f !== 'string') {
+      var objects = [];
+      for (var i = 0; i < arguments.length; i++) {
+        objects.push(inspect(arguments[i]));
+      }
+      return objects.join(' ');
+    }
+    var i = 1;
+    var args = arguments;
+    var len = args.length;
+    var str = String(f).replace(formatRegExp, function(x) {
+      if (i >= len) return x;
+      switch (x) {
+        case '%s': return String(args[i++]);
+        case '%d': return Number(args[i++]);
+        case '%j': return JSON.stringify(args[i++]);
+        case '%%': return '%';
+        default:
+          return x;
+      }
+    });
+    for (var x = args[i]; i < len; x = args[++i]) {
+      if (x === null || typeof x !== 'object') {
+        str += ' ' + x;
+      } else {
+        str += ' ' + inspect(x);
+      }
+    }
+    return str;
+  };
+}
+
 /**
  * Parse the given string into a JS string. Basically: handle escapes.
  */
@@ -107,7 +145,7 @@ function printHelp() {
   util.puts("");
   util.puts("Conditional filtering:");
   util.puts("  Use the '-c CODE' option to filter the input JSON.");
-  util.puts("     $ echo '[{\"age\":38},{\"age\":4}]' | jsondev -c 'age>21'");
+  util.puts("     $ echo '[{\"age\":38},{\"age\":4}]' | json -c 'age>21'");
   util.puts("     [{\"age\":38}]");
   util.puts("  If input is an array, this will automatically process each");
   util.puts("  item separately.");
@@ -151,7 +189,9 @@ function printHelp() {
   util.puts("  -A            Process input as a single object, i.e. stop");
   util.puts("                '-e' and '-c' automatically processing each");
   util.puts("                item of an input array.");
-  util.puts("  -d DELIM      Delimiter string for tabular output (default is ' ').");
+  util.puts("  -d DELIM      Delimiter char for tabular output (default is ' ').");
+  util.puts("  -D DELIM      Delimiter char between lookups (default is '.'). E.g.:");
+  util.puts("                  $ echo '{\"a.b\": {\"b\": 1}}' | json -D / a.b/b");
   util.puts("");
   util.puts("  -e CODE       Execute the given code on the input. If input is an");
   util.puts("                array, then each item of the array is processed");
@@ -196,13 +236,14 @@ function parseArgv(argv) {
     outputMode: OM_JSONY,
     jsonIndent: 2,
     array: null,
-    delim: ' '
+    delim: ' ',
+    lookupDelim: '.'
   };
 
   // Turn '-iH' into '-i -H', except for argument-accepting options.
   var args = argv.slice(2);  // drop ['node', 'scriptname']
   var newArgs = [];
-  var optTakesArg = {'d': true, 'o': true};
+  var optTakesArg = {'d': true, 'o': true, 'D': true};
   for (var i = 0; i < args.length; i++) {
     if (args[i].charAt(0) === "-" && args[i].charAt(1) !== '-' && args[i].length > 2) {
       var splitOpts = args[i].slice(1).split("");
@@ -246,6 +287,9 @@ function parseArgv(argv) {
       case "-o":
       case "--output":
         var name = args.shift();
+        if (!name) {
+          throw new Error("no argument given for '-o|--output' option");
+        }
         var idx = name.lastIndexOf('-');
         if (idx !== -1) {
           var indent = Number(name.slice(idx+1));
@@ -274,6 +318,14 @@ function parseArgv(argv) {
         break;
       case "-d":
         parsed.delim = _parseString(args.shift());
+        break;
+      case "-D":
+        parsed.lookupDelim = args.shift();
+        if (parsed.lookupDelim.length !== 1) {
+          throw new Error(format(
+            "invalid lookup delim '%s' (must be a single char)",
+            parsed.lookupDelim));
+        }
         break;
       case "-e":
         parsed.exeSnippets.push(args.shift());
@@ -304,7 +356,8 @@ function isInteger(s) {
 // Parse a lookup string into a list of lookup bits. E.g.:
 //    "a.b.c" -> ["a","b","c"]
 //    "b['a']" -> ["b","['a']"]
-function parseLookup(lookup) {
+// Optionally receives an alternative lookup delimiter (other than '.')
+function parseLookup(lookup, lookupDelim) {
   //var debug = console.warn;
   var debug = function () {};
 
@@ -312,6 +365,7 @@ function parseLookup(lookup) {
   debug("\n*** "+lookup+" ***")
 
   bits = [];
+  lookupDelim = lookupDelim || ".";
   var bit = "";
   var states = [null];
   var escaped = false;
@@ -343,7 +397,7 @@ function parseLookup(lookup) {
         }
         bit += ch;
         break;
-      case '.':
+      case lookupDelim:
         if (bit !== "") {
           bits.push(bit);
           bit = ""
@@ -475,25 +529,42 @@ function parseInput(buffer) {
  *
  * @argument datum {Object}
  * @argument lookup {Array} The parsed lookup (from
- *    `parseLookup(<string>)`). Might be empty.
+ *    `parseLookup(<string>, <string>)`). Might be empty.
  * @returns {Object} The result of the lookup.
  */
 function lookupDatum(datum, lookup) {
   // Put it back together with some convenience transformations.
   var lookupCode = "";
   var isJSIdentifier = /^[$A-Za-z_][0-9A-Za-z_]*$/;
+  var isNegArrayIndex = /^-\d+$/;
   for (var i=0; i < lookup.length; i++) {
     var bit = lookup[i];
     if (bit[0] === '[') {
       lookupCode += bit;
-    } else if (! isJSIdentifier.exec(lookup[i])) {
-      // Allow a non-JS-indentifier token, e.g. `json foo-bar`.
-      lookupCode += '["' + lookup[i].replace('"', '\\"') + '"]';
+    // Support Python-style negative array indexing.
+    } else if (bit === '-1') {
+      lookupCode += '.slice(-1)[0]';
+    } else if (isNegArrayIndex.test(bit)) {
+      lookupCode += format('.slice(%s, %d)[0]', bit, Number(bit) + 1);
+    } else if (! isJSIdentifier.test(bit)) {
+      // Allow a non-JS-indentifier token, e.g. `json foo-bar`. This also
+      // works for array index lookups: `json 0` becomes a `["0"]` lookup.
+      lookupCode += '["' + bit.replace(/"/g, '\\"') + '"]';
     } else {
-      lookupCode += '.' + lookup[i];
+      lookupCode += '.' + bit;
     }
   }
-  return vm.runInNewContext("(" + JSON.stringify(datum) + ")" + lookupCode);
+  try {
+    return vm.runInNewContext("(" + JSON.stringify(datum) + ")" + lookupCode);
+  } catch (e) {
+    if (e.name === 'TypeError') {
+      // Skip the following for a lookup 'foo.bar' where 'foo' is undefined:
+      //    TypeError: Cannot read property 'bar' of undefined
+      // TODO: Are there other potential TypeError's in here to avoid?
+      return undefined;
+    }
+    throw e;
+  }
 }
 
 
@@ -768,7 +839,9 @@ function main(argv) {
 
     // Process: lookups
     var lookupsAreIndeces = false;
-    var lookups = lookupStrs.map(parseLookup);
+    var lookups = lookupStrs.map(function(lookup) {
+        return parseLookup(lookup, opts.lookupDelim);
+    });
     if (lookups.length) {
       if (opts.array) {
         if (!Array.isArray(data)) data = [data];
