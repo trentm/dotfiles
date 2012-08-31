@@ -51,12 +51,12 @@ PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 PATH="/usr/local/bin:$PATH"
 [[ $(uname -s) = "SunOS" ]] && PATH="/opt/local/bin:$PATH" # smartos pkgsrc
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
-PATH="$HOME/opt/node-0.6/bin:$PATH"
+PATH="$HOME/opt/node-0.8/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
 [[ $(uname -s) = "SunOS" ]] && MANPATH="/opt/local/man:$MANPATH" # smartos pkgsrc
-MANPATH="$HOME/opt/node-0.6/share/man:$MANPATH"
+MANPATH="$HOME/opt/node-0.8/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------

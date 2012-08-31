@@ -5,7 +5,7 @@
 // See <https://github.com/trentm/json>.
 //
 
-var VERSION = "5.0.0";
+var VERSION = "4.0.1";
 
 var util = require('util');
 var pathlib = require('path');
@@ -78,7 +78,7 @@ if (util.format) {
     if (typeof f !== 'string') {
       var objects = [];
       for (var i = 0; i < arguments.length; i++) {
-        objects.push(util.inspect(arguments[i]));
+        objects.push(inspect(arguments[i]));
       }
       return objects.join(' ');
     }
@@ -100,7 +100,7 @@ if (util.format) {
       if (x === null || typeof x !== 'object') {
         str += ' ' + x;
       } else {
-        str += ' ' + util.inspect(x);
+        str += ' ' + inspect(x);
       }
     }
     return str;
@@ -710,7 +710,7 @@ function printDatum(datum, opts, sep, alwaysPrintSep) {
   var output = null;
   switch (opts.outputMode) {
   case OM_INSPECT:
-    output = util.inspect(datum, false, Infinity, process.stdout.isTTY);
+    output = util.inspect(datum, false, Infinity, true);
     break;
   case OM_JSON:
     if (typeof datum !== 'undefined') {
@@ -1028,17 +1028,7 @@ function main(argv) {
 
     // Output
     if (opts.outputMode === OM_JSON) {
-      if (lookups.length === 1 && !opts.array) {
-        // Special case: For JSON output of a *single* lookup, *don't* use
-        // the full table structure, else there is no way to get string
-        // quoting for a single value:
-        //      $ echo '{"a": [], "b": "[]"}' | json -j a
-        //      []
-        //      $ echo '{"a": [], "b": "[]"}' | json -j b
-        //      "[]"
-        // See <https://github.com/trentm/json/issues/35> for why.
-        data = data[lookups[0].join('.')];
-      } else if (lookupsAreIndeces) {
+      if (lookupsAreIndeces) {
         // Special case: Lookups that are all indeces into an input array
         // are more likely to be wanted as an array of selected items rather
         // than a "JSON table" thing that we use otherwise.
