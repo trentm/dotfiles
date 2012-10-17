@@ -132,7 +132,7 @@ def main(argv):
         message_arg = ""
     time_str = time.strftime("%I:%M %p").lstrip('0')
     date_str = time.strftime("%a, %b %d at ") + time_str
-    script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s --progress"
+    script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s"
         % (time_str, message_arg))
 
     fd, path = tempfile.mkstemp(prefix='reminder-tmp')
