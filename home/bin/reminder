@@ -9,16 +9,24 @@ Usage:
 Examples:
     reminder 5m             # reminder in 5 minutes
     reminder 5m blah blah   # ... in 5 minutes with message "blah blah"
+    reminder 1h             # ... in 1 hour
+    reminder 10s            # ... in 10 seconds
+
     reminder 1:30           # ... at 1:30 (the *next* 1:30, am/pm depends)
     reminder 10:00p         # ... at 10:00 pm
     reminder 10:00a         # ... at 10:00 am
     reminder 10p            # ... at 10:00 pm (shortcut)
-    reminder 1h             # ... in 1 hour
-    reminder 10s            # ... in 10 seconds
+
+    reminder now            # ... right now
+
+TODO:
+    reminder noon
+    reminder midnight
     reminder 1:30h          # ... in 1 hour and 30 minutes
     reminder 1:30m          # ... in 1 minute and 30 seconds
-    reminder now            # ... right now
     reminder 1:23:45h       # ... in 1 hour, 23 minutes and 45 seconds
+    reminders               # list all pending reminders
+    reminders -c ID         # candel a reminder
 """
 
 import sys
@@ -27,6 +35,11 @@ import datetime
 import codecs
 import re
 import tempfile
+
+
+#---- globals
+
+TRACE = os.environ.has_key("TRACE")
 
 
 
@@ -46,7 +59,7 @@ def timeFromArg(arg, now):
     timePatterns = [
         ("now", re.compile("now")),
         ("relative", re.compile("(?P<first>[1-9][0-9]*)(?P<scope>[smhd])")),
-        #("absolute", re.compile("([1-9])[0-9]*[mhd]")),
+        ("absolute", re.compile("(?P<hours>[1-9][0-9]?)(:(?P<minutes>[0-9]{2}))?(?P<meridian>[pa])?")),
     ]
     for timeType, pat in timePatterns:
         m = pat.search(arg)
@@ -68,6 +81,29 @@ def timeFromArg(arg, now):
             time += datetime.timedelta(hours=first)
         elif scope == 'd':
             time += datetime.timedelta(days=first)
+    elif timeType == "absolute":
+        hours = int(m.group("hours"))
+        minutes = m.group("minutes") and int(m.group("minutes")) or 0
+        if minutes >= 60:
+            raise ReminderError(
+                "invalid minutes (>=60) in time argument: '%s'" % arg)
+        meridian = m.group("meridian")
+        if not meridian:
+            time = datetime.datetime(now.year, now.month, now.day, hours,
+                minutes)
+            while time < now:
+                time += datetime.timedelta(hours=12)
+        elif meridian == 'a':
+            time = datetime.datetime(now.year, now.month, now.day)
+            time += datetime.timedelta(hours=hours, minutes=minutes)
+            if now > time:
+                time += datetime.timedelta(days=1)
+        elif meridian == 'p':
+            hours += 12
+            time = datetime.datetime(now.year, now.month, now.day)
+            time += datetime.timedelta(hours=hours, minutes=minutes)
+            if now > time:
+                time += datetime.timedelta(days=1)
     else:
         raise ReminderError("WTF?")
     return time
@@ -86,19 +122,29 @@ def main(argv):
     time = timeFromArg(argv[1], now=now)
     assert time >= now
     delta = time - now
+    delta_seconds = delta.days * 24 * 60 * 60 + delta.seconds
 
-    fd, path = tempfile.mkstemp(prefix='reminder-tmp')
-    f = os.fdopen(fd, 'w')
-    f.write("sleep %d\n" % delta.seconds)
+    script = []
+    script.append("sleep %d" % delta_seconds)
     if message:
         message_arg = " -m '%s'" % message
     else:
         message_arg = ""
     time_str = time.strftime("%I:%M %p").lstrip('0')
-    f.write("growlnotify -s -t 'Reminder at %s' -a iCal %s\n"
+    date_str = time.strftime("%a, %b %d at ") + time_str
+    script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s --progress"
         % (time_str, message_arg))
+
+    fd, path = tempfile.mkstemp(prefix='reminder-tmp')
+    f = os.fdopen(fd, 'w')
+    f.write('\n'.join(script))
     f.close()
-    os.system('nohup bash "%s" 2>/dev/null &' % path)
+    os.system('cd /var/tmp && nohup bash "%s" 2>/dev/null &' % path)
+
+    print "Reminder set for %s." % date_str
+    if TRACE:
+        print "-- (time: %s, delta: %s)" % (time, delta)
+        print '\n'.join(script)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
