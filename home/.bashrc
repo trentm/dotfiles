@@ -26,6 +26,8 @@ test -r /etc/bashrc &&
 # notify of bg job completion immediately
 set -o notify
 
+set -o vi
+
 # shell opts. see bash(1) for details
 shopt -s extglob >/dev/null 2>&1
 shopt -s histappend >/dev/null 2>&1
@@ -265,7 +267,7 @@ alias restdown=$HOME/tm/restdown/bin/restdown
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
 alias spot='/Users/trentm/src/spot/spot.sh'
-alias bunyan=$HOME/tm/node-bunyan/bin/bunyan
+alias bunyan=$HOME/tm/node-bunyan-0.x/bin/bunyan
 alias by='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
 
