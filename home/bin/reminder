@@ -4,7 +4,8 @@
 Popup (growl) reminder for a certain time.
 
 Usage:
-    reminder TIME [MESSAGE]
+    reminder TIME [MESSAGE]     # set a reminder
+    reminders                   # list all pending reminders
 
 Examples:
     reminder 5m             # reminder in 5 minutes
@@ -18,14 +19,13 @@ Examples:
     reminder 10p            # ... at 10:00 pm (shortcut)
 
     reminder now            # ... right now
-
-TODO:
     reminder noon
     reminder midnight
+
+TODO someday:
     reminder 1:30h          # ... in 1 hour and 30 minutes
     reminder 1:30m          # ... in 1 minute and 30 seconds
     reminder 1:23:45h       # ... in 1 hour, 23 minutes and 45 seconds
-    reminders               # list all pending reminders
     reminders -c ID         # candel a reminder
 """
 
@@ -35,11 +35,17 @@ import datetime
 import codecs
 import re
 import tempfile
+import getpass
+import hashlib
+import random
+import json
+import operator
 
 
 #---- globals
 
 TRACE = os.environ.has_key("TRACE")
+REMINDERS_PATH = os.path.expanduser('~/.reminders.json')
 
 
 
@@ -47,6 +53,7 @@ TRACE = os.environ.has_key("TRACE")
 
 class ReminderError(Exception):
     pass
+
 
 
 #---- support stuff
@@ -57,6 +64,8 @@ def usage():
 #var endPattern = /^([1-9]\d*)([mhd])$/;
 def timeFromArg(arg, now):
     timePatterns = [
+        ("noon", re.compile("noon")),
+        ("midnight", re.compile("midnight")),
         ("now", re.compile("now")),
         ("relative", re.compile("(?P<first>[1-9][0-9]*)(?P<scope>[smhd])")),
         ("absolute", re.compile("(?P<hours>[1-9][0-9]?)(:(?P<minutes>[0-9]{2}))?(?P<meridian>[pa])?")),
@@ -69,6 +78,14 @@ def timeFromArg(arg, now):
         raise ReminderError("invalid time argument: '%s'" % arg)
     if timeType == "now":
         time = now
+    elif timeType == "noon":
+        time = datetime.datetime(now.year, now.month, now.day, 12)
+        if time < now:
+            time += datetime.timedelta(days=1)
+    elif timeType == "midnight":
+        time = datetime.datetime(now.year, now.month, now.day)
+        if time < now:
+            time += datetime.timedelta(days=1)
     elif timeType == "relative":
         time = now
         first = int(m.group("first"))
@@ -108,39 +125,115 @@ def timeFromArg(arg, now):
         raise ReminderError("WTF?")
     return time
 
+def get_rid():
+    h = hashlib.sha1(str(random.random()))
+    return h.hexdigest()[:7]
+
+# http://stackoverflow.com/questions/455580/json-datetime-between-python-and-javascript
+class ReminderJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            s = obj.isoformat()
+            # Drop the ms part because older strftime can't read that.
+            s = s[:s.rfind('.')] + 'Z'
+            return s
+        else:
+            return super(DateTimeJSONEncoder, self).default(obj)
+
+def decode_reminder(o):
+    if o.has_key("rid"):
+        o["time"] = datetime.datetime.strptime(
+            o["time"], '%Y-%m-%dT%H:%M:%SZ')
+        return o
+    else:
+        return o
+
+def get_reminders():
+    if not os.path.exists(REMINDERS_PATH):
+        return []
+    content = codecs.open(REMINDERS_PATH, 'r', 'utf8').read()
+    reminders = json.loads(content, object_hook=decode_reminder)
+    reminders.sort(key=operator.itemgetter("time"))
+
+    # Remove reminders that are no longer running.
+    # TODO: should instead or also look at running processes for "reminder-$rid".
+    for i, r in reversed(list(enumerate(reminders))):
+        if not os.path.exists(r["path"]):
+            del reminders[i]
+
+    return reminders
+
+def add_reminder(rid, time, msg, path):
+    # WARNING: We're ignoring file locking here. This isn't critical stuff.
+    reminders = get_reminders()
+    reminders.append({"rid": rid, "time": time, "msg": msg, "path": path})
+    f = codecs.open(REMINDERS_PATH, 'w', 'utf8')
+    content = json.dumps(reminders, cls=ReminderJSONEncoder)
+    f.write(content)
+    f.close()
+
+
 
 #---- mainline
 
 def main(argv):
+    # Hack process opts.
+    if '-h' in argv or '--help' in argv:
+        usage()
+        return 0
+
+    cmdname = os.path.basename(argv[0])
+    if cmdname == "reminders":
+        return main_reminders(argv)
+    else:
+        return main_reminder(argv)
+
+def main_reminders(argv):
+    reminders = get_reminders()
+    template = "%-7s  %-23s  %s"
+    print template % ("ID", "TIME", "MESSAGE")
+    for r in reminders:
+        print template % (r["rid"],
+            r["time"].strftime("%a, %b %d at %I:%M %p"), r["msg"])
+
+def main_reminder(argv):
     if len(argv) < 2:
         usage()
         return 2
-    message = None
+
+    msg = None
     if len(argv) > 2:
-        message = ' '.join(argv[2:])
+        msg = ' '.join(argv[2:])
     now = datetime.datetime.now()
     time = timeFromArg(argv[1], now=now)
     assert time >= now
     delta = time - now
     delta_seconds = delta.days * 24 * 60 * 60 + delta.seconds
 
+    # Write the script (all but the last 'rm' command that deletes self).
     script = []
     script.append("sleep %d" % delta_seconds)
-    if message:
-        message_arg = " -m '%s'" % message
+    if msg:
+        msg_arg = " -m '%s'" % msg
     else:
-        message_arg = ""
+        msg_arg = ""
     time_str = time.strftime("%I:%M %p").lstrip('0')
     date_str = time.strftime("%a, %b %d at ") + time_str
     script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s"
-        % (time_str, message_arg))
+        % (time_str, msg_arg))
 
-    fd, path = tempfile.mkstemp(prefix='reminder-tmp')
+    rid = get_rid()
+    fd, path = tempfile.mkstemp(prefix='reminder-%s-tmp' % rid)
+    script.append("rm -f '%s'" % path)
     f = os.fdopen(fd, 'w')
     f.write('\n'.join(script))
     f.close()
-    os.system('cd /var/tmp && nohup bash "%s" 2>/dev/null &' % path)
 
+    # Log this reminder for `reminders` possible usage.
+    add_reminder(rid, time, msg, path)
+
+    # Run it.
+    os.system('cd /var/tmp && nohup bash "%s" 2>/dev/null &' % path)
     print "Reminder set for %s." % date_str
     if TRACE:
         print "-- (time: %s, delta: %s)" % (time, delta)
