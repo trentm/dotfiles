@@ -41,6 +41,8 @@ import random
 import json
 import operator
 
+assert sys.platform == "darwin", "this only works on Mac (uses Growl)"
+
 
 #---- globals
 

@@ -1,0 +1,99 @@
+#!/usr/bin/python
+
+"""
+Archive my tweets. Adapted from <https://github.com/drdrang/archive-tweets>
+
+TODO:
+- get the full content of "RT:"'d links
+- resolve t.co links
+- follow.txt backup
+- post it
+"""
+
+import sys
+import os
+from os.path import join, dirname, realpath, exists
+from pprint import pprint
+import codecs
+
+sys.path.insert(0, join(dirname(realpath(__file__)), 'python_modules'))
+import pytz
+import tweepy
+
+
+
+# Parameters.
+me = 'trentmick'
+urlprefix = 'http://twitter.com/%s/status/' % me
+tweetdir = os.environ['HOME'] + '/Dropbox/Backups/twitter/'
+tweetfile = tweetdir + 'twitter.txt'
+idfile = tweetdir + 'lastID.txt'
+conffile = os.environ['HOME'] + '/.archive-tweets.conf'
+datefmt = '%B %d, %Y at %I:%M %p'
+homeTZ = pytz.timezone('Canada/Pacific')
+utc = pytz.utc
+
+
+def setup_api():
+  """Authorize the use of the Twitter API."""
+  a = {}
+  with open(conffile) as credentials:
+    for line in credentials:
+      k, v = line.split(': ')
+      a[k] = v.strip()
+  auth = tweepy.OAuthHandler(a['consumerKey'], a['consumerSecret'])
+  auth.set_access_token(a['token'], a['tokenSecret'])
+  return tweepy.API(auth)
+
+# Authorize.
+api = setup_api()
+
+# Get the ID of the last downloaded tweet.
+if exists(idfile):
+  with open(idfile, 'r') as f:
+    lastID = f.read().strip()
+else:
+  lastID = None
+
+# Collect all the tweets since the last one.
+# - https://dev.twitter.com/docs/working-with-timelines
+COUNT = 200
+tweets = api.user_timeline(me, since_id=lastID, count=COUNT, include_rts=True)
+for t in tweets:
+  print t.id_str, t.text[:60].replace('\n', ' ')
+if tweets:
+  max_id = tweets[-1].id_str
+  sentinel = 50
+  while True:
+    sentinel -= 1
+    if sentinel <= 0:
+      print "Stop on sentinel."
+      break
+    page = api.user_timeline(me, max_id=max_id, since_id=lastID,
+                             count=COUNT, include_rts=True)
+    page = page[1:]  # drop first, max_id is inclusive so first is a repeat
+    if len(page) == 0:
+      break
+    max_id = page[-1].id_str
+    tweets += page
+    for t in page:
+      print t.id_str, t.text[:60].replace('\n', ' ')
+
+# Write them out to the twitter.txt file.
+with codecs.open(tweetfile, 'a', 'utf8') as f:
+    for t in reversed(tweets):
+      ts = utc.localize(t.created_at).astimezone(homeTZ)
+      lines = ['',
+               t.text,
+               ts.strftime(datefmt).decode('utf8'),
+               urlprefix + t.id_str,
+               '- - - - -',
+               '']
+      f.write('\n'.join(lines))
+      lastID = t.id_str
+
+# Update the ID of the last downloaded tweet.
+with open(idfile, 'w') as f:
+  f.write(lastID)
+
+print "\n%d tweets archived (lastID is %s)." % (len(tweets), lastID)

@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# Convenience wrapper for calling elasticsearch on localhost:
+# <http://www.elasticsearch.org/guide/reference/api/>
+#
+# Usage:
+#   es /_cluster/nodes/_local
+#
+
+if [ "$TRACE" != "" ]; then
+    export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
+
+# Arguments.
+verbose=0
+if [ "$1" == "-v" ]; then
+    shift
+    verbose=1
+fi
+path=$1
+if [[ -z "$path" ]]; then
+    echo "error: no PATH argument given"
+    echo ""
+    echo "Usage:"
+    echo "  es [-v] PATH [EXTRA-CURL-ARGS]"
+    echo ""
+    echo "Environment Variables:"
+    echo "  ES_URL      Base URL for elasticsearch server. Default: localhost:9200."
+    exit 1
+fi
+shift;
+JSON=$(which json 2>/dev/null || true)
+
+
+# Determine Amon URL.
+if [[ -z "$ES_URL" ]]; then
+    ES_URL=localhost:9200
+fi
+
+#CURL_ARGS="-sS -i -H accept:application/json -H content-type:application/json"
+CURL_ARGS="-sS -i"
+
+# Note: the 'echo' doesn't show the real quoting of args.
+[ "$verbose" == "1" ] && echo "# curl $CURL_ARGS --url $ES_URL$path $@" >&2
+if [[ ! -x "$JSON" ]]; then
+    curl $CURL_ARGS --url "$ES_URL$path" "$@"
+    echo ""
+else
+    curl $CURL_ARGS --url "$ES_URL$path" "$@" | json -q
+fi
