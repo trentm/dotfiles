@@ -267,7 +267,6 @@ alias restdown=$HOME/tm/restdown/bin/restdown
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
 alias spot='/Users/trentm/src/spot/spot.sh'
-alias bunyan=$HOME/tm/node-bunyan-0.x/bin/bunyan
 alias by='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
 

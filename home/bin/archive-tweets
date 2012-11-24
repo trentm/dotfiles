@@ -6,8 +6,11 @@ Archive my tweets. Adapted from <https://github.com/drdrang/archive-tweets>
 TODO:
 - get the full content of "RT:"'d links
 - resolve t.co links
-- follow.txt backup
+- follow.txt backup (https://dev.twitter.com/docs/api/1/get/statuses/home_timeline)
 - post it
+
+Notes:
+- first post-ish: https://twitter.com/trentmick/status/989881425
 """
 
 import sys

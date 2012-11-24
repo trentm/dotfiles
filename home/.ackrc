@@ -1,5 +1,4 @@
 -a
---ignore-dir=test
 --ignore-dir=node_modules
 --ignore-dir=deps
 --ignore-dir=log

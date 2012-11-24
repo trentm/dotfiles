@@ -23,6 +23,9 @@ Examples:
     reminder midnight
 
 TODO someday:
+- fix 'sleep SECONDS' bash file technique for sleeping laptop.
+  Need to have a ~60s sleep loop, then recalc.
+- more formats:
     reminder 1:30h          # ... in 1 hour and 30 minutes
     reminder 1:30m          # ... in 1 minute and 30 seconds
     reminder 1:23:45h       # ... in 1 hour, 23 minutes and 45 seconds
@@ -32,6 +35,7 @@ TODO someday:
 import sys
 import os
 import datetime
+import time
 import codecs
 import re
 import tempfile
@@ -79,27 +83,27 @@ def timeFromArg(arg, now):
     else:
         raise ReminderError("invalid time argument: '%s'" % arg)
     if timeType == "now":
-        time = now
+        t = now
     elif timeType == "noon":
-        time = datetime.datetime(now.year, now.month, now.day, 12)
-        if time < now:
-            time += datetime.timedelta(days=1)
+        t = datetime.datetime(now.year, now.month, now.day, 12)
+        if t < now:
+            t += datetime.timedelta(days=1)
     elif timeType == "midnight":
-        time = datetime.datetime(now.year, now.month, now.day)
-        if time < now:
-            time += datetime.timedelta(days=1)
+        t = datetime.datetime(now.year, now.month, now.day)
+        if t < now:
+            t += datetime.timedelta(days=1)
     elif timeType == "relative":
-        time = now
+        t = now
         first = int(m.group("first"))
         scope = m.group("scope")
         if scope == 's':
-            time += datetime.timedelta(seconds=first)
+            t += datetime.timedelta(seconds=first)
         elif scope == 'm':
-            time += datetime.timedelta(minutes=first)
+            t += datetime.timedelta(minutes=first)
         elif scope == 'h':
-            time += datetime.timedelta(hours=first)
+            t += datetime.timedelta(hours=first)
         elif scope == 'd':
-            time += datetime.timedelta(days=first)
+            t += datetime.timedelta(days=first)
     elif timeType == "absolute":
         hours = int(m.group("hours"))
         minutes = m.group("minutes") and int(m.group("minutes")) or 0
@@ -108,24 +112,24 @@ def timeFromArg(arg, now):
                 "invalid minutes (>=60) in time argument: '%s'" % arg)
         meridian = m.group("meridian")
         if not meridian:
-            time = datetime.datetime(now.year, now.month, now.day, hours,
+            t = datetime.datetime(now.year, now.month, now.day, hours,
                 minutes)
-            while time < now:
-                time += datetime.timedelta(hours=12)
+            while t < now:
+                t += datetime.timedelta(hours=12)
         elif meridian == 'a':
-            time = datetime.datetime(now.year, now.month, now.day)
-            time += datetime.timedelta(hours=hours, minutes=minutes)
-            if now > time:
-                time += datetime.timedelta(days=1)
+            t = datetime.datetime(now.year, now.month, now.day)
+            t += datetime.timedelta(hours=hours, minutes=minutes)
+            if now > t:
+                t += datetime.timedelta(days=1)
         elif meridian == 'p':
             hours += 12
-            time = datetime.datetime(now.year, now.month, now.day)
-            time += datetime.timedelta(hours=hours, minutes=minutes)
-            if now > time:
-                time += datetime.timedelta(days=1)
+            t = datetime.datetime(now.year, now.month, now.day)
+            t += datetime.timedelta(hours=hours, minutes=minutes)
+            if now > t:
+                t += datetime.timedelta(days=1)
     else:
         raise ReminderError("WTF?")
-    return time
+    return t
 
 def get_rid():
     h = hashlib.sha1(str(random.random()))
@@ -140,7 +144,7 @@ class ReminderJSONEncoder(json.JSONEncoder):
             s = s[:s.rfind('.')] + 'Z'
             return s
         else:
-            return super(DateTimeJSONEncoder, self).default(obj)
+            return super(json.JSONEncoder, self).default(obj)
 
 def decode_reminder(o):
     if o.has_key("rid"):
@@ -154,6 +158,8 @@ def get_reminders():
     if not os.path.exists(REMINDERS_PATH):
         return []
     content = codecs.open(REMINDERS_PATH, 'r', 'utf8').read()
+    if not content.strip():
+        return []
     reminders = json.loads(content, object_hook=decode_reminder)
     reminders.sort(key=operator.itemgetter("time"))
 
@@ -165,10 +171,10 @@ def get_reminders():
 
     return reminders
 
-def add_reminder(rid, time, msg, path):
+def add_reminder(rid, t, msg, path):
     # WARNING: We're ignoring file locking here. This isn't critical stuff.
     reminders = get_reminders()
-    reminders.append({"rid": rid, "time": time, "msg": msg, "path": path})
+    reminders.append({"rid": rid, "time": t, "msg": msg, "path": path})
     f = codecs.open(REMINDERS_PATH, 'w', 'utf8')
     content = json.dumps(reminders, cls=ReminderJSONEncoder)
     f.write(content)
@@ -207,22 +213,55 @@ def main_reminder(argv):
     if len(argv) > 2:
         msg = ' '.join(argv[2:])
     now = datetime.datetime.now()
-    time = timeFromArg(argv[1], now=now)
-    assert time >= now
-    delta = time - now
+    t = timeFromArg(argv[1], now=now)
+    assert t >= now
+    delta = t - now
     delta_seconds = delta.days * 24 * 60 * 60 + delta.seconds
 
     # Write the script (all but the last 'rm' command that deletes self).
-    script = []
-    script.append("sleep %d" % delta_seconds)
     if msg:
         msg_arg = " -m '%s'" % msg
     else:
         msg_arg = ""
-    time_str = time.strftime("%I:%M %p").lstrip('0')
-    date_str = time.strftime("%a, %b %d at ") + time_str
+    t_str = t.strftime("%I:%M %p").lstrip('0')
+    script = ["""#!/bin/bash
+set -o errexit
+set -o xtrace
+function fatal() {
+    echo "$(basename $0): fatal error: $*"
+    exit 1
+}
+function cleanup() {
+    local status=$?
+    if [[ $status -ne 0 ]]; then
+        growlnotify -s -t 'Error in reminder script' -a iCal  -m '(for %s) %s'
+    fi
+}
+trap 'cleanup' EXIT
+""" % (t_str, msg)]
+    t_unix = time.mktime(t.timetuple())
+    script.append("""
+TARGET=%d
+
+LONG_INTERVAL=60
+SHORT_INTERVAL=10
+while true; do
+    CURR=$(date +%%s)
+    if [[ $CURR -ge $TARGET ]]; then
+        break
+    fi
+    REMAINING=$(($TARGET - $CURR))
+    if [[ $REMAINING -lt $SHORT_INTERVAL ]]; then
+        sleep $REMAINING
+    elif [[ $REMAINING -lt $LONG_INTERVAL ]]; then
+        sleep $SHORT_INTERVAL
+    else
+        sleep $LONG_INTERVAL
+    fi
+done
+""" % t_unix)
     script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s"
-        % (time_str, msg_arg))
+        % (t_str, msg_arg))
 
     rid = get_rid()
     fd, path = tempfile.mkstemp(prefix='reminder-%s-tmp' % rid)
@@ -232,13 +271,14 @@ def main_reminder(argv):
     f.close()
 
     # Log this reminder for `reminders` possible usage.
-    add_reminder(rid, time, msg, path)
+    add_reminder(rid, t, msg, path)
 
     # Run it.
     os.system('cd /var/tmp && nohup bash "%s" 2>/dev/null &' % path)
+    date_str = t.strftime("%a, %b %d at ") + t_str
     print "Reminder set for %s." % date_str
     if TRACE:
-        print "-- (time: %s, delta: %s)" % (time, delta)
+        print "-- (time: %s, delta: %s)" % (t, delta)
         print '\n'.join(script)
 
 if __name__ == '__main__':

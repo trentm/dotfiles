@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+set -o errexit
+python $HOME/joy/joybot/sandbox/chatgrep.py "$@"
