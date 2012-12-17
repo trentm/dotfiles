@@ -51,7 +51,10 @@ umask 0022
 
 PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 PATH="/usr/local/bin:$PATH"
-[[ $(uname -s) = "SunOS" ]] && PATH="/opt/local/bin:$PATH" # smartos pkgsrc
+if [[ $(uname -s) = "SunOS" ]]; then
+    # smartos pkgsrc
+    PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
+fi
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/opt/node-0.8/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
