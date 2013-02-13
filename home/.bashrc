@@ -26,7 +26,7 @@ test -r /etc/bashrc &&
 # notify of bg job completion immediately
 set -o notify
 
-set -o vi
+#set -o vi
 
 # shell opts. see bash(1) for details
 shopt -s extglob >/dev/null 2>&1
@@ -252,6 +252,7 @@ alias gs='git status'
 alias gb='git branch'
 alias gc='git checkout'
 alias gl='git log --stat'
+alias giddyup='git fetch -a origin && git pull --rebase origin master'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -271,6 +272,7 @@ alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)
 alias ackless='ack --pager="less -R"'
 alias spot='/Users/trentm/src/spot/spot.sh'
 alias by='bunyan'
+alias log='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
 
 #export PATH=$HOME/tm/restdown/bin:$PATH

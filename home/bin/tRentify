@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+"""tRentify!"""
+
+import re
+import sys
+import os
+import random
+
+
+FREQ = 0.6
+
+def tRentifyWord(match):
+    word = match.group(0)
+    if word.upper() == word:
+        pass
+    elif word.startswith('T') or random.random() < FREQ:
+        #print "tRentifyWord: %r" % (match.group(0),)
+        if random.random() < 0.5:
+            word = word[0].lower() + word[1].upper() + word[2:]
+        else:
+            word = word[0].lower() + '-' + word[1].upper() + word[2:]
+    return word
+
+def tRentify(s):
+    return re.sub(r'\b[a-zA-Z]\w{2,}\b', tRentifyWord, s)
+
+
+#---- mainline
+
+def main(argv):
+    args = argv[1:]
+    if args:
+        s = ' '.join(args)
+    else:
+        #s = sys.stdin.read()
+        lines = []
+        while True:
+            line = raw_input()
+            if line == '.':
+                break
+            lines.append(line.decode('utf-8'))
+        s = '\n'.join(lines) + '\n'
+    sys.stdout.write(tRentify(s))
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
