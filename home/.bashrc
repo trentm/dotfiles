@@ -180,6 +180,7 @@ prompt_color() {
 
 if [ "$UNAME" = Darwin ]; then
     alias k='open -a "Komodo IDE"'
+    #alias k='open -a "Komodo IDE 8"'
     alias komodo=k
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
@@ -258,6 +259,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 
 
+
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
 alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
@@ -274,6 +276,8 @@ alias spot='/Users/trentm/src/spot/spot.sh'
 alias by='bunyan'
 alias log='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
+alias js2json='node -e '\''s=""; process.stdin.resume(); process.stdin.on("data",function(c){s+=c}); process.stdin.on("end",function(){o=eval("("+s+")");console.log(JSON.stringify(o)); });'\'''
+
 
 #export PATH=$HOME/tm/restdown/bin:$PATH
 #export PATH=$HOME/tm/node-bunyan/bin:$PATH
@@ -304,7 +308,7 @@ alias note="python ~/Dropbox/gtd/bin/gtd.py note"
 alias ps1='ps -wwx'
 alias ps2='ps -wwux'
 alias dir='l'
-alias fn='find . -name'
+function fn() { find . -iname "*$@*"; }
 
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
 alias crontab='VIM_CRONTAB=true crontab'
