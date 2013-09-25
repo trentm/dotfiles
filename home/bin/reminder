@@ -220,9 +220,11 @@ def main_reminder(argv):
 
     # Write the script (all but the last 'rm' command that deletes self).
     if msg:
-        msg_arg = " -m '%s'" % msg
+        #msg_arg = " -m '%s'" % msg
+        msg_arg = " -message '%s'" % msg
     else:
         msg_arg = ""
+    terminal_notifier = '/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier'
     t_str = t.strftime("%I:%M %p").lstrip('0')
     script = ["""#!/bin/bash
 set -o errexit
@@ -234,11 +236,11 @@ function fatal() {
 function cleanup() {
     local status=$?
     if [[ $status -ne 0 ]]; then
-        growlnotify -s -t 'Error in reminder script' -a iCal  -m '(for %s) %s'
+        %s -title 'Error in reminder script' -message '(for %s) %s'
     fi
 }
 trap 'cleanup' EXIT
-""" % (t_str, msg)]
+""" % (terminal_notifier, t_str, msg)]
     t_unix = time.mktime(t.timetuple())
     script.append("""
 TARGET=%d
@@ -260,8 +262,10 @@ while true; do
     fi
 done
 """ % t_unix)
-    script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s"
-        % (t_str, msg_arg))
+    #script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s"
+    #    % (t_str, msg_arg))
+    script.append("%s -title 'Reminder at %s' %s"
+        % (terminal_notifier, t_str, msg_arg))
 
     rid = get_rid()
     fd, path = tempfile.mkstemp(prefix='reminder-%s-tmp' % rid)

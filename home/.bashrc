@@ -56,12 +56,12 @@ if [[ $(uname -s) = "SunOS" ]]; then
     PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 fi
 test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
-PATH="$HOME/opt/node-0.8/bin:$PATH"
+PATH="$HOME/opt/node-0.10/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
-[[ $(uname -s) = "SunOS" ]] && MANPATH="/opt/local/man:$MANPATH" # smartos pkgsrc
-MANPATH="$HOME/opt/node-0.8/share/man:$MANPATH"
+#[[ $(uname -s) = "SunOS" ]] && MANPATH="/opt/local/man:$MANPATH" # smartos pkgsrc
+#MANPATH="$HOME/opt/node-0.10/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -179,8 +179,8 @@ prompt_color() {
 # ----------------------------------------------------------------------
 
 if [ "$UNAME" = Darwin ]; then
-    alias k='open -a "Komodo IDE"'
-    #alias k='open -a "Komodo IDE 8"'
+    #alias k='open -a "Komodo IDE"'
+    alias k='open -a "Komodo IDE 8"'
     alias komodo=k
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
@@ -253,11 +253,31 @@ alias gs='git status'
 alias gb='git branch'
 alias gc='git checkout'
 alias gl='git log --stat'
-alias giddyup='git fetch -a origin && git pull --rebase origin master'
+alias glp='git log -p'
+alias gl1='git log -1'
+alias giddyup='git fetch -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD)'
 
 alias ..='cd ..'
 alias ...='cd ../..'
+alias t='cd ~/tmp'  # TODO make this a function that'll create a tmp subdir if given
 
+function mkcd() {
+    mkdir "$1" && cd "$1"
+}
+
+# https://gist.github.com/trentm/6126755
+function googl {
+    # echo URL | googl
+    local url=$(cat <&0)
+    (
+        set -e pipefail;
+        echo "{}" \
+            | json -e "this.longUrl='$url'" \
+            | curl -sf https://www.googleapis.com/urlshortener/v1/url \
+                -H 'Content-Type: application/json' -d@- \
+            | json id
+    )
+}
 
 
 # Tools
@@ -294,7 +314,8 @@ function hi() {
     perl -pe "s/$1/\e[1;31;43m$&\e[0m/g"
 }
 
-alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo -n "date " && date -u "+%m%d%H%M%Y.%S"'
+alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo "date $(date -u "+%m%d%H%M%Y.%S")"'
+alias date-from-timestamp='node -p -e "(new Date(Number(process.argv[1]))).toISOString()"'
 
 alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'

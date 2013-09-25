@@ -86,6 +86,18 @@ if $VIM_CRONTAB == "true"
 endif
 
 
+
+"---- Vim bundles in ~/.vim/bundles
+
+" https://github.com/tpope/vim-pathogen
+execute pathogen#infect()
+
+" https://github.com/airblade/vim-gitgutter
+nmap <silent> ]h :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>
+nmap <silent> [h :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
+
+
+
 "---- some autocommands
 
 if has("autocmd") && !exists("autocommands_loaded")
