@@ -1,6 +1,7 @@
-tmp
+/tmp
 *.py[oc]
-home/.subversion/README.txt
-home/.subversion/servers
-home/.subversion/auth
-home/.vim/.netrwhist
+/home/.subversion/README.txt
+/home/.subversion/servers
+/home/.subversion/auth
+/home/.vim/.netrwhist
+/home/.vim/bundle
