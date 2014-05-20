@@ -6,7 +6,7 @@
 if &term == "xterm-color"
     set t_kb=
     fixdel
-endif 
+endif
 
 
 "---- platform/target-generic configuration
@@ -105,17 +105,17 @@ if has("autocmd") && !exists("autocommands_loaded")
   let autocommands_loaded = 1
 
   "---- all files
-  autocmd BufEnter		*		vnoremap ,filter :!linefilter 
+  autocmd BufEnter		*		vnoremap ,filter :!linefilter
   autocmd BufLeave		*		vunmap ,filter
-  autocmd BufEnter		*		vnoremap ,tab :!linefilter tabify 
+  autocmd BufEnter		*		vnoremap ,tab :!linefilter tabify
   autocmd BufLeave		*		vunmap ,tab
-  autocmd BufEnter		*		vnoremap ,untab :!linefilter untabify 
+  autocmd BufEnter		*		vnoremap ,untab :!linefilter untabify
   autocmd BufLeave		*		vunmap ,untab
-  autocmd BufEnter		*		vnoremap ,tounix :!linefilter tounix 
+  autocmd BufEnter		*		vnoremap ,tounix :!linefilter tounix
   autocmd BufLeave		*		vunmap ,tounix
   autocmd BufEnter		*		vnoremap ,todos :!linefilter todos
   autocmd BufLeave		*		vunmap ,todos
-  
+
   " When editing a file, always jump to the last cursor position
   autocmd BufReadPost	*		if line("'\"") | exe "'\"" | endif
 
@@ -223,7 +223,7 @@ endif
 if has("win32")
   " set the make program
   "set makeprg=nmake
-  
+
   set mousehide
   set guifont=Courier_New:h10,Lucida_Console:h10
   set backupdir=~/.vimtmp,~/tmp
@@ -254,7 +254,7 @@ if has("gui")
   set go=gmrbT
 "  set lines=46  " number of display lines
 "  set columns=90
-endif 
+endif
 
 
 "---- VIM v.5 specific configuration stuff
@@ -276,16 +276,16 @@ endif
 " Note: I reversed the mappings because IMO <tab> should search _backwards_ by
 " default.
 
-function! InsertTabWrapper(direction) 
-    let col = col('.') - 1 
-    if !col || getline('.')[col - 1] !~ '\k' 
-        return "\<tab>" 
-    elseif "backward" == a:direction 
-        return "\<c-p>" 
-    else 
-        return "\<c-n>" 
-    endif 
-endfunction 
+function! InsertTabWrapper(direction)
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    elseif "backward" == a:direction
+        return "\<c-p>"
+    else
+        return "\<c-n>"
+    endif
+endfunction
 
 inoremap <tab> <c-r>=InsertTabWrapper ("backward")<cr>
 inoremap <s-tab> <c-r>=InsertTabWrapper ("forward")<cr>
@@ -314,3 +314,13 @@ if &t_Co > 2 || has("gui_running")
 endif
 
 
+
+"
+" Josh's poo
+" Doesn't work with my font, or without Mavericks I don't think.
+"
+"set listchars=tab:💩\
+"set list
+"" To disable or re-enable poo mode
+"command PooOff set tabstop=8 | set nolist
+"command PooOn set tabstop=4 | set list

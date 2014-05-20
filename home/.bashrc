@@ -55,7 +55,7 @@ if [[ $(uname -s) = "SunOS" ]]; then
     # smartos pkgsrc
     PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 fi
-test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
+#test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="$HOME/opt/node-0.10/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
@@ -93,7 +93,7 @@ export FTP_PASSIVE
 
 # ignore backups, CVS directories, python bytecode, vim swap files
 FIGNORE="~:CVS:#:.pyc:.pyo:.swp:.swa:apache-solr-*:.git"
-HISTCONTROL=ignoreboth
+HISTCONTROL=ignoredups
 
 # ----------------------------------------------------------------------
 # PAGER / EDITOR
@@ -255,7 +255,7 @@ alias gc='git checkout'
 alias gl='git log --stat'
 alias glp='git log -p'
 alias gl1='git log -1'
-alias giddyup='git fetch -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD)'
+alias giddyup='git fetch -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 
 alias ..='cd ..'
 alias ...='cd ../..'

@@ -6,6 +6,7 @@
 --ignore-dir=cache
 --ignore-dir=build
 --ignore-dir=.cache
---ignore-dir=*.vmwarevm
+--ignore-dir=coal.*vmwarevm
+--ignore-dir=boot-master-*
 --type-set=log=.log
 #--pager=less -R
