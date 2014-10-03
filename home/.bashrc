@@ -257,6 +257,9 @@ alias glp='git log -p'
 alias gl1='git log -1'
 alias giddyup='git fetch -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 
+alias jsondev='$HOME/tm/json/lib/json.js'
+alias bumpver='json -I -f package.json -e "v = this.version.split(/\./g); if (v.length !== 3 || isNaN(Number(v[2]))) throw new Error(\"wtf semver\"); v[2]=Number(v[2])+1; this.version = v.join(\".\")"'
+
 alias ..='cd ..'
 alias ...='cd ../..'
 alias t='cd ~/tmp'  # TODO make this a function that'll create a tmp subdir if given
@@ -339,7 +342,7 @@ alias crontab='VIM_CRONTAB=true crontab'
 
 # Bash shell driver for 'go' (http://code.google.com/p/go-tool/).
 #export PATH=$HOME/tm/go/lib:$PATH
-function go {
+function g {
     export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
     PYTHONPATH=$HOME/tm/go/lib:$PYTHONPATH python -m go $*
     if [ -f $GO_SHELL_SCRIPT ] ; then

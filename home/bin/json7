@@ -8,7 +8,7 @@
  * See <https://github.com/trentm/json> and <https://trentm.com/json/>
  */
 
-var VERSION = '9.0.0';
+var VERSION = '7.0.0';
 
 var p = console.warn;
 var util = require('util');
@@ -155,8 +155,8 @@ function printHelp() {
     w('  and similar.');
     w('');
     w('Execution:');
-    w('  Use the "-e CODE" option to execute JavaScript code on the input JSON.');
-    w('     $ echo \'{"name":"trent","age":38}\' | json -e \'this.age++\'');
+    w('  Use the "-E CODE" option to execute JavaScript code on the input JSON.');
+    w('     $ echo \'{"name":"trent","age":38}\' | json -E \'this.age++\'');
     w('     {');
     w('       "name": "trent",');
     w('       "age": 39');
@@ -165,8 +165,8 @@ function printHelp() {
     w('  item separately.');
     w('');
     w('Conditional filtering:');
-    w('  Use the "-c CODE" option to filter the input JSON.');
-    w('     $ echo \'[{"age":38},{"age":4}]\' | json -c \'this.age>21\'');
+    w('  Use the "-C CODE" option to filter the input JSON.');
+    w('     $ echo \'[{"age":38},{"age":4}]\' | json -C \'this.age>21\'');
     w('     [{\'age\':38}]');
     w('  If input is an array, this will automatically process each');
     w('  item separately. Note: "CODE" is JavaScript code.');
@@ -229,36 +229,31 @@ function printHelp() {
     w('                item of an input array.');
     w('  -d DELIM      Delimiter char for tabular output (default is " ").');
     w('  -D DELIM      Delimiter char between lookups (default is "."). E.g.:');
-    w('                    $ echo \'{"a.b": {"b": 1}}\' | json -D / a.b/b');
+    w('                  $ echo \'{"a.b": {"b": 1}}\' | json -D / a.b/b');
     w('');
-    w('  -M, --items   Itemize an object into an array of ');
-    w('                    {"key": <key>, "value": <value>}');
-    w('                objects for easier processing.');
-    w('');
-    w('  -e CODE       Execute the given JavaScript code on the input. If input');
+    w('  -E CODE       Execute the given JavaScript code on the input. If input');
     w('                is an array, then each item of the array is processed');
     w('                separately (use "-A" to override).');
-    w('  -c CODE       Filter the input with JavaScript `CODE`. If `CODE`');
+    w('  -C CODE       Filter the input with JavaScript `CODE`. If `CODE`');
     w('                returns false-y, then the item is filtered out. If');
     w('                input is an array, then each item of the array is ');
     w('                processed separately (use "-A" to override).');
+    w('  -e CODE, -c CODE');
+    w('                Similar to "-E CODE" and "-C CODE", respectively,');
+    w('                but potentially much slower. Deprecated. Remains ');
+    w('                for backward compat. See the full docs for details.');
     w('');
     w('  -k, --keys    Output the input object\'s keys.');
     w('  -n, --validate  Just validate the input (no processing or output).');
     w('                Use with "-q" for silent validation (exit status).');
     w('');
-    w('  -o, --output MODE');
-    w('                Specify an output mode. One of:');
-    w('                    jsony (default): JSON with string quotes elided');
-    w('                    json: JSON output, 2-space indent');
-    w('                    json-N: JSON output, N-space indent, e.g. "json-4"');
-    w('                    inspect: node.js `util.inspect` output');
-    w('  -i            Shortcut for `-o inspect`');
-    w('  -j            Shortcut for `-o json`');
-    w('  -0, -2, -4    Set indentation to the given value w/o setting MODE.');
-    w('                    -0   =>  -o jsony-0');
-    w('                    -4   =>  -o jsony-4');
-    w('                    -j0  =>  -o json-0');
+    w('  -o, --output MODE   Specify an output mode. One of');
+    w('                  jsony (default): JSON with string quotes elided');
+    w('                  json: JSON output, 2-space indent');
+    w('                  json-N: JSON output, N-space indent, e.g. "json-4"');
+    w('                  inspect: node.js `util.inspect` output');
+    w('  -i            shortcut for `-o inspect`');
+    w('  -j            shortcut for `-o json`');
     w('');
     w('See <http://trentm.com/json> for more docs and ');
     w('<https://github.com/trentm/json> for project details.');
@@ -285,13 +280,14 @@ function parseArgv(argv) {
         quiet: false,
         dropHeaders: false,
         exeSnippets: [],
+        vmExeSnippets: [],
         condSnippets: [],
+        vmCondSnippets: [],
         outputMode: OM_JSONY,
         jsonIndent: 2,
         array: null,
         delim: ' ',
         lookupDelim: '.',
-        items: false,
         outputKeys: false,
         group: false,
         merge: null, // --merge -> 'shallow', --deep-merge -> 'deep'
@@ -336,10 +332,6 @@ function parseArgv(argv) {
     endOfOptions = false;
     while (args.length > 0) {
         var arg = args.shift();
-        if (endOfOptions) {
-            parsed.args.push(arg);
-            break;
-        }
         switch (arg) {
         case '--':
             endOfOptions = true;
@@ -377,15 +369,6 @@ function parseArgv(argv) {
                 throw new Error('unknown output mode: "' + name + '"');
             }
             break;
-        case '-0':
-            parsed.jsonIndent = 0;
-            break;
-        case '-2':
-            parsed.jsonIndent = 2;
-            break;
-        case '-4':
-            parsed.jsonIndent = 4;
-            break;
         case '-I':
         case '--in-place':
             parsed.inPlace = true;
@@ -415,16 +398,16 @@ function parseArgv(argv) {
             }
             break;
         case '-e':
-        case '-E':  // DEPRECATED in v9
+            parsed.vmExeSnippets.push(args.shift());
+            break;
+        case '-E':
             parsed.exeSnippets.push(args.shift());
             break;
         case '-c':
-        case '-C':  // DEPRECATED in v9
-            parsed.condSnippets.push(args.shift());
+            parsed.vmCondSnippets.push(args.shift());
             break;
-        case '-M':
-        case '--items':
-            parsed.items = true;
+        case '-C':
+            parsed.condSnippets.push(args.shift());
             break;
         case '-k':
         case '--keys':
@@ -581,7 +564,7 @@ function chunkEmitter(opts) {
              * objects (e.g. a bunyan log).
              */
             // An object must end with '}'. This is an early out to avoid
-            // `JSON.parse` which I'm *presuming* is slower.
+            // `JSON.parse` which I *presuming* is slower.
             var trimmed = block.split(/\s*\r?\n/)[0];
             if (trimmed[trimmed.length - 1] === '}') {
                 var obj;
@@ -599,12 +582,9 @@ function chunkEmitter(opts) {
             return block;
         } else {
             var n = bits.length - 2;
-            var s;
-            s = bits[0] + bits[1];
-            emitter.emit('chunk', s, JSON.parse(s));
+            emitter.emit('chunk', bits[0] + bits[1]);
             for (var i = 3; i < n; i += 4) {
-                s = bits[i] + bits[i + 1] + bits[i + 2];
-                emitter.emit('chunk', s, JSON.parse(s));
+                emitter.emit('chunk', bits[i] + bits[i + 1] + bits[i + 2]);
             }
             return bits[n] + bits[n + 1];
         }
@@ -883,8 +863,8 @@ function parseLookup(lookup, lookupDelim) {
  *   }
  *
  * @param buffer {String} The text to parse as JSON.
- * @param obj {Object} Optional. Set when in streaming mode to avoid
- *    re-interpretation of `group`. Also avoids reparsing.
+ * @param obj {Object} Optional. Some streaming code paths will provide
+ *    this, an already parsed JSON object. Use this to avoid reparsing.
  * @param group {Boolean} Default false. If true, then non-JSON input
  *    will be attempted to be 'arrayified' (see inline comment).
  * @param merge {Boolean} Default null. Can be 'shallow' or 'deep'. An
@@ -1153,9 +1133,6 @@ var stdoutFlushed = true;
 function emit(s) {
     // TODO:PERF If this is try/catch is too slow (too granular): move up to
     //    mainline and be sure to only catch this particular error.
-    if (drainingStdout) {
-        return;
-    }
     try {
         stdoutFlushed = process.stdout.write(s);
     } catch (e) {
@@ -1184,16 +1161,8 @@ process.stdout.on('error', function (err) {
  * refer to regular files or TTY file descriptors." However, this hack might
  * still be necessary in a shell pipeline.
  */
-var drainingStdout = false;
 function drainStdoutAndExit(code) {
-    if (drainingStdout) {
-        return;
-    }
-    drainingStdout = true;
     process.stdout.on('drain', function () {
-        process.exit(code);
-    });
-    process.stdout.on('close', function () {
         process.exit(code);
     });
     if (stdoutFlushed) {
@@ -1207,10 +1176,9 @@ function drainStdoutAndExit(code) {
  *
  * If no 'return' in the given javascript snippet, then assume we are a single
  * statement and wrap in 'return (...)'. This is for convenience for short
- * '-c ...' snippets.
+ * '-C ...' snippets.
  */
 function funcWithReturnFromSnippet(js) {
-    // auto-"return"
     if (js.indexOf('return') === -1) {
         if (js.substring(js.length - 1) === ';') {
             js = js.substring(0, js.length - 1);
@@ -1254,34 +1222,24 @@ function main(argv) {
     }
     var lookupStrs = opts.args;
 
-    // Prepare condition and execution funcs (and vm scripts) for -c/-e.
-    var execVm = Boolean(process.env.JSON_EXEC &&
-        process.env.JSON_EXEC === 'vm');
+    // Prepare condition and execution funcs (and vm scripts) for -C/-E (-c/-e).
     var i;
     var condFuncs = [];
-    if (!execVm) {
-        for (i = 0; i < opts.condSnippets.length; i++) {
-            condFuncs[i] = funcWithReturnFromSnippet(opts.condSnippets[i]);
-        }
+    for (i = 0; i < opts.condSnippets.length; i++) {
+        condFuncs[i] = funcWithReturnFromSnippet(opts.condSnippets[i]);
     }
     var condScripts = [];
-    if (execVm) {
-        for (i = 0; i < opts.condSnippets.length; i++) {
-            condScripts[i] = vm.createScript(opts.condSnippets[i]);
-        }
+    for (i = 0; i < opts.vmCondSnippets.length; i++) {
+        condScripts[i] = vm.createScript(opts.vmCondSnippets[i]);
     }
     var cond = Boolean(condFuncs.length + condScripts.length);
     var exeFuncs = [];
-    if (!execVm) {
-        for (i = 0; i < opts.exeSnippets.length; i++) {
-            exeFuncs[i] = new Function(opts.exeSnippets[i]);
-        }
+    for (i = 0; i < opts.exeSnippets.length; i++) {
+        exeFuncs[i] = new Function(opts.exeSnippets[i]);
     }
     var exeScripts = [];
-    if (execVm) {
-        for (i = 0; i < opts.exeSnippets.length; i++) {
-            exeScripts[i] = vm.createScript(opts.exeSnippets[i]);
-        }
+    for (i = 0; i < opts.vmExeSnippets.length; i++) {
+        exeScripts[i] = vm.createScript(opts.vmExeSnippets[i]);
     }
     var exe = Boolean(exeFuncs.length + exeScripts.length);
 
@@ -1432,24 +1390,7 @@ function main(argv) {
         }
         var data = input.datum;
 
-        // Process: items (-M, --items)
-        if (opts.items) {
-            if (!Array.isArray(data)) {
-                var key;
-                var array = [];
-                for (key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        array.push({
-                          key: key,
-                          value: data[key]
-                        });
-                    }
-                }
-                data = array;
-            }
-        }
-
-        // Process: executions (-e, -E)
+        // Process: executions (-E/-e)
         var i, j;
         if (!exe) {
             /* pass */
@@ -1480,7 +1421,7 @@ function main(argv) {
             }
         }
 
-        // Process: conditionals (-c)
+        // Process: conditionals (-C/-c)
         if (!cond) {
             /* pass */
         } else if (opts.array || (opts.array === null && Array.isArray(data))) {
