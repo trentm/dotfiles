@@ -8,6 +8,10 @@ if &term == "xterm-color"
     fixdel
 endif
 
+" Vim bundles in ~/.vim/bundles
+" https://github.com/tpope/vim-pathogen
+execute pathogen#infect()
+
 
 "---- platform/target-generic configuration
 
@@ -48,7 +52,7 @@ endif
 set modeline
 set modelines=5
 filetype on
-filetype plugin on
+filetype plugin indent on
 
 
 
@@ -86,11 +90,6 @@ if $VIM_CRONTAB == "true"
 endif
 
 
-
-"---- Vim bundles in ~/.vim/bundles
-
-" https://github.com/tpope/vim-pathogen
-execute pathogen#infect()
 
 " https://github.com/airblade/vim-gitgutter
 nmap <silent> ]h :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>

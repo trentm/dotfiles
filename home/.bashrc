@@ -56,6 +56,7 @@ if [[ $(uname -s) = "SunOS" ]]; then
     PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 fi
 #test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
+PATH="/usr/local/go/bin:$PATH"
 PATH="$HOME/opt/node-0.10/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
@@ -264,6 +265,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias t='cd ~/tmp'  # TODO make this a function that'll create a tmp subdir if given
 
+
 function mkcd() {
     mkdir "$1" && cd "$1"
 }
@@ -295,11 +297,14 @@ alias j="jekyll && (cd _site && staticserve)"
 alias restdown=$HOME/tm/restdown/bin/restdown
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
+alias ag='ag --color-line-number=31 -s'
+alias agless='ag -s --pager="less -R"'
 alias by='bunyan'
 alias log='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
 alias js2json='node -e '\''s=""; process.stdin.resume(); process.stdin.on("data",function(c){s+=c}); process.stdin.on("end",function(){o=eval("("+s+")");console.log(JSON.stringify(o)); });'\'''
 
+export MANTASH_PS1='[\u@\h \w]$ '
 
 #export PATH=$HOME/tm/restdown/bin:$PATH
 #export PATH=$HOME/tm/node-bunyan/bin:$PATH
@@ -359,6 +364,9 @@ function parse_git_branch {
    echo "("${ref#refs/heads/}")"
 }
 alias noderepl='env NODE_NO_READLINE=1 rlwrap -p Red -S "$(parse_git_branch) node> " node'
+
+alias docker-ip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+alias docker-name="docker inspect --format '{{ .Name }}'"
 
 
 test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
