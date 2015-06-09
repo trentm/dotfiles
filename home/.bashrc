@@ -39,9 +39,6 @@ shopt -s no_empty_cmd_completion >/dev/null 2>&1
 # no "you have new mail" in terminal
 unset MAILCHECK
 
-# disable core dumps
-ulimit -S -c 0
-
 # default umask
 umask 0022
 
