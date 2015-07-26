@@ -262,6 +262,9 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias t='cd ~/tmp'  # TODO make this a function that'll create a tmp subdir if given
 
+# Shuffle lines (from <http://stackoverflow.com/a/6511327>)
+alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
+
 
 function mkcd() {
     mkdir "$1" && cd "$1"
