@@ -224,7 +224,14 @@ def main_reminder(argv):
         msg_arg = " -message '%s'" % msg
     else:
         msg_arg = ""
-    terminal_notifier = '/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier'
+    terminal_notifier = '/usr/local/bin/terminal-notifier'
+
+    if not os.path.exists(terminal_notifier):
+        sys.stderr.write("'%s' not found.\n" % terminal_notifier)
+        sys.stderr.write("You must install this manually: `brew install terminal-notifier`\n");
+        sys.stderr.write("See <https://github.com/julienXX/terminal-notifier> for details.\n")
+        return 1
+
     t_str = t.strftime("%I:%M %p").lstrip('0')
     script = ["""#!/bin/bash
 set -o errexit
