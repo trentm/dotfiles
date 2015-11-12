@@ -149,7 +149,8 @@ prompt_compact() {
 }
 
 __prompt_extra_info() {
-    local branch=`__git_ps1 "%s"`
+    local branch
+    branch=`__git_ps1 "%s"`
 
     local gemset
     # Too slow. Causes bash output problems.
@@ -213,6 +214,8 @@ fi
 
 # ----------------------------------------------------------------------
 # Keychain / SSH-agent
+#
+# Update ~/bin/keychain from <https://github.com/funtoo/keychain/>
 # ----------------------------------------------------------------------
 
 HAVE_KEYCHAIN=$(command -v keychain)
@@ -428,6 +431,7 @@ test -z "$BASH_COMPLETION" && {
         # bits installed. Symptom of not having this:
         #   -bash: __git_ps1: command not found
         for f in /usr/local/etc/bash_completion \
+                 /usr/pkg/share/bash-completion/bash_completion \
                  /usr/pkg/etc/bash_completion \
                  /opt/local/etc/bash_completion \
                  /etc/bash_completion
