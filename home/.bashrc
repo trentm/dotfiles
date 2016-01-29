@@ -354,8 +354,8 @@ alias crontab='VIM_CRONTAB=true crontab'
 # I found I've needed this on skink (Ubuntu box), at least.
 [ "$UNAME" = "Linux" ] && alias screen='TERM=screen screen'
 
-# Bash shell driver for 'go' (http://code.google.com/p/go-tool/).
-#export PATH=$HOME/tm/go/lib:$PATH
+# Bash shell driver for 'go' (https://github.com/trentm/go-tool).
+#export PATH=$HOME/tm/go-tool/lib:$PATH
 function g {
     export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
     PYTHONPATH=$HOME/tm/go-tool/lib:$PYTHONPATH python -m go $*
@@ -363,6 +363,24 @@ function g {
         source $GO_SHELL_SCRIPT
     fi
     unset GO_SHELL_SCRIPT
+}
+
+
+function node-select {
+    local ver dir firstpath
+    ver=$1
+    dir=$HOME/opt/node-$ver/bin
+    if [[ ! -d $dir ]]; then
+        echo "node-select: error: '$dir' does not exist" >&2
+        return
+    fi
+    echo "select node $($dir/node --version) at $dir"
+    firstpath=$(echo "$PATH" | cut -d: -f1)
+    if [[ -n "$(echo "$firstpath" | grep "^$HOME/opt/node-.*/bin" 2>/dev/null)" ]]; then
+        export PATH=$(echo "$PATH" | sed -e "s#$firstpath:#$dir:#")
+    else
+        export PATH=$dir:$PATH
+    fi
 }
 
 
