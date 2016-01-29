@@ -300,8 +300,8 @@ alias j="jekyll && (cd _site && staticserve)"
 alias restdown=$HOME/tm/restdown/bin/restdown
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias ackless='ack --pager="less -R"'
-alias ag='ag --color-line-number=31 -s'
-alias agless='ag -s --pager="less -R"'
+alias ag='ag --color-line-number=31 -s -a'
+alias agless='ag -s --pager="less -R" -a'
 alias by='bunyan'
 alias log='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
@@ -319,10 +319,16 @@ function staticserve() {
     python -m SimpleHTTPServer
 }
 
-#highlight
+# Highlight the given term. Usage: ... | hi foo
 function hi() {
     perl -pe "s/$1/\e[1;31;43m$&\e[0m/g"
 }
+
+# Highlight chars beyond 80 columns.
+function col80() {
+    perl -pe 's/^(.{80})(.*?)$/$1\e[1;31;43m$2\e[0m/';
+}
+
 
 alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo "date $(date -u "+%m%d%H%M%Y.%S")"'
 alias date-from-timestamp='node -p -e "(new Date(Number(process.argv[1]))).toISOString()"'
@@ -352,7 +358,7 @@ alias crontab='VIM_CRONTAB=true crontab'
 #export PATH=$HOME/tm/go/lib:$PATH
 function g {
     export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
-    PYTHONPATH=$HOME/tm/go/lib:$PYTHONPATH python -m go $*
+    PYTHONPATH=$HOME/tm/go-tool/lib:$PYTHONPATH python -m go $*
     if [ -f $GO_SHELL_SCRIPT ] ; then
         source $GO_SHELL_SCRIPT
     fi
