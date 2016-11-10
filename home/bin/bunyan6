@@ -1,2 +1,0 @@
-#!/bin/bash
-node6 $HOME/tm/node-bunyan-0.x/bin/bunyan

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * Copyright (c) 2013 Trent Mick. All rights reserved.
- * Copyright (c) 2013 Joyent Inc. All rights reserved.
+ * Copyright (c) 2014 Trent Mick. All rights reserved.
+ * Copyright (c) 2014 Joyent Inc. All rights reserved.
  *
  * json -- JSON love for your command line.
  *
  * See <https://github.com/trentm/json> and <https://trentm.com/json/>
  */
 
-var VERSION = '9.0.0';
+var VERSION = '9.0.4';
 
 var p = console.warn;
 var util = require('util');
@@ -45,7 +45,7 @@ var OM_FROM_NAME = {
     'json': OM_JSON,
     'inspect': OM_INSPECT,
     'compact': OM_COMPACT
-}
+};
 
 
 
@@ -82,14 +82,15 @@ if (util.format) {
     var formatRegExp = /%[sdj%]/g;
 
     function format(f) {
+        var i;
         if (typeof (f) !== 'string') {
             var objects = [];
-            for (var i = 0; i < arguments.length; i++) {
+            for (i = 0; i < arguments.length; i++) {
                 objects.push(util.inspect(arguments[i]));
             }
             return objects.join(' ');
         }
-        var i = 1;
+        i = 1;
         var args = arguments;
         var len = args.length;
         var str = String(f).replace(formatRegExp, function (x) {
@@ -116,7 +117,7 @@ if (util.format) {
             }
         }
         return str;
-    };
+    }
 }
 
 /**
@@ -208,7 +209,7 @@ function printHelp() {
     w('Options:');
     w('  -h, --help    Print this help info and exit.');
     w('  --version     Print version of this command and exit.');
-    w('  -q, --quiet   Don"t warn if input isn"t valid JSON.');
+    w('  -q, --quiet   Don\'t warn if input isn\'t valid JSON.');
     w('');
     w('  -f FILE       Path to a file to process. If not given, then');
     w('                stdin is used.');
@@ -366,9 +367,12 @@ function parseArgv(argv) {
             }
             var idx = name.lastIndexOf('-');
             if (idx !== -1) {
-                var indent = Number(name.slice(idx + 1));
-                if (!isNaN(indent)) {
-                    parsed.jsonIndent = indent;
+                var indent = name.slice(idx + 1);
+                if (/^\d+$/.test(indent)) {
+                    parsed.jsonIndent = Number(indent);
+                    name = name.slice(0, idx);
+                } else if (indent === 'tab') {
+                    parsed.jsonIndent = '\t';
                     name = name.slice(0, idx);
                 }
             }
@@ -1023,7 +1027,9 @@ function lookupDatum(datum, lookup) {
     var d = datum;
     for (var i = 0; i < lookup.length; i++) {
         var bit = lookup[i];
-        if (typeof (bit) === 'number' && bit < 0) {
+        if (d === null) {
+            return undefined;
+        } else if (typeof (bit) === 'number' && bit < 0) {
             d = d[d.length + bit];
         } else {
             d = d[bit];
@@ -1074,11 +1080,13 @@ function printDatasets(datasets, filename, headers, opts) {
         }
     }
     if (filename) {
-        f.end();
-        fs.renameSync(tmpPath, filename);
-        if (!opts.quiet) {
-            warn('json: updated "%s" in-place', filename);
-        }
+        f.on('open', function () {
+            f.end();
+            fs.renameSync(tmpPath, filename);
+            if (!opts.quiet) {
+                warn('json: updated "%s" in-place', filename);
+            }
+        });
     }
 }
 

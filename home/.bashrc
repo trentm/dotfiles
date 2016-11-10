@@ -54,12 +54,12 @@ if [[ $(uname -s) = "SunOS" ]]; then
 fi
 #test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="/usr/local/go/bin:$PATH"
-PATH="$HOME/opt/node-0.10/bin:$PATH"
+PATH="$HOME/opt/node-4/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
 #[[ $(uname -s) = "SunOS" ]] && MANPATH="/opt/local/man:$MANPATH" # smartos pkgsrc
-#MANPATH="$HOME/opt/node-0.10/share/man:$MANPATH"
+#MANPATH="$HOME/opt/node-4/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -220,7 +220,7 @@ fi
 
 HAVE_KEYCHAIN=$(command -v keychain)
 test -n "$INTERACTIVE" -a -n "$LOGIN" -a -f $HOME/.ssh/trusted -a -n "$HAVE_KEYCHAIN" && {
-    ls -1 $HOME/.ssh/id_* | grep -v '\.pub' | grep -v '\.ppk' \
+    ls -1 $HOME/.ssh/*.id_rsa | grep -v '\.pub' | grep -v '\.ppk' \
         | xargs keychain --quick --quiet --lockwait 120
     [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
     [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source  $HOME/.keychain/$HOSTNAME-sh-gpg
@@ -394,6 +394,14 @@ alias noderepl='env NODE_NO_READLINE=1 rlwrap -p Red -S "$(parse_git_branch) nod
 
 alias docker-ip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
 alias docker-name="docker inspect --format '{{ .Name }}'"
+function docker-port {
+    # The first host:port in NetworkSettings.Ports
+    # Q: Does this correspond to the first '-p N:M' in 'docker run' args?
+    docker inspect $1 | json -a -e '
+        ports=this.NetworkSettings.Ports;
+        first=ports[Object.keys(ports)[0]][0];
+        this._ = first.HostIp + ":" + first.HostPort' _
+}
 
 
 test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
@@ -440,6 +448,29 @@ function catenc() {
     # Cat an encrypted file.
     # Usage: `catenc PATH.asc` will decrypt and cat the contents of `PATH.asc`.
     gpg --decrypt "$1"
+}
+
+function 11jul {
+    local name
+    local tmppath
+
+    set -o errexit
+
+    name=$(date '+%Y').txt
+    encpath=$HOME/Dropbox/gtd/notes/11jul/$name.asc
+    tmppath=/var/tmp/.11jul-$name
+    if [[ -f $encpath ]]; then
+        catenc $encpath >$tmppath
+    else
+        rm -f $tmppath
+        touch $tmppath
+    fi
+    vi $tmppath
+    enc $tmppath
+    cp $tmppath.asc $encpath
+    rm $tmppath.asc
+
+    set +o errexit
 }
 
 
