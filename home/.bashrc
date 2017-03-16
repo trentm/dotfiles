@@ -151,18 +151,23 @@ prompt_compact() {
 __prompt_extra_info() {
     local branch
     branch=`__git_ps1 "%s"`
+    local content
+    content=
 
-    local gemset
-    # Too slow. Causes bash output problems.
-    #if test -x "$HOME/.rvm/bin/rvm-prompt"; then
-    #    source $HOME/.rvm/scripts/rvm && gemset=`$HOME/.rvm/bin/rvm-prompt g`
-    #fi
+    if test -n "$branch"; then
+        content+="$branch"
+    fi
+    if test -n "$TRITON_PROFILE"; then
+        test -n "$content" && content+=" "
+        content+="t:$TRITON_PROFILE"
+    fi
+    if test -n "$MANTA_PROFILE"; then
+        test -n "$content" && content+=" "
+        content+="m:$MANTA_PROFILE"
+    fi
 
-    if test -n "$branch" -o -n "$gemset"; then
-        echo -n " ("
-        test -n "$branch" && echo -n $branch
-        test -n "$gemset" && echo -n $gemset
-        echo -n ")"
+    if test -n "$content"; then
+        echo -n " ($content)"
     fi
 }
 
@@ -258,6 +263,8 @@ alias glp='git log -p'
 alias gl1='git log -1'
 alias giddyup='git fetch -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 
+alias gist='gist --private --open' # https://github.com/defunkt/gist
+
 alias jsondev='$HOME/tm/json/lib/json.js'
 alias bumpver='json -I -f package.json -e "v = this.version.split(/\./g); if (v.length !== 3 || isNaN(Number(v[2]))) throw new Error(\"wtf semver\"); v[2]=Number(v[2])+1; this.version = v.join(\".\")"'
 
@@ -307,7 +314,7 @@ alias log='bunyan'
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
 alias js2json='node -e '\''s=""; process.stdin.resume(); process.stdin.on("data",function(c){s+=c}); process.stdin.on("end",function(){o=eval("("+s+")");console.log(JSON.stringify(o)); });'\'''
 
-export MANTASH_PS1='[\u@\h \w]$ '
+export MANTASH_PS1='[\u@\H \w]$ '
 
 #export PATH=$HOME/tm/restdown/bin:$PATH
 #export PATH=$HOME/tm/node-bunyan/bin:$PATH

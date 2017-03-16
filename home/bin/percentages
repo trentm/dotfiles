@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+#
+# Take input like this:
+#       13406 docker-compose/1.11
+#       20054 docker-compose/1.9
+#       21761 docker-compose/1.8
+#       199839 docker-compose/1.10
+# and transform those to percentages:
+#
+#
+# The point of this is to be able to publicly publish percentages without
+# giving absolute numbers that might be internal info.
+#
+
+import sys
+
+def main(argv):
+    rows = []
+    for line in sys.stdin.readlines():
+        n, data = line.strip().split(None, 1)
+        rows.append((int(n), data))
+    total = sum([n for n, data in rows])
+
+    for n, data in rows:
+        print "  %4.1f%%  %s" % (n * 100.0 / total, data)
+
+if __name__ == "__main__":
+    main(sys.argv)
