@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+#
+# Take input like this:
+#       13406 trent
+#       20054 bryan
+# or like this
+#       25% t r e n t
+#       50% b r y a n
+# and change the string after the first column such that we don't alert everyone
+# named in chat.
+#
+
+import sys
+
+def main(argv):
+    rows = []
+    for line in sys.stdin.readlines():
+        first, data = line.strip().split(None, 1)
+        rows.append((first, data))
+
+    for first, data in rows:
+        print "  %10s  %s" % (first, ' '.join(data))
+
+if __name__ == "__main__":
+    main(sys.argv)

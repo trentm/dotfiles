@@ -233,7 +233,7 @@ test -n "$INTERACTIVE" -a -n "$LOGIN" -a -f $HOME/.ssh/trusted -a -n "$HAVE_KEYC
 
 
 # ----------------------------------------------------------------------
-# Aliases / Functions
+# Aliases / Functions / Env
 # ----------------------------------------------------------------------
 
 test -n "$HAVE_VIM" && alias vi=vim
@@ -261,7 +261,7 @@ alias gc='git checkout'
 alias gl='git log --stat'
 alias glp='git log -p'
 alias gl1='git log -1'
-alias giddyup='git fetch -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
+alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 
 alias gist='gist --private --open' # https://github.com/defunkt/gist
 
@@ -306,18 +306,16 @@ alias ti='python $HOME/as/openkomodo/src/python-sitelib/textinfo.py'
 alias j="jekyll && (cd _site && staticserve)"
 alias restdown=$HOME/tm/restdown/bin/restdown
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
-alias ackless='ack --pager="less -R"'
-alias ag='ag --color-line-number=31 -s -a'
-alias agless='ag -s --pager="less -R" -a'
-alias by='bunyan'
-alias log='bunyan'
+alias rgall='rg -g "*" -a'
+function rgless() {
+    rg --heading -n --color ansi "$@" | less -R
+}
 alias vimfluence=$HOME/tm/vimfluence/vimfluence
 alias js2json='node -e '\''s=""; process.stdin.resume(); process.stdin.on("data",function(c){s+=c}); process.stdin.on("end",function(){o=eval("("+s+")");console.log(JSON.stringify(o)); });'\'''
 
 export MANTASH_PS1='[\u@\H \w]$ '
 
-#export PATH=$HOME/tm/restdown/bin:$PATH
-#export PATH=$HOME/tm/node-bunyan/bin:$PATH
+export GOPATH=$HOME/go  # same as Go1.8 default
 
 function staticserve() {
     for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do

@@ -6,6 +6,10 @@
 #       21761 docker-compose/1.8
 #       199839 docker-compose/1.10
 # and transform those to percentages:
+#    5.3%  docker-compose/1.11
+#    7.9%  docker-compose/1.9
+#    8.5%  docker-compose/1.8
+#   78.3%  docker-compose/1.10
 #
 #
 # The point of this is to be able to publicly publish percentages without
