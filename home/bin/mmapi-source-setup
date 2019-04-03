@@ -1,0 +1,61 @@
+#!/bin/bash
+#
+# Usage:
+#   source ~/bin/mmapi-source-setup
+#   mmapi /teams
+#
+
+mmUrl=https://chat.joyent.us
+#mmUrl=https://mattermost0.joyent.com
+#mmUrl=http://192.168.1.4:8065
+#mmUrl=http://localhost:8065
+mmUser=trent.mick
+
+echo -n "Password for $mmUser ($mmUrl): "
+read -s mmPass
+echo
+mmApiUrl=$mmUrl/api/v4
+mmLoginRes=$(curl -s -i -d "{\"login_id\":\"$mmUser\",\"password\":\"$mmPass\"}" $mmApiUrl/users/login)
+unset mmPass
+
+# Need '\r' in field separator because (a) HTTP header lines use '\r\n'
+# and (b) default awk FS doesn't include '\r'. Having '\r' in mmToken breaks
+# subsequent usage.
+mmToken=$(echo "$mmLoginRes" | grep ^Token | awk -F '[\r\t ]+' '{print $2}')
+if [[ -z "$mmToken" ]]; then
+    echo "error: could not get auth token:" >&2
+    echo "" >&2
+    echo "$mmLoginRes" >&2
+else
+    echo "Got an auth token for $mmUser."
+
+    function mmapi() {
+        local verbose
+        local path
+        local curlArgs
+
+        # Arguments.
+        verbose=0
+        if [ "$1" == "-v" ]; then
+            shift
+            verbose=1
+        fi
+        path="$1"
+        shift
+
+        curlArgs="-4 --connect-timeout 10 -sS"
+        curlArgs+=" -H accept:application/json -H content-type:application/json"
+
+        if [[ "$verbose" == "1" ]]; then
+            echo "curl $curlArgs -i -H \"Authorization: Bearer $mmToken\" --url \"$mmApiUrl$path\" $@ | (json -q || true)"
+        fi
+        curl $curlArgs -i -H "Authorization: Bearer $mmToken" --url "$mmApiUrl$path" "$@" | (json -q || true)
+    }
+
+    echo "'mmapi' is now setup."
+    echo "Usage:"
+    echo "    mmapi PATH [ARGS]"
+    echo "Example:"
+    echo "    mmapi /teams"
+    echo "See https://api.mattermost.com/"
+fi

@@ -165,6 +165,10 @@ __prompt_extra_info() {
         test -n "$content" && content+=" "
         content+="m:$MANTA_PROFILE"
     fi
+    if test -n "$PS1_NODE_VERSION"; then
+        test -n "$content" && content+=" "
+        content+="node:$PS1_NODE_VERSION"
+    fi
 
     if test -n "$content"; then
         echo -n " ($content)"
@@ -186,6 +190,7 @@ if [ "$UNAME" = Darwin ]; then
     #alias k='open -a "Komodo IDE"'
     alias k='open -a "Komodo IDE 8"'
     alias komodo=k
+    alias c=code  # vscode
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
     alias vlc='open -a /Applications/VLC.app'
@@ -268,12 +273,65 @@ alias gist='gist --private --open' # https://github.com/defunkt/gist
 alias jsondev='$HOME/tm/json/lib/json.js'
 alias bumpver='json -I -f package.json -e "v = this.version.split(/\./g); if (v.length !== 3 || isNaN(Number(v[2]))) throw new Error(\"wtf semver\"); v[2]=Number(v[2])+1; this.version = v.join(\".\")"'
 
+# pics/exiftool/flickr commands
+#
+# Prerequisites:
+# - brew install exiftool
+#
+alias exif-ls='exiftool -exif:all'
+function flickr-open {
+    local id="$1"
+    if [[ -z "$id" ]]; then
+        echo "flickr-open: error: no photo ID argument given" >&2
+        return 1
+    else
+        open -a Firefox "https://www.flickr.com/photos/trento/$id/in/photostream/"
+    fi
+}
+function pics-set-createdate {
+    local exifDate
+    local isoDate
+    local files
+
+    isoDate="$1"
+    shift
+    files="$@"
+
+    if [[ -z "$isoDate" ]]; then
+        echo "pics-set-createdate: error: missing ISODATE argument" >&2
+        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
+        return 1
+    elif ! echo "$isoDate" | egrep '^\d{8}T\d{6}$' >/dev/null; then
+        echo "pics-set-createdate: error: '$isoDate' is not of the form 'YYYYmmddTHHMMSS'" >&2
+        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
+        return 1
+    elif [[ -z "$files" ]]; then
+        echo "pics-set-createdate: error: missing FILE argument(s)" >&2
+        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
+        return 1
+    fi
+
+    # "YYYYmmddTHHMMSS" -> "YYYY:mm:dd HH:MM:SS"
+    exifDate=$(echo "$isoDate" \
+        | awk '{print substr($0,0,4) ":" substr($0,5,2) ":" substr($0,7,2) " " substr($0,10,2) ":" substr($0,12,2) ":" substr($0,14,2)}')
+    #echo "exifDate: $exifDate"
+    #echo "files: $files"
+
+    # exiftool [OPTIONS] -TAG[+-<]=[VALUE]... FILE...
+    echo "# exiftool '-CreateDate=$exifDate' $files"
+    exiftool "-CreateDate=$exifDate" $files
+}
+
+
 alias ..='cd ..'
 alias ...='cd ../..'
-alias t='cd ~/tmp'  # TODO make this a function that'll create a tmp subdir if given
 
 # Shuffle lines (from <http://stackoverflow.com/a/6511327>)
 alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
+
+function uuid() {
+    uuidgen | tr A-Z a-z  # mac has `uuidgen`
+}
 
 
 function mkcd() {
@@ -386,6 +444,7 @@ function node-select {
     else
         export PATH=$dir:$PATH
     fi
+    export PS1_NODE_VERSION=$1  # for my PS1
 }
 
 
