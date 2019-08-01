@@ -54,7 +54,7 @@ if [[ $(uname -s) = "SunOS" ]]; then
 fi
 #test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
 PATH="/usr/local/go/bin:$PATH"
-PATH="$HOME/opt/node-4/bin:$PATH"
+PATH="$HOME/opt/node-6/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 
