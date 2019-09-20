@@ -53,17 +53,20 @@ if [[ $(uname -s) = "SunOS" ]]; then
     # smartos pkgsrc
     PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 fi
+PATH="/usr/local/go/bin:$PATH"
+PATH="$HOME/opt/node-10/bin:$PATH"
+if [[ -d /Library/Frameworks/Python.framework/Versions/2.7/bin ]]; then
+    PATH=/Library/Frameworks/Python.framework/Versions/2.7/bin:$PATH
+    PATH="$HOME/Library/Python/2.7/bin:$PATH"
+fi
 if [[ -d /Library/Frameworks/Python.framework/Versions/3.7/bin ]]; then
     PATH=/Library/Frameworks/Python.framework/Versions/3.7/bin:$PATH
+    PATH="$HOME/Library/Python/3.7/bin:$PATH"
 elif [[ -d /Library/Frameworks/Python.framework/Versions/3.6/bin ]]; then
     PATH=/Library/Frameworks/Python.framework/Versions/3.6/bin:$PATH
 else
     echo ".bashrc: warning: no python.org install of Python 3 is available" >&2
 fi
-test -d /Library/Frameworks/Python.framework/Versions/2.7/bin \
-    && PATH=/Library/Frameworks/Python.framework/Versions/2.7/bin:$PATH
-PATH="/usr/local/go/bin:$PATH"
-PATH="$HOME/opt/node-10/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 export PATH
@@ -197,37 +200,16 @@ prompt_color() {
 # ----------------------------------------------------------------------
 
 if [ "$UNAME" = Darwin ]; then
-    #alias k='open -a "Komodo IDE"'
     alias k='open -a "Komodo IDE 8"'
     alias c=code  # vscode
-    alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
     alias vlc='open -a /Applications/VLC.app'
     alias vlc0.9='open -a /Applications/VLC-0.9.app'
-
-    # Start Canon LiDE scanner.
-    # This is here to avoid having the painful "N*_ButtonManager.app" processes
-    # running all the time. See
-    # <http://forums.macnn.com/57/consumer-hardware-and-components/132661/attn-canon-lide-owners/>
-    # for details.
-    alias scanner-start='open /Library/CFMSupport/N067U_ButtonManager.app && open /Library/CFMSupport/N124U_ButtonManager.app'
 
     # From MySQL setup on Mac OS X. Don't know if this install path is
     # Mac-specific.
     alias mysql-start="sudo /usr/local/mysql/support-files/mysql.server start"
     alias mysql-stop="sudo /usr/local/mysql/support-files/mysql.server stop"
-
-    # put ports on the paths if /opt/local exists
-    #test -x /opt/local -a ! -L /opt/local && {
-    #    PORTS=/opt/local
-    #
-    #    # setup the PATH and MANPATH
-    #    PATH="$PORTS/bin:$PORTS/sbin:$PATH"
-    #    MANPATH="$PORTS/share/man:$MANPATH"
-    #
-    #    # nice little port alias
-    #    alias port="sudo nice -n +18 $PORTS/bin/port"
-    #}
 fi
 
 
@@ -253,11 +235,6 @@ test -n "$INTERACTIVE" -a -n "$LOGIN" -a -f $HOME/.ssh/trusted -a -n "$HAVE_KEYC
 test -n "$HAVE_VIM" && alias vi=vim
 
 # SCC
-alias ss='svn status -q --ignore-externals'
-alias vc='python ~/tm/sandbox/tools/vc.py'
-alias svn_add_ignore='python ~/tm/sandbox/tools/svn_add_ignore.py'
-alias svnmerge='python ~/src/svnmerge/svnmerge.py'
-alias sux='svn up --ignore-externals'
 function sd() {
     svn diff --diff-cmd diff -x -U10 $* | less
 }
