@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Popup (growl) reminder for a certain time.
+Popup notification reminder for a certain time.
 
 Usage:
     reminder TIME [MESSAGE]     # set a reminder
@@ -29,7 +29,7 @@ TODO someday:
     reminder 1:30h          # ... in 1 hour and 30 minutes
     reminder 1:30m          # ... in 1 minute and 30 seconds
     reminder 1:23:45h       # ... in 1 hour, 23 minutes and 45 seconds
-    reminders -c ID         # candel a reminder
+    reminders -c ID         # cancel a reminder
 """
 
 import sys

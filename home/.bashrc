@@ -42,6 +42,7 @@ unset MAILCHECK
 # default umask
 umask 0022
 
+
 # ----------------------------------------------------------------------
 # PATH
 # ----------------------------------------------------------------------
@@ -52,14 +53,23 @@ if [[ $(uname -s) = "SunOS" ]]; then
     # smartos pkgsrc
     PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 fi
-#test -d /Library/Frameworks/Python.framework/Versions/Current/bin && PATH=/Library/Frameworks/Python.framework/Versions/Current/bin:$PATH
+if [[ -d /Library/Frameworks/Python.framework/Versions/3.7/bin ]]; then
+    PATH=/Library/Frameworks/Python.framework/Versions/3.7/bin:$PATH
+elif [[ -d /Library/Frameworks/Python.framework/Versions/3.6/bin ]]; then
+    PATH=/Library/Frameworks/Python.framework/Versions/3.6/bin:$PATH
+else
+    echo ".bashrc: warning: no python.org install of Python 3 is available" >&2
+fi
+test -d /Library/Frameworks/Python.framework/Versions/2.7/bin \
+    && PATH=/Library/Frameworks/Python.framework/Versions/2.7/bin:$PATH
 PATH="/usr/local/go/bin:$PATH"
-PATH="$HOME/opt/node-6/bin:$PATH"
+PATH="$HOME/opt/node-10/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
+export PATH
 
 #[[ $(uname -s) = "SunOS" ]] && MANPATH="/opt/local/man:$MANPATH" # smartos pkgsrc
-#MANPATH="$HOME/opt/node-4/share/man:$MANPATH"
+#MANPATH="$HOME/opt/node-10/share/man:$MANPATH"
 
 
 # ----------------------------------------------------------------------
@@ -165,9 +175,9 @@ __prompt_extra_info() {
         test -n "$content" && content+=" "
         content+="m:$MANTA_PROFILE"
     fi
-    if test -n "$PS1_NODE_VERSION"; then
+    if test -n "$NODE_PROFILE"; then
         test -n "$content" && content+=" "
-        content+="node:$PS1_NODE_VERSION"
+        content+="n:$NODE_PROFILE"
     fi
 
     if test -n "$content"; then
@@ -189,7 +199,6 @@ prompt_color() {
 if [ "$UNAME" = Darwin ]; then
     #alias k='open -a "Komodo IDE"'
     alias k='open -a "Komodo IDE 8"'
-    alias komodo=k
     alias c=code  # vscode
     alias chrome='open -a "Google Chrome"'
     alias pixel='open -a Pixelmator'
@@ -268,6 +277,37 @@ alias glp='git log -p'
 alias gl1='git log -1'
 alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 
+alias isotime='node -e "console.log(new Date().toISOString())"'
+
+# Checkout a Joyent Gerrit CR for this repo.
+function cr-checkout {
+    local crnum=$1
+    if [[ -z "$crnum" ]]; then
+        echo "cr-checkout: error: missing CRNUM argument" >&2
+        echo "usage: cr-checkout CRNUM" >&2
+        return 1
+    fi
+    patchset=$(git ls-remote cr | grep "refs/changes/../${crnum}/" | cut -d/ -f5 | sort -n | tail -1)
+    git checkout master
+    git fetch -f cr refs/changes/${crnum:(-2)}/${crnum}/${patchset}:cr-${crnum}-${patchset}
+    git checkout cr-${crnum}-${patchset}
+}
+
+# Checkout a GitHub PR for this repo.
+# TODO: I think there is a way to get this re-fetchable. Test this.
+# Some notes at https://gist.github.com/karlhorky/88b3c8c258796cd3eb97615da36e07be
+function pr-checkout {
+    local prnum=$1
+    if [[ -z "$prnum" ]]; then
+        echo "pr-checkout: error: missing PRNUM argument" >&2
+        echo "usage: pr-checkout PRNUM" >&2
+        return 1
+    fi
+    git fetch origin +refs/pull/$prnum/head:pr-$prnum
+    git checkout pr-$prnum
+}
+
+
 alias gist='gist --private --open' # https://github.com/defunkt/gist
 
 alias jsondev='$HOME/tm/json/lib/json.js'
@@ -335,7 +375,7 @@ function uuid() {
 
 
 function mkcd() {
-    mkdir "$1" && cd "$1"
+    mkdir -p "$1" && cd "$1"
 }
 
 # https://gist.github.com/trentm/6126755
@@ -444,7 +484,7 @@ function node-select {
     else
         export PATH=$dir:$PATH
     fi
-    export PS1_NODE_VERSION=$1  # for my PS1
+    export NODE_PROFILE=$ver
 }
 
 
@@ -469,6 +509,7 @@ function docker-port {
 
 
 test -f "$HOME/.bashrc_private" && source $HOME/.bashrc_private
+
 
 
 # ----------------------------------------------------------------------
@@ -599,48 +640,9 @@ test -n "$LS_COMMON" && alias ls="command ls $LS_COMMON"
 alias l="ls -lFA"
 
 
-# --------------------------------------------------------------------
-# MISC COMMANDS
-# --------------------------------------------------------------------
-
-## use gem-man(1) if available:
-#man () {
-#    gem man -s "$@" 2>/dev/null ||
-#    command man "$@"
-#}
-
-# Usage: pls [<var>]
-# List path entries of PATH or environment variable <var>.
-pls () { eval echo \$${1:-PATH} |tr : '\n'; }
-
-if [[ `uname` == "Darwin" ]]; then
-    # Usage: puniq [<path>]
-    # Remove duplicate entries from a PATH style value while retaining
-    # the original order. Use PATH if no <path> is given.
-    #
-    # Example:
-    #   $ puniq /usr/bin:/usr/local/bin:/usr/bin
-    #   /usr/bin:/usr/local/bin
-    puniq () {
-        # Some stupid breakage in non-GNU `sed` on some systems
-        # such that it returns empty string.
-        [[ `(gsed --version 2>/dev/null || true) | grep "GNU sed"` ]] && SED=gsed || SED=sed
-        echo "$1" |tr : '\n' |nl |sort -u -k 2,2 |sort -n | cut -f 2- |tr '\n' : | $SED -e 's/:$//' -e 's/^://'
-    }
-else
-    puniq () {
-        echo "$1"
-    }
-fi
-
-
 # -------------------------------------------------------------------
 # USER SHELL ENVIRONMENT
 # -------------------------------------------------------------------
-
-# condense PATH entries
-PATH=$(puniq $PATH)
-MANPATH=$(puniq $MANPATH)
 
 # Use the color prompt by default when interactive
 if [[ `uname` == "Darwin" ]]; then
@@ -657,7 +659,7 @@ test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
 # Host-local and final stuff
 # -------------------------------------------------------------------
 
-test -r $HOME/.bash_localenv && . $HOME/.bash_localenv
+test -r $HOME/.bash_localenv && source $HOME/.bash_localenv
 
 # RVM
 # - <http://rvm.beginrescueend.com/rvm/install/> says:
@@ -667,15 +669,5 @@ test -r $HOME/.bash_localenv && . $HOME/.bash_localenv
 #   be trampled when you switch rubies."
 # - self-update periodically via: `rvm update --head && rvm reload`
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# -------------------------------------------------------------------
-# MOTD / FORTUNE
-# -------------------------------------------------------------------
-
-test -n "$INTERACTIVE" -a -n "$LOGIN" && {
-    uname -npsr
-    uptime
-}
-
 
 # vim: ts=4 sts=4 shiftwidth=4 expandtab

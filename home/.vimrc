@@ -31,15 +31,13 @@ set tabstop=4           " default tabstop of 4 spaces
 set shiftwidth=4        " default shiftwidth of 4 spaces
 set expandtab           " use spaces instead of tabs
 
-set cmdheight=1			" set command line four lines high
+set cmdheight=1         " set command line four lines high
 
 set showmatch           " show matching parentheses
 
-set ic					" ignore case in searching (by default)
+set scrolloff=10        " keep a number of lines above/below cursor
 
-set scrolloff=10		" keep a number of lines above/below cursor
-
-set selectmode=key		" MS Windows style shifted-movement SELECT mode
+set selectmode=key      " MS Windows style shifted-movement SELECT mode
 set keymodel=startsel
 
 set noic                " case-sensitive searching
