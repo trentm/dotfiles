@@ -2,7 +2,8 @@
 #
 # Explanation of login vs. interactive vs. not shells:
 # https://www.linuxquestions.org/questions/linux-general-1/difference-between-normal-shell-and-login-shell-14983/#post4828786
-echo "running ~/.zprofile" >&2
+#
+#echo "running ~/.zprofile" >&2
 
 # Keychain (https://www.funtoo.org/Keychain) tool to setup ssh-agent.
 test -x $HOME/bin/keychain && KEYCHAIN=$HOME/bin/keychain || KEYCHAIN=$(command -v keychain)

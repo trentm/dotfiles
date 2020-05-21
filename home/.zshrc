@@ -1,5 +1,5 @@
 # Trent's main zsh config. See .zprofile for login shell stuff.
-echo "running ~/.zshrc" >&2
+#echo "running ~/.zshrc" >&2
 
 # Shared-with-bash config.
 if [[ -e ~/.shellrc ]]; then
