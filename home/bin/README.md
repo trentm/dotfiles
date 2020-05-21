@@ -1,1 +1,0 @@
-- no.de.sh from https://gist.github.com/598663

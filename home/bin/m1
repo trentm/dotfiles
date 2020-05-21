@@ -1,2 +1,0 @@
-#!/bin/bash
-/Users/trentm/joy/mantash/bin/mantash -k -m manta.bh1-kvm1.joyent.us -u trent $*

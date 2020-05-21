@@ -1,2 +1,0 @@
-#!/bin/sh
-python $HOME/tm/sandbox/recipes/recipe.py "$@"
