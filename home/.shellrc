@@ -1,0 +1,201 @@
+# Trent's shared shell config (compat with bash and zsh)
+
+# ---- Env
+
+UNAME=$(uname)
+
+if [[ $UNAME == "SunOS" ]]; then
+    PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
+fi
+PATH="/usr/local/go/bin:$PATH"
+PATH="$HOME/.cargo/bin:$PATH"
+PATH="$HOME/opt/node-10/bin:$PATH"
+if [[ -d /Library/Frameworks/Python.framework/Versions/3.8/bin ]]; then
+    PATH=/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH
+elif [[ "$UNAME" == "Darwin" ]]; then
+    echo ".shellrc: warning: no python.org install of Python 3 is available" >&2
+fi
+if [[ -d "$HOME/.local/bin" ]]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+PATH="$HOME/bin:$PATH"
+export PATH
+
+# TODO: should we lock to en_US.UTF-8?
+## enable en_US locale w/ utf-8 encodings if not already configured
+#: ${LANG:="en_US.UTF-8"}
+#: ${LANGUAGE:="en"}
+#: ${LC_CTYPE:="en_US.UTF-8"}
+#: ${LC_ALL:="en_US.UTF-8"}
+#export LANG LANGUAGE LC_CTYPE LC_ALL
+
+if [[ -n "$(command -v vim)" ]]; then
+    export EDITOR=vim 
+    alias vi=vim
+else
+    export EDITOR=vi
+fi
+export PAGER="less -iRwX"
+export MANPAGER="less -iRswX"
+
+export MANTASH_PS1='[\u@\H \w]$ '
+export GOPATH=$HOME/go  # same as Go1.8 default
+test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
+
+
+# ---- Aliases and functions
+
+# Common
+if [[ "$UNAME" == "SunOS" ]]; then
+    alias ls="command ls -h"
+else
+    alias ls="command ls -hBG"
+fi
+alias l="ls -lFA"
+
+# VCS
+function sd() {
+    svn diff --diff-cmd diff -x -U10 $* | less
+}
+function hd() {
+    hg diff $* | less
+}
+function hs() {
+    hg st $*
+}
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gs='git status'
+alias gb='git branch'
+alias gc='git checkout'
+alias gl='git log --stat'
+alias glp='git log -p'
+alias gl1='git log -1'
+alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
+
+# My tools
+alias k='open -a "Komodo IDE 8"'
+alias c=code  # vscode
+alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
+alias eol="python $HOME/tm/eol/lib/eol.py"
+alias j="jekyll && (cd _site && staticserve)"
+alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
+alias rgall='rg -g "*" -a'
+alias gtd="python ~/Dropbox/gtd/bin/gtd.py"
+alias note="python ~/Dropbox/gtd/bin/gtd.py note"
+
+# Shuffle lines (from <http://stackoverflow.com/a/6511327>)
+alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
+
+alias isotime='node -e "console.log(new Date().toISOString())"'
+alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
+
+# http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
+alias crontab='VIM_CRONTAB=true crontab'
+
+# Bash shell driver for 'go' (https://github.com/trentm/go-tool).
+#export PATH=$HOME/tm/go-tool/lib:$PATH
+function g {
+    export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
+    PYTHONPATH=$HOME/tm/go-tool/lib:$PYTHONPATH python -m go $*
+    if [ -f $GO_SHELL_SCRIPT ] ; then
+        source $GO_SHELL_SCRIPT
+    fi
+    unset GO_SHELL_SCRIPT
+}
+
+function node-select {
+    local ver dir firstpath
+    ver=$1
+    dir=$HOME/opt/node-$ver/bin
+    if [[ ! -d $dir ]]; then
+        echo "node-select: error: '$dir' does not exist" >&2
+        return
+    fi
+    echo "select node $($dir/node --version) at $dir"
+    firstpath=$(echo "$PATH" | cut -d: -f1)
+    if [[ -n "$(echo "$firstpath" | grep "^$HOME/opt/node-.*/bin" 2>/dev/null)" ]]; then
+        export PATH=$(echo "$PATH" | sed -e "s#$firstpath:#$dir:#")
+    else
+        export PATH=$dir:$PATH
+    fi
+    export NODE_PROFILE=$ver
+}
+
+function mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+function staticserve() {
+    for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do
+        echo "# http://${ip}:8000"
+    done
+    python -m SimpleHTTPServer
+}
+
+# Highlight the given term. Usage: ... | hi foo
+function hi() {
+    perl -pe "s/$1/\e[1;31;43m$&\e[0m/g"
+}
+
+function fn() { find . -iname "*$@*"; }
+
+if [[ $UNAME == "Darwin" ]]; then
+    alias ldd='otool -L'
+
+    function uuid() {
+        uuidgen | tr A-Z a-z  # mac has `uuidgen`
+    }
+fi
+
+
+# ---- pics/exiftool/flickr commands
+#
+# Prerequisites:
+# - brew install exiftool
+#
+alias exif-ls='exiftool -exif:all'
+function flickr-open {
+    local id="$1"
+    if [[ -z "$id" ]]; then
+        echo "flickr-open: error: no photo ID argument given" >&2
+        return 1
+    else
+        open -a Firefox "https://www.flickr.com/photos/trento/$id/in/photostream/"
+    fi
+}
+function pics-set-createdate {
+    local exifDate
+    local isoDate
+    local files
+
+    isoDate="$1"
+    shift
+    files="$@"
+
+    if [[ -z "$isoDate" ]]; then
+        echo "pics-set-createdate: error: missing ISODATE argument" >&2
+        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
+        return 1
+    elif ! echo "$isoDate" | egrep '^\d{8}T\d{6}$' >/dev/null; then
+        echo "pics-set-createdate: error: '$isoDate' is not of the form 'YYYYmmddTHHMMSS'" >&2
+        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
+        return 1
+    elif [[ -z "$files" ]]; then
+        echo "pics-set-createdate: error: missing FILE argument(s)" >&2
+        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
+        return 1
+    fi
+
+    # "YYYYmmddTHHMMSS" -> "YYYY:mm:dd HH:MM:SS"
+    exifDate=$(echo "$isoDate" \
+        | awk '{print substr($0,0,4) ":" substr($0,5,2) ":" substr($0,7,2) " " substr($0,10,2) ":" substr($0,12,2) ":" substr($0,14,2)}')
+    #echo "exifDate: $exifDate"
+    #echo "files: $files"
+
+    # exiftool [OPTIONS] -TAG[+-<]=[VALUE]... FILE...
+    echo "# exiftool '-CreateDate=$exifDate' $files"
+    exiftool "-CreateDate=$exifDate" $files
+}
+
+
