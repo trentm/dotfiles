@@ -22,18 +22,43 @@ setopt appendhistory
 
 # 
 # Prompt
-# - TODO: git status
-# - TODO: my profile stuff
-# - TODO: consider '%3~'
+# - git status, see:
+#   http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#Version-Control-Information
+#   https://github.com/zsh-users/zsh/blob/master/Misc/vcs_info-examples
 # - TODO: consider dropping username and hostname for local usage
 #   (use SSH_CLIENT presence for remote sessions)
-# - TODO: consider time from bash prompt
-# - TODO: consider newline from bash prompt
-#       [22:06:31 trentm@purple:~]
-#       $
-# - with xterm-256color can use more colours via %F{0} to %F{255}
 #
-PS1='%n@%m:%B%F{240}%~%f%b%(?.. (%F{red}status=%?%f%)) %# '
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git*' formats "%s:%b"
+zstyle ':vcs_info:git*' actionformats "%s:%b|%a"
+function precmd() {
+    local extras=()
+
+    if [[ -n "$TRITON_PROFILE" ]]; then
+        extras+=("t:$TRITON_PROFILE")
+    fi
+    if [[ -n "$MANTA_PROFILE" ]]; then
+        extras+=("t:$MANTA_PROFILE")
+    fi
+    if [[ -n "$NODE_PROFILE" ]]; then
+        extras+=("t:$NODE_PROFILE")
+    fi
+
+    vcs_info
+    if [[ -n "$vcs_info_msg_0_" ]]; then
+        extras+=($vcs_info_msg_0_)
+    fi
+
+    if [[ -n "$extras" ]]; then
+        PS1="[%F{blue}%* %n@%m:%~ (${extras}%(?.. %F{red}rv:%?%F{blue}))]
+%#%f "
+    else
+        PS1='[%F{blue}%* %n@%m:%~%(?.. (%F{red}rv:%?%F{blue}%))]
+%#%f '
+    fi
+}
+
 
 #
 # Other
