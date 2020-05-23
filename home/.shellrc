@@ -104,20 +104,29 @@ function g {
     unset GO_SHELL_SCRIPT
 }
 
+# Select a node $ver either at ~/opt/node-$ver or via 'nvm use $ver'.
+# Set NODE_PROFILE for my PS1.
 function node-select {
     local ver dir firstpath
     ver=$1
     dir=$HOME/opt/node-$ver/bin
     if [[ ! -d $dir ]]; then
-        echo "node-select: error: '$dir' does not exist" >&2
-        return
-    fi
-    echo "select node $($dir/node --version) at $dir"
-    firstpath=$(echo "$PATH" | cut -d: -f1)
-    if [[ -n "$(echo "$firstpath" | grep "^$HOME/opt/node-.*/bin" 2>/dev/null)" ]]; then
-        export PATH=$(echo "$PATH" | sed -e "s#$firstpath:#$dir:#")
+        if which nvm >/dev/null 2>/dev/null; then
+            if ! nvm use $ver; then
+                return
+            fi
+        else
+            echo "node-select: error: no '$dir' and no nvm" >&2
+            return
+        fi
     else
-        export PATH=$dir:$PATH
+        echo "select node $($dir/node --version) at $dir"
+        firstpath=$(echo "$PATH" | cut -d: -f1)
+        if [[ -n "$(echo "$firstpath" | grep "^$HOME/opt/node-.*/bin" 2>/dev/null)" ]]; then
+            export PATH=$(echo "$PATH" | sed -e "s#$firstpath:#$dir:#")
+        else
+            export PATH=$dir:$PATH
+        fi
     fi
     export NODE_PROFILE=$ver
 }

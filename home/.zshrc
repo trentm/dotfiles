@@ -10,6 +10,7 @@ fi
 [[ -e ~/.shellrc.private ]] && source ~/.shellrc.private
 [[ -e ~/.shellrc.local ]] && source ~/.shellrc.local
 
+
 #
 # Zsh shell options
 #
@@ -19,6 +20,7 @@ setopt autocd  # can 'cd DIR' with just the 'DIR'
 # Shell history tweaks. See 'emulate -lLR zsh | grep hist' for other opts.
 setopt sharehistory
 setopt appendhistory
+
 
 # 
 # Prompt
@@ -39,10 +41,10 @@ function precmd() {
         extras+=("t:$TRITON_PROFILE")
     fi
     if [[ -n "$MANTA_PROFILE" ]]; then
-        extras+=("t:$MANTA_PROFILE")
+        extras+=("m:$MANTA_PROFILE")
     fi
     if [[ -n "$NODE_PROFILE" ]]; then
-        extras+=("t:$NODE_PROFILE")
+        extras+=("n:$NODE_PROFILE")
     fi
 
     vcs_info
@@ -71,3 +73,5 @@ autoload -Uz compinit && compinit
 # those from node-cmdln.
 #autoload bashcompinit && bashcompinit
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
