@@ -43,6 +43,9 @@ setopt appendhistory
 # - git status, see:
 #   http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#Version-Control-Information
 #   https://github.com/zsh-users/zsh/blob/master/Misc/vcs_info-examples
+#   TODO: consider the markers for current and staged changes (%u%c in formats,
+#   requires enabling check-for-changes and check-for-staged-changes). I saw
+#   a nice example using unicode black circle with coloring for the badges.
 # - TODO: consider dropping username and hostname for local usage
 #   (use SSH_CLIENT presence for remote sessions)
 #
