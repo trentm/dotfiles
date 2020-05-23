@@ -1,5 +1,21 @@
 # Trent's main zsh config. See .zprofile for login shell stuff.
-#echo "running ~/.zshrc" >&2
+
+# Internal trace logging of this script.
+_TRACE=0
+case "$0" in
+    -*) _LOGINSHELL=1 ;;
+    *)  unset _LOGINSHELL ;;
+esac
+if [[ $_TRACE == 1 && $_LOGINSHELL == 1 ]]; then
+    function _trace {
+        echo "[$(date "+%Y-%m-%dT%H:%M:%SZ")] .zshrc: trace: $*" >&2
+        return 0
+    }
+else
+    function _trace {}
+fi
+_trace start
+
 
 # Shared-with-bash config.
 if [[ -e ~/.shellrc ]]; then
@@ -63,15 +79,43 @@ function precmd() {
 
 
 #
+# nvm lazy load, because nvm takes waaay too long to load. Adapted from
+# https://gist.github.com/rtfpessoa/811701ed8fa642f60e411aef04b2b64a
+#
+
+NVM_DIR="$HOME/.nvm"
+NODE_GLOBALS+=(nvm node npm npx)
+
+function load_nvm() {
+  # Unset placeholder functions
+  for cmd in "${NODE_GLOBALS[@]}"; do unset -f ${cmd} &>/dev/null; done
+
+  # Load NVM
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+  # Do not reload nvm again
+  export NVM_LOADED=1
+}
+
+for cmd in "${NODE_GLOBALS[@]}"; do
+  # Skip defining the function if the binary is already in the PATH
+  if ! which ${cmd} &>/dev/null; then
+    eval "${cmd}() { unset -f ${cmd} &>/dev/null; [ -z \${NVM_LOADED+x} ] && load_nvm; ${cmd} \$@; }"
+  fi
+done
+
+
+#
 # Other
 #
 
 # Enable completion
 autoload -Uz compinit && compinit
 
-# After bashcompinit one can load bash completion files, e.g.
-# those from node-cmdln.
-#autoload bashcompinit && bashcompinit
+# After bashcompinit one can load bash completion files, e.g.  those from
+# node-cmdln.
+autoload bashcompinit && bashcompinit
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+source ~/.nvm/bash_completion
+
+_trace "end"
