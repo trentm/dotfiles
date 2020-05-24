@@ -75,6 +75,7 @@ alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-pars
 
 # My tools
 alias k='open -a "Komodo IDE 8"'
+alias code="'/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'"
 alias c=code  # vscode
 alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
 alias eol="python $HOME/tm/eol/lib/eol.py"

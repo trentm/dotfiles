@@ -87,7 +87,11 @@ function precmd() {
 #
 
 NVM_DIR="$HOME/.nvm"
-NODE_GLOBALS+=(nvm node npm npx)
+# Skip adding binaries if there is no node version installed yet
+if [ -d $NVM_DIR/versions/node ]; then
+    NODE_GLOBALS=(`find $NVM_DIR/versions/node -maxdepth 3 \( -type l -o -type f \) -wholename '*/bin/*' | xargs -n1 basename | sort | uniq`)
+fi
+NODE_GLOBALS+=("nvm")
 
 function load_nvm() {
   # Unset placeholder functions
