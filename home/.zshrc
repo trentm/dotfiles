@@ -27,9 +27,7 @@ fi
 [[ -e ~/.shellrc.local ]] && source ~/.shellrc.local
 
 
-#
-# Zsh shell options
-#
+# ---- Zsh shell options
 
 setopt autocd  # can 'cd DIR' with just the 'DIR'
 
@@ -38,8 +36,7 @@ setopt sharehistory
 setopt appendhistory
 
 
-# 
-# Prompt
+# ---- Prompt
 # - git status, see:
 #   http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#Version-Control-Information
 #   https://github.com/zsh-users/zsh/blob/master/Misc/vcs_info-examples
@@ -48,7 +45,6 @@ setopt appendhistory
 #   a nice example using unicode black circle with coloring for the badges.
 # - TODO: consider dropping username and hostname for local usage
 #   (use SSH_CLIENT presence for remote sessions)
-#
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git*' formats "%s:%b"
@@ -81,10 +77,9 @@ function precmd() {
 }
 
 
-#
-# nvm lazy load, because nvm takes waaay too long to load. Adapted from
+# ---- nvm lazy load
+# Because nvm takes waaay too long to load. Adapted from:
 # https://gist.github.com/rtfpessoa/811701ed8fa642f60e411aef04b2b64a
-#
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet
@@ -111,10 +106,7 @@ for cmd in "${NODE_GLOBALS[@]}"; do
   fi
 done
 
-
-#
-# Other
-#
+# ---- Other
 
 # Enable completion
 autoload -Uz compinit && compinit
@@ -124,5 +116,6 @@ autoload -Uz compinit && compinit
 autoload bashcompinit && bashcompinit
 
 source ~/.nvm/bash_completion
+
 
 _trace "end"
