@@ -1,0 +1,86 @@
+#!/bin/bash
+#
+# [V]iew the current dir, or given file arg, in GitHub view.
+#
+# Usage:
+#   v [PATH] [LINE-NUM-OR-ANCHOR]
+#   v [ISSUE-OR-PR-NUM]
+#
+
+if [ "$TRACE" != "" ]; then
+    export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+# TODO: getopt and arg for line or token? could use GH URL syntax for
+# those unless '#' is shell automatically comments out
+
+# ---- globals
+
+base_url=
+
+# ---- support functions
+
+function fatal {
+    echo "$(basename $0): error: $*"
+    exit 1
+}
+
+function set_base_url_from_dir {
+    local dir
+    local repo_name
+
+    dir="$1"
+
+    remote_url=$(git -C "$dir" config remote.origin.url || true)
+    [[ -n "$remote_url" ]] || fatal "'$dir' is not in a git clone"
+
+    if [[ "$remote_url" =~ ^https://.* ]]; then
+        base_url="$remote_url"
+    elif [[ "$remote_url" =~ ^git@github.com: ]]; then
+        repo_name=$(echo "$remote_url" | cut -d ':' -f 2 | sed 's/\.git$//')
+        base_url="https://github.com/$repo_name"
+    else
+        fatal "don't know base https URL for remote '$remote_url'"
+    fi
+}
+
+# ---- mainline
+
+path="$1"
+[[ -n "$path" ]] || path=.
+anchor="$2"
+
+# If "path" is a number, open that issue/pr.
+if [[ "$path" =~ ^[0-9]+$ ]]; then
+    set_base_url_from_dir "."
+    url=$base_url/issues/$path
+else
+    if [[ -d "$path" ]]; then
+        dir="$path"
+        base=
+    else
+        dir=$(dirname "$path")
+        base=$(basename "$path")
+    fi
+
+    set_base_url_from_dir "$dir"
+    branch=$(git -C "$dir" symbolic-ref HEAD | cut -d/ -f3-)
+    subdir=$(git -C "$dir" rev-parse --show-prefix)
+
+    if [[ -z "$base" ]]; then
+        url=$base_url/tree/${branch}/${subdir}
+    else
+        url=$base_url/blob/${branch}/${subdir}${base}
+
+        if [[ "$anchor" =~ ^[0-9]+$ ]]; then
+            url+="#L${anchor}"
+        elif [[ -n "$anchor" ]]; then
+            url+="#${anchor}"
+        fi
+    fi
+fi
+
+open "$url"
