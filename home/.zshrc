@@ -106,7 +106,8 @@ for cmd in "${NODE_GLOBALS[@]}"; do
   fi
 done
 
-# ---- Other
+
+# ---- Completion
 
 # Enable completion
 autoload -Uz compinit && compinit
@@ -116,6 +117,17 @@ autoload -Uz compinit && compinit
 autoload bashcompinit && bashcompinit
 
 source ~/.nvm/bash_completion
+
+
+# ---- Other
+
+function _iterm_title_update {
+    echo -ne "\033];${PWD##*/}\007"
+}
+if [[ -n "$ITERM_SESSION_ID" ]]; then
+    _iterm_title_update
+    chpwd_functions+=(_iterm_title_update)
+fi
 
 
 _trace "end"
