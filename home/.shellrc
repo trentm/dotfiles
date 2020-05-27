@@ -72,6 +72,7 @@ alias gl='git log --stat'
 alias glp='git log -p'
 alias gl1='git log -1'
 alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
+alias prit='hub pull-request -p -a trentm'
 
 # My tools
 alias k='open -a "Komodo IDE 8"'
@@ -103,6 +104,12 @@ function g {
         source $GO_SHELL_SCRIPT
     fi
     unset GO_SHELL_SCRIPT
+}
+
+# pomodoro timer
+function pomo() {
+    reminder 25m "pomodoro: end of timer"
+    reminder 30m "pomodoro: end of break"
 }
 
 # Select a node $ver either at ~/opt/node-$ver or via 'nvm use $ver'.

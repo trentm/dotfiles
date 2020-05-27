@@ -118,6 +118,11 @@ autoload bashcompinit && bashcompinit
 
 source ~/.nvm/bash_completion
 
+# TODO: verify this
+# Hub completion (https://github.com/github/hub/tree/master/etc)
+[ -s /usr/local/etc/bash_completion.d/hub.bash_completion.sh ] \
+    && source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
+
 
 # ---- Other
 
