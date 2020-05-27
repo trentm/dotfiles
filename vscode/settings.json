@@ -1,0 +1,28 @@
+{
+    "workbench.colorTheme": "Default Light+",
+    "editor.renderWhitespace": "all",
+    "editor.find.autoFindInSelection": "multiline",
+    "files.trimTrailingWhitespace": true,
+    "window.title": "${activeEditorLong}${separator}${rootName}",
+    "editor.rulers": [
+        80,
+        100
+    ],
+    "workbench.startupEditor": "welcomePage",
+
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+
+    // Hover tips (can get in the way sometimes)
+    "editor.hover.enabled": true,
+
+    // Intellisense
+    // https://code.visualstudio.com/docs/editor/intellisense
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.tabCompletion": "on",
+    "editor.parameterHints.enabled": false,
+
+    "window.zoomLevel": 0,
+    "editor.tabSize": 8
+}

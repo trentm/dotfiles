@@ -31,13 +31,13 @@ log.setLevel(logging.INFO)
 SRC_DIR = join(dirname(abspath(__file__)), "home")
 DST_DIR = normpath(os.environ["HOME"])
 #DST_DIR = join(normpath(os.environ["HOME"]), "tmp", "home")
-BAK_DIR = expanduser("~/tmp/olddotfiles")
+BAK_DIR = expanduser("~/tmp/dotfiles.home.old")
 
 
 
 #---- main routines
 
-def linkup(src_dir=SRC_DIR, dst_dir=DST_DIR, dry_run=False):
+def linkup(src_dir=SRC_DIR, dst_dir=DST_DIR, bak_dir=BAK_DIR, dry_run=False):
     if sys.platform == "win32":
         raise Error("require symlinks, no workie on Windows for now")
 
@@ -51,30 +51,31 @@ def linkup(src_dir=SRC_DIR, dst_dir=DST_DIR, dry_run=False):
     log.debug("linkup '%s' -> '%s'", dst_dir, src_dir)
 
     # fresh backup dir
-    log.info("backup old dotfiles to '%s'", BAK_DIR)
-    if exists(BAK_DIR):
-        shutil.rmtree(BAK_DIR)
+    if bak_dir:
+        log.info("backup old dotfiles to '%s'", bak_dir)
+        if exists(bak_dir):
+            shutil.rmtree(bak_dir)
 
     dir_skips = [".svn", ".hg", ".git"]
     for f in os.listdir(src_dir):
         from_path = join(dst_dir, f)
         to_path = join(src_dir, f)
         if not dry_run:
-            _symlink(from_path, to_path)
+            _symlink(from_path, to_path, bak_dir)
         else:
             log.info("symlink '%s' -> '%s' (dry-run)", from_path, to_path)
 
 
 #---- internal support stuff
 
-def _symlink(from_path, to_path):
+def _symlink(from_path, to_path, bak_dir):
     """'to_path' is the one that should exist already."""
     # Backup, if necessary.
     if lexists(from_path):
-        if not exists(BAK_DIR):
-            os.makedirs(BAK_DIR)
-        bak_path = join(BAK_DIR, basename(from_path))
-        #log.info("backing up '%s' to '%s'", from_path, bak_path)
+        if not exists(bak_dir):
+            os.makedirs(bak_dir)
+        bak_path = join(bak_dir, basename(from_path))
+        log.debug("backing up '%s' to '%s'", from_path, bak_path)
         os.rename(from_path, bak_path)
     log.info("symlink '%s' -> '%s'", from_path, to_path)
     os.symlink(to_path, from_path)
@@ -143,7 +144,19 @@ def main(argv=sys.argv):
     opts, args = parser.parse_args()
     log.setLevel(opts.log_level)
 
-    return linkup(dry_run=opts.dry_run)
+    #SRC_DIR = join(dirname(abspath(__file__)), "home")
+    #DST_DIR = normpath(os.environ["HOME"])
+    linkup(dry_run=opts.dry_run)
+
+    vscode_settings_dir = normpath(join(os.environ["HOME"],
+        "Library", "Application Support", "Code", "User"))
+    if sys.platform == "darwin" and isdir(vscode_settings_dir):
+        src_dir = join(dirname(abspath(__file__)), "vscode")
+        bak_dir = expanduser("~/tmp/dotfiles.vscode.old")
+        linkup(src_dir=src_dir, dst_dir=vscode_settings_dir,
+            bak_dir=bak_dir, dry_run=opts.dry_run)
+
+    return 0
 
 if __name__ == "__main__":
     if sys.version_info[:2] <= (2,2): __file__ = sys.argv[0]
