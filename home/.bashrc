@@ -103,7 +103,7 @@ export LANG LANGUAGE LC_CTYPE LC_ALL
 export FTP_PASSIVE
 
 # ignore backups, CVS directories, python bytecode, vim swap files
-FIGNORE="~:CVS:#:.pyc:.pyo:.swp:.swa:apache-solr-*:.git"
+FIGNORE="~:CVS:#:.pyc:.pyo:.swp:.swa:apache-solr-*"
 HISTCONTROL=ignoredups
 
 # ----------------------------------------------------------------------
@@ -147,6 +147,11 @@ else
     COLOR1="${BLUE}"
     COLOR2="${BLUE}"
     P="\$"
+fi
+
+# Make iTerm2 tab the current dir.  https://gist.github.com/phette23/5270658
+if [ $ITERM_SESSION_ID ]; then
+    export PROMPT_COMMAND='echo -ne "\033];${PWD##*/}\007"; ':"$PROMPT_COMMAND";
 fi
 
 prompt_simple() {
@@ -253,6 +258,7 @@ alias gl='git log --stat'
 alias glp='git log -p'
 alias gl1='git log -1'
 alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
+alias prit='hub pull-request -p -a trentm'
 
 alias isotime='node -e "console.log(new Date().toISOString())"'
 
@@ -355,20 +361,12 @@ function mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
-# https://gist.github.com/trentm/6126755
-function googl {
-    # echo URL | googl
-    local url=$(cat <&0)
-    (
-        set -e pipefail;
-        echo "{}" \
-            | json -e "this.longUrl='$url'" \
-            | curl -sf https://www.googleapis.com/urlshortener/v1/url \
-                -H 'Content-Type: application/json' -d@- \
-            | json id
-    )
-}
 
+# pomodoro timer
+function pomo() {
+    reminder 25m "pomodoro: end of timer"
+    reminder 30m "pomodoro: end of break"
+}
 
 # Tools
 alias pics='python $HOME/tm/pics/bin/pics'
@@ -646,5 +644,13 @@ test -r $HOME/.bash_localenv && source $HOME/.bash_localenv
 #   be trampled when you switch rubies."
 # - self-update periodically via: `rvm update --head && rvm reload`
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Hub completion (https://github.com/github/hub/tree/master/etc)
+[ -s /usr/local/etc/bash_completion.d/hub.bash_completion.sh ] \
+    && source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
 
 # vim: ts=4 sts=4 shiftwidth=4 expandtab
