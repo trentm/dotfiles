@@ -65,10 +65,21 @@ set errorformat+=%f(%l)\ :\ %m
 " Don't use Ex mode, use Q for formatting
 map Q gq
 
-" mapping for navigating through 'quickfix' lists (i.e. make and grep results)
-map <F6> :cp
-map <F7> :cc
-map <F8> :cn
+" ripgrep in quickfix, search via ':grep ...'
+set grepprg=rg\ --vimgrep
+set grepformat^=%f:%l:%c:%m
+
+" Mapping for navigating through 'quickfix' lists (i.e. make and grep results)
+" Examples:
+"   vi -q <(./node_modules/.bin/eslint --format unix .)
+"   vi -q <(./node_modules/.bin/eslint --format unix --no-eslintrc --rule eqeqeq:error .)
+"   vi -q <(rg --vimgrep foo)
+map <F5> :cp<CR>
+map <F6> :cc<CR>
+map <F7> :cl<CR>
+map <F8> :cn<CR>
+map m :cn<CR>
+
 " navigating through open files
 map <F10> :bprevious
 map <F11> :buffers
