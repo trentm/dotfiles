@@ -15,19 +15,21 @@ echo -n "Password for $mmUser ($mmUrl): "
 read -s mmPass
 echo
 mmApiUrl=$mmUrl/api/v4
-mmLoginRes=$(curl -s -i -d "{\"login_id\":\"$mmUser\",\"password\":\"$mmPass\"}" $mmApiUrl/users/login)
+mmLoginRes="$(curl -s -i -d "{\"login_id\":\"$mmUser\",\"password\":\"$mmPass\"}" $mmApiUrl/users/login)"
 unset mmPass
 
 # Need '\r' in field separator because (a) HTTP header lines use '\r\n'
 # and (b) default awk FS doesn't include '\r'. Having '\r' in mmToken breaks
 # subsequent usage.
-mmToken=$(echo "$mmLoginRes" | grep ^Token | awk -F '[\r\t ]+' '{print $2}')
+mmToken=$(echo "$mmLoginRes" | grep ^token: | awk -F '[\r\t ]+' '{print $2}')
 if [[ -z "$mmToken" ]]; then
-    echo "error: could not get auth token:" >&2
-    echo "" >&2
+    echo "error: could not get auth token from this login response:" >&2
+    echo "--" >&2
     echo "$mmLoginRes" >&2
+    echo "--" >&2
 else
-    echo "Got an auth token for $mmUser."
+    echo "Successfully got an auth token for $mmUser."
+    echo ""
 
     function mmapi() {
         local verbose
@@ -52,10 +54,29 @@ else
         curl $curlArgs -i -H "Authorization: Bearer $mmToken" --url "$mmApiUrl$path" "$@" | (json -q || true)
     }
 
-    echo "'mmapi' is now setup."
+    echo "The 'mmapi' curl-wrapper bash function is now setup to talk to $mmUrl."
+    echo "Note that it pipes output through 'json', so the exit value is lost."
+    echo ""
     echo "Usage:"
-    echo "    mmapi PATH [ARGS]"
-    echo "Example:"
-    echo "    mmapi /teams"
+    echo "    mmapi URLPATH [CURL-ARGS]"
+    echo ""
+    echo "Examples:"
+    echo "    mmapi /users/username/\$username        # get a user id (uid) and info"
+    echo "    mmapi /teams                           # get the team id (tid) from this response"
+    echo "    mmapi /teams/\$tid/channels?page=1      # page through public channels"
+    echo "    mmapi /teams/\$tid/channels/name/\$name  # lookup a channel by name"
+    echo ""
+    echo "    # List all channels for this user and team."
+    echo "    # Types: D=direct, O=open, G=group, P=private"
+    echo "    # https://github.com/mattermost/mattermost-server/blob/master/model/channel.go#L18-L21"
+    echo "    mmapi /users/\$uid/teams/\$tid/channels \\"
+    echo "        | json -Ha type id display_name | sort"
+    echo ""
+    echo "    # List all posts in a channel:"
+    echo "    # 1. Get most recent posts:"
+    echo "    mmapi /channels/\$chanid/posts"
+    echo "    # 2. Page backwards using 'prev_post_id' from previous response:"
+    echo "    mmapi '/channels/\$chanid/posts?per_page=200&before=\$prev_post_id'"
+    echo ""
     echo "See https://api.mattermost.com/"
 fi
