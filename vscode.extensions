@@ -1,0 +1,10 @@
+# List:
+#   code --list-extensions
+# Install:
+#   cat ~/tm/dotfiles/vscode.extensions | grep -v '^#' | while read ext; do code --install-extension $ext; done
+#
+bungcip.better-toml
+dbaeumer.vscode-eslint
+ms-python.python
+rust-lang.rust
+vscodevim.vim

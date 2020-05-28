@@ -1,4 +1,6 @@
 {
+    "telemetry.enableTelemetry": false,
+
     "workbench.colorTheme": "Default Light+",
     "editor.renderWhitespace": "all",
     "editor.find.autoFindInSelection": "multiline",
