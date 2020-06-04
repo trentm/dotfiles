@@ -26,5 +26,8 @@
     "editor.parameterHints.enabled": false,
 
     "window.zoomLevel": 0,
-    "editor.tabSize": 8
+    "editor.tabSize": 8,
+    "go.formatTool": "goimports",
+    // https://github.com/microsoft/vscode-go/wiki/Go-modules-support-in-Visual-Studio-Code
+    "go.useLanguageServer": true
 }

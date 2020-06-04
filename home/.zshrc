@@ -81,6 +81,9 @@ function precmd() {
 # Because nvm takes waaay too long to load. Adapted from:
 # https://gist.github.com/rtfpessoa/811701ed8fa642f60e411aef04b2b64a
 
+# Note: Keep this in sync with nvm default.
+export PATH="/Users/trentm/.nvm/versions/node/v10.20.1/bin:$PATH"
+
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet
 if [ -d $NVM_DIR/versions/node ]; then
@@ -117,6 +120,15 @@ autoload -Uz compinit && compinit
 autoload bashcompinit && bashcompinit
 
 source ~/.nvm/bash_completion
+
+if [[ -d ~/tm/dotfiles/zsh-completion ]]; then
+    ls ~/tm/dotfiles/zsh-completion/*.zsh | while read f; do
+        _trace "sourcing $f"
+        source $f
+    done
+else
+    echo ".zshrc: warning: no ~/tm/dotfiles/zsh-completion" >&2
+fi
 
 # TODO: verify this
 # Hub completion (https://github.com/github/hub/tree/master/etc)
