@@ -257,7 +257,7 @@ alias gc='git checkout'
 alias gl='git log --stat'
 alias glp='git log -p'
 alias gl1='git log -1'
-alias giddyup='git fetch -p -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
+alias giddyup='git fetch --tags --prune --prune-tags -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 alias prit='hub pull-request -p -a trentm'
 
 alias isotime='node -e "console.log(new Date().toISOString())"'
