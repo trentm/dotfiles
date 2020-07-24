@@ -154,6 +154,10 @@ if has("autocmd") && !exists("autocommands_loaded")
   autocmd BufEnter		*.js	vnoremap ,unc :!linefilter c uncomment
   autocmd BufLeave		*.js	vunmap ,unc
 
+  "---- Go files
+  autocmd BufEnter		*.go	set noexpandtab
+  autocmd BufLeave		*.go	set expandtab
+
   "---- Todo and Perforce temp form files
   autocmd BufEnter		*.todo,t*.tmp	set noexpandtab textwidth=74
   autocmd BufLeave		*.todo,t*.tmp	set expandtab textwidth=0

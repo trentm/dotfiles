@@ -28,8 +28,12 @@ fi
 
 
 # ---- Zsh shell options
+# http://zsh.sourceforge.net/Doc/Release/Options.html
+# List all opts via 'emulate -lLR zsh'. <shrug/>
 
 setopt autocd  # can 'cd DIR' with just the 'DIR'
+
+unsetopt nomatch # avoid: 'zsh: no matches found: <something with glob chars>'
 
 # Shell history tweaks. See 'emulate -lLR zsh | grep hist' for other opts.
 setopt sharehistory
