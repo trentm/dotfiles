@@ -1,57 +1,59 @@
-"-----------------------------------------------------
-"  Trent's VIM configuration file.
-"-----------------------------------------------------
+" Trent's VIM configuration file.
 
-" Required to fix BS on booboo. XXX Does this cause problems on other plats?
-if &term == "xterm-color"
-    set t_kb=
-    fixdel
-endif
+set nocompatible
 
+" ???
 " Vim bundles in ~/.vim/bundles
 " https://github.com/tpope/vim-pathogen
 execute pathogen#infect()
 
+" TODO: tpope/vim-commentary
 
-"---- platform/target-generic configuration
+syntax on
+filetype on
+filetype plugin indent on
 
+set hlsearch
 set hidden              " allow modified and not forefront buffers
-
-set nocompatible        " Use Vim defaults (much better!)
 set backspace=2         " allow backspacing over all in insert mode
 set ai                  " always set autoindenting on
 set backup              " keep a backup file
-set viminfo='20,\"50    " read/write a .viminfo file, don't store more
-                        " than 50 lines of registers
 set history=50          " keep 50 lines of command line history
 set ruler               " show the cursor position all the time
 set laststatus=2        " always display a status line
+set showmatch           " show matching parentheses
+set noic                " case-sensitive searching
+set scrolloff=10        " keep a number of lines above/below cursor
 
 set tabstop=4           " default tabstop of 4 spaces
 set shiftwidth=4        " default shiftwidth of 4 spaces
 set expandtab           " use spaces instead of tabs
+set smarttab
 
-set cmdheight=1         " set command line four lines high
 
-set showmatch           " show matching parentheses
-
-set scrolloff=10        " keep a number of lines above/below cursor
-
+" ???
 set selectmode=key      " MS Windows style shifted-movement SELECT mode
 set keymodel=startsel
 
-set noic                " case-sensitive searching
 
-if version >= 730
-    set colorcolumn=80,120
-endif
+" Consider '+0,...' format to be relative to 'textwidth'.
+set colorcolumn=80,120
 
+" Showing whitespace. Use 'set nolist' to disable.
+" TODO: Consider 'trail:c' in listchars rather than the EOL space highlighting.
+" TODO: why do I need this 'highlight' in a BufWinEnter?
+autocmd BufWinEnter * highlight SpecialKey ctermfg=grey
+set listchars=tab:│\ ,nbsp:⎵
+set list
 
-set modeline
-set modelines=5
-filetype on
-filetype plugin indent on
-
+" Highlight spaces at end of lines.
+" see: http://vim.wikia.com/wiki/Highlight_unwanted_spaces
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
 
 
 " Sarathy's 'search' output with -n option
@@ -248,13 +250,6 @@ endif
 
 "---- GUI configuration
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-  syntax on
-  set hlsearch
-endif
-
 if has("gui")
   " set the gui options to:
   "   g: grey inactive menu items
@@ -267,21 +262,6 @@ if has("gui")
 "  set lines=46  " number of display lines
 "  set columns=90
 endif
-
-
-"---- VIM v.5 specific configuration stuff
-
-if version >= 500
-  " Enable syntax highlighting
-  syntax on
-
-  " Set the location of my syntax overrides and read the defaults
-  "XXX huh?
-  "let mysyntaxfile = $VIM . "/usersyntax/usersyntax.vim"
-  "source $VIM/syntax/syntax.vim
-endif
-
-
 
 
 "---- http://vim.sourceforge.net/tips/tip.php?tip_id=102
@@ -318,21 +298,5 @@ if &t_Co > 2 || has("gui_running")
     set t_Sf=[3%dm
     set t_Sb=[4%dm
   endif
-  syntax on
-  set hlsearch
-  " So far for a *light* scheme, I've found whatever is the default to
-  " be the best. For dark, slate2 is nice.
-  "colorscheme slate2
 endif
 
-
-
-"
-" Josh's poo
-" Doesn't work with my font, or without Mavericks I don't think.
-"
-"set listchars=tab:💩\
-"set list
-"" To disable or re-enable poo mode
-"command PooOff set tabstop=8 | set nolist
-"command PooOn set tabstop=4 | set list
