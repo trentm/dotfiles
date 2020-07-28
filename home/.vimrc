@@ -30,8 +30,7 @@ set shiftwidth=4        " default shiftwidth of 4 spaces
 set expandtab           " use spaces instead of tabs
 set smarttab
 
-
-" ???
+" TODO: regrok this
 set selectmode=key      " MS Windows style shifted-movement SELECT mode
 set keymodel=startsel
 
@@ -42,6 +41,7 @@ set colorcolumn=80,120
 " Showing whitespace. Use 'set nolist' to disable.
 " TODO: Consider 'trail:c' in listchars rather than the EOL space highlighting.
 " TODO: why do I need this 'highlight' in a BufWinEnter?
+" TODO: want the autocmd guard below?
 autocmd BufWinEnter * highlight SpecialKey ctermfg=grey
 set listchars=tab:│\ ,nbsp:⎵
 set list
@@ -56,18 +56,17 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
 
+" TODO: review/grok this
 " Sarathy's 'search' output with -n option
 set errorformat-=%f:%l:%m  errorformat+=%f\\,:%l:%m,%f:%l:%m
 " Intel's Win64 xcompiler (??? I think)
 set errorformat+=%f(%l)\ :\ %m
 
-
-"---- personal mappings
-
 " Don't use Ex mode, use Q for formatting
 map Q gq
 
 " ripgrep in quickfix, search via ':grep ...'
+" TODO: grok using :grep again
 set grepprg=rg\ --vimgrep
 set grepformat^=%f:%l:%c:%m
 
@@ -87,153 +86,63 @@ map <F10> :bprevious
 map <F11> :buffers
 map <F12> :bnext
 " scroll with Ctrl-arrow-keys
+" TODO: review/grok this
 map <C-Up> 
 map <C-Down> 
 map <C-j> <C-E>
 map <C-k> <C-Y>
 
-"---- fix for crontab -e problem
+" Fix for 'crontab -e' problem.
 " http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
-
 if $VIM_CRONTAB == "true"
     set nobackup
     set nowritebackup
 endif
 
 
-
 " https://github.com/airblade/vim-gitgutter
+" TODO: review/grok this
 nmap <silent> ]h :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>
 nmap <silent> [h :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
 
 
-
-"---- some autocommands
-
+" autocommands
+"
+" Like this:
+"   autocmd BufEnter <glob> vnoremap <keybinding> <cmd>
+"   autocmd BufLeave <glob> vunmap   <keybinding>
+" E.g.:
+"   autocmd BufEnter *      vnoremap ,filter :!linefilter
+"   autocmd BufLeave *      vunmap ,filter
+"
 if has("autocmd") && !exists("autocommands_loaded")
-  " avoid double def'n
+  " Avoid double definition
   let autocommands_loaded = 1
 
-  "---- all files
-  autocmd BufEnter		*		vnoremap ,filter :!linefilter
-  autocmd BufLeave		*		vunmap ,filter
-  autocmd BufEnter		*		vnoremap ,tab :!linefilter tabify
-  autocmd BufLeave		*		vunmap ,tab
-  autocmd BufEnter		*		vnoremap ,untab :!linefilter untabify
-  autocmd BufLeave		*		vunmap ,untab
-  autocmd BufEnter		*		vnoremap ,tounix :!linefilter tounix
-  autocmd BufLeave		*		vunmap ,tounix
-  autocmd BufEnter		*		vnoremap ,todos :!linefilter todos
-  autocmd BufLeave		*		vunmap ,todos
-
   " When editing a file, always jump to the last cursor position
-  autocmd BufReadPost	*		if line("'\"") | exe "'\"" | endif
+  autocmd BufReadPost   *       if line("'\"") | exe "'\"" | endif
 
-  "---- text files, and structure text files
-  " always limit the width of text to 77 characters
-  autocmd BufEnter		*.txt,*.stx	set textwidth=77
-  autocmd BufLeave		*.txt,*.stx	set textwidth=0
-  autocmd BufEnter		*.txt	vnoremap ,c :!linefilter python comment
-  autocmd BufLeave		*.txt	vunmap ,c
-  autocmd BufEnter		*.txt	vnoremap ,unc :!linefilter python uncomment
-  autocmd BufLeave		*.txt	vunmap   ,unc
-  autocmd BufEnter		*.stx	set tabstop=2
-  autocmd BufLeave		*.stx	set tabstop=4
-  autocmd BufEnter		*.stx	set shiftwidth=2
-  autocmd BufLeave		*.stx	set shiftwidth=4
-  "XXX should have exit event to undo this
+  " Text files.
+  " Always limit the width of text to 77 characters for one-level of
+  " blockquote in email.
+  autocmd BufEnter      *.txt   set textwidth=77
+  autocmd BufLeave      *.txt   set textwidth=0
 
-  "---- Makefiles files
-  " One of the BufLeave's for Makefiles causes an error in Vim.
-  autocmd BufEnter		Makefile*,makefile*	vnoremap ,c :!linefilter python comment
-  "autocmd BufLeave		Makefile*,makefile*	vunmap ,c
-  autocmd BufEnter		Makefile*,makefile*	vnoremap ,unc :!linefilter python uncomment
-  "autocmd BufLeave		Makefile*,makefile*	vunmap ,unc
+  " Go files use tabs. Boo.
+  autocmd BufEnter      *.go    set noexpandtab
+  autocmd BufLeave      *.go    set expandtab
 
-  "---- JavaScript files
-  autocmd BufEnter		*.js	vnoremap ,c :!linefilter c comment
-  autocmd BufLeave		*.js	vunmap ,c
-  autocmd BufEnter		*.js	vnoremap ,unc :!linefilter c uncomment
-  autocmd BufLeave		*.js	vunmap ,unc
-
-  "---- Go files
-  autocmd BufEnter		*.go	set noexpandtab
-  autocmd BufLeave		*.go	set expandtab
-
-  "---- Todo and Perforce temp form files
-  autocmd BufEnter		*.todo,t*.tmp	set noexpandtab textwidth=74
-  autocmd BufLeave		*.todo,t*.tmp	set expandtab textwidth=0
-
-  "---- XML files
-  "autocmd BufEnter		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	set noexpandtab
-  "autocmd BufLeave		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	set expandtab
-  "autocmd BufEnter		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	set tabstop=2 shiftwidth=2
-  "autocmd BufLeave		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	set tabstop=4 shiftwidth=4
-  autocmd BufEnter		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	vnoremap ,c :!linefilter xml comment
-  autocmd BufLeave		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	vunmap ,c
-  autocmd BufEnter		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	vnoremap ,unc :!linefilter xml uncomment
-  autocmd BufLeave		*.xml,*.html,*.htm,*.xhtml,*.xul,*.rdf,*.recipe,*.khr	vunmap ,unc
-
-  "---- mutt temporary mail files (i.e. email I write)
-  autocmd BufRead		mutt-*	set textwidth=72
-  "XXX should have exit event to undo this
-  autocmd BufEnter		mutt-*	vnoremap ,c :!linefilter mail comment
-  autocmd BufLeave		mutt-*	vunmap   ,c
-  autocmd BufEnter		mutt-*	vnoremap ,unc :!linefilter mail uncomment
-  autocmd BufLeave		mutt-*	vunmap   ,unc
-
-  "---- rc files typically use Python-style commenting
-  autocmd BufEnter		muttrc,*.rc	vnoremap ,c :!linefilter python comment
-  autocmd BufLeave		muttrc,*.rc	vunmap   ,c
-  autocmd BufEnter		muttrc,*.rc	vnoremap ,unc :!linefilter python uncomment
-  autocmd BufLeave		muttrc,*.rc	vunmap   ,unc
-
-  "---- markdown files use email-type "commenting" for blockquotes
-  autocmd BufRead       *.markdown  set textwidth=72
-  autocmd BufEnter      *.markdown  vnoremap ,c :!linefilter mail comment
-  autocmd BufLeave      *.markdown  vunmap   ,c
-  autocmd BufEnter      *.markdown  vnoremap ,unc :!linefilter mail uncomment
-  autocmd BufLeave      *.markdown  vunmap   ,unc
-
-  "---- programming lang files files
-  "need common file repository for these (maybe my own public ftp site):
-  "  autocmd BufNewFile	*.py	0r ~/skel/skel.py
-  " use linefilter for commenting and uncommenting
-  autocmd BufEnter		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl		vnoremap ,c :!linefilter c comment
-  autocmd BufLeave		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl		vunmap   ,c
-  autocmd BufEnter		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl		vnoremap ,unc :!linefilter c uncomment
-  autocmd BufLeave		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl		vunmap   ,unc
-  autocmd BufEnter		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl		set formatoptions=crql comments=sr:/*,mb:*,el:*/,b:// textwidth=72
-  autocmd BufLeave		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl*.c,*.h,*.cc,*.cxx,*.hxx,*.hpp,*.cpp,*.idl		set formatoptions=tcql nocindent comments& textwidth=0
-  "autocmd BufEnter		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx	set tabstop=8 shiftwidth=4 noexpandtab
-  "autocmd BufLeave		*.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx	set tabstop=4 shiftwidth=4 expandtab
-  autocmd BufEnter		*.sh	vnoremap ,c :!linefilter python comment
-  autocmd BufLeave		*.sh	vunmap   ,c
-  autocmd BufEnter		*.sh	vnoremap ,unc :!linefilter python uncomment
-  autocmd BufLeave		*.sh	vunmap   ,unc
-  autocmd BufEnter		*.ptl	setf python
-  autocmd BufEnter		*.py*,*.ptl	vnoremap ,c :!linefilter python comment
-  autocmd BufLeave		*.py*,*.ptl	vunmap   ,c
-  autocmd BufEnter		*.py*,*.ptl	vnoremap ,unc :!linefilter python uncomment
-  autocmd BufLeave		*.py*,*.ptl	vunmap   ,unc
-  autocmd BufEnter		*.py*,*.ptl	set tabstop=4
-  autocmd BufEnter		*.pl,Construct,Conscript	vnoremap ,c   :!linefilter perl comment
-  autocmd BufLeave		*.pl,Construct,Conscript	vunmap   ,c
-  autocmd BufEnter		*.pl,Construct,Conscript	vnoremap ,unc :!linefilter perl uncomment
-  autocmd BufLeave		*.pl,Construct,Conscript	vunmap   ,unc
-  autocmd BufEnter		*.sh,*.py*,*.ptl,*.pl,Construct,Conscript	set formatoptions=crql comments=:# textwidth=72
-  autocmd BufLeave		*.sh,*.py*,*.ptl,*.pl,Construct,Conscript	set formatoptions=tcql comments& textwidth=0
-  " Ick. Use tabs and tabstop=8 for .sh and .pl files because this
-  " is typical.
-  "autocmd BufEnter		*.sh,*.pl	set tabstop=8 shiftwidth=8 noexpandtab
-  "autocmd BufLeave		*.sh,*.pl	set tabstop=4 shiftwidth=4 expandtab
-
-  autocmd BufEnter		Rakefile,Capfile,*.rb	set tabstop=2 shiftwidth=2 expandtab
+  " Programming lang files files
+  "need common file repository for these
+  "  autocmd BufNewFile *.py    0r ~/skel/skel.py
+  autocmd BufEnter      *.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl      set formatoptions=crql comments=sr:/*,mb:*,el:*/,b:// textwidth=72
+  autocmd BufLeave      *.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl*.c,*.h,*.cc,*.cxx,*.hxx,*.hpp,*.cpp,*.idl        set formatoptions=tcql nocindent comments& textwidth=0
+  autocmd BufEnter      *.sh,*.py*,*.pl set formatoptions=crql comments=:# textwidth=72
+  autocmd BufLeave      *.sh,*.py*,*.pl set formatoptions=tcql comments& textwidth=0
 endif
 
 
-"---- Windows configuration
-
+" Windows configuration
 if has("win32")
   " set the make program
   "set makeprg=nmake
@@ -248,8 +157,7 @@ else
 endif
 
 
-"---- GUI configuration
-
+" GUI configuration (ancient gvim)
 if has("gui")
   " set the gui options to:
   "   g: grey inactive menu items
@@ -267,7 +175,7 @@ endif
 "---- http://vim.sourceforge.net/tips/tip.php?tip_id=102
 " Note: I reversed the mappings because IMO <tab> should search _backwards_ by
 " default.
-
+" TODO: review/grok this
 function! InsertTabWrapper(direction)
     let col = col('.') - 1
     if !col || getline('.')[col - 1] !~ '\k'
@@ -283,11 +191,8 @@ inoremap <tab> <c-r>=InsertTabWrapper ("backward")<cr>
 inoremap <s-tab> <c-r>=InsertTabWrapper ("forward")<cr>
 
 
-
-" ---------------------------------------------------------------------------
 " Colors / Theme
-" ---------------------------------------------------------------------------
-
+" TODO: review/grok this
 if &t_Co > 2 || has("gui_running")
   if has("terminfo")
     set t_Co=16
@@ -299,4 +204,3 @@ if &t_Co > 2 || has("gui_running")
     set t_Sb=[4%dm
   endif
 endif
-
