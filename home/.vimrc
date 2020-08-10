@@ -2,13 +2,6 @@
 
 set nocompatible
 
-" TODO: maybe drop pathogen usage, esp. if I have no plugins
-" Vim bundles in ~/.vim/bundles
-" https://github.com/tpope/vim-pathogen
-execute pathogen#infect()
-
-" TODO: tpope/vim-commentary
-
 syntax on
 filetype on
 filetype plugin indent on
@@ -106,6 +99,12 @@ endif
 " TODO: review/grok this
 nmap <silent> ]h :<C-U>execute v:count1 . "GitGutterNextHunk"<CR>
 nmap <silent> [h :<C-U>execute v:count1 . "GitGutterPrevHunk"<CR>
+
+" https://github.com/tpope/vim-commentary
+" - `gc<motion>` to toggle commenting
+" - `gcc` to for current line
+" - `g/foo/Commentary` for lines matching foo, for example
+" TODO: ,c shortcut for gc for commenting? Or get used to gc?
 
 
 " autocommands
