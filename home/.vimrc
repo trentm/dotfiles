@@ -2,7 +2,7 @@
 
 set nocompatible
 
-" ???
+" TODO: maybe drop pathogen usage, esp. if I have no plugins
 " Vim bundles in ~/.vim/bundles
 " https://github.com/tpope/vim-pathogen
 execute pathogen#infect()
@@ -38,22 +38,24 @@ set keymodel=startsel
 " Consider '+0,...' format to be relative to 'textwidth'.
 set colorcolumn=80,120
 
-" Showing whitespace. Use 'set nolist' to disable.
-" TODO: Consider 'trail:c' in listchars rather than the EOL space highlighting.
-" TODO: why do I need this 'highlight' in a BufWinEnter?
-" TODO: want the autocmd guard below?
-autocmd BufWinEnter * highlight SpecialKey ctermfg=grey
+" Showing whitespace. 'set list' to enable, 'set nolist' to disable.
+" Disabled by default because cut 'n paste from terminal includes these chars.
+"autocmd BufWinEnter * highlight SpecialKey ctermfg=grey
 set listchars=tab:│\ ,nbsp:⎵
-set list
 
-" Highlight spaces at end of lines.
-" see: http://vim.wikia.com/wiki/Highlight_unwanted_spaces
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
+" Highlight subtle whitespace:
+" 1. Whitespace at end of lines, and spaces before tabs => red
+" 2. TODO: Make tabs LightGrey, but only in langs I don't typically use
+"    tabs. E.g. not in Go. Perhaps highlight leading spaces in Go.
+"       highlight TabWhitespace term=reverse ctermbg=7 guibg=LightGrey
+"       autocmd BufWinEnter * 2match TabWhitespace /\t/
+highlight BadWhitespace ctermbg=red guibg=red
+autocmd BufWinEnter * match BadWhitespace /\s\+$\| \+\ze\t/
+autocmd InsertEnter * match BadWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match BadWhitespace /\s\+$\| \+\ze\t/
+if version >= 702
+  autocmd BufWinLeave * call clearmatches()
+endif
 
 
 " TODO: review/grok this
