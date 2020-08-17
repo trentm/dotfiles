@@ -1,3 +1,6 @@
 [submodule "home/.vim/pack/tpope/start/commentary"]
 	path = home/.vim/pack/tpope/start/commentary
 	url = https://tpope.io/vim/commentary.git
+[submodule "home/.vim/pack/leafgarland/start/typescript-vim"]
+	path = home/.vim/pack/leafgarland/start/typescript-vim
+	url = https://github.com/leafgarland/typescript-vim.git
