@@ -38,7 +38,7 @@ function set_base_url_from_dir {
     [[ -n "$remote_url" ]] || fatal "'$dir' is not in a git clone"
 
     if [[ "$remote_url" =~ ^https://.* ]]; then
-        base_url="$remote_url"
+        base_url=$(echo "$remote_url" | sed 's/\.git$//')
     elif [[ "$remote_url" =~ ^git@github.com: ]]; then
         repo_name=$(echo "$remote_url" | cut -d ':' -f 2 | sed 's/\.git$//')
         base_url="https://github.com/$repo_name"
