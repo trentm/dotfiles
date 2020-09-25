@@ -17,11 +17,13 @@ set laststatus=2        " always display a status line
 set showmatch           " show matching parentheses
 set noic                " case-sensitive searching
 set scrolloff=10        " keep a number of lines above/below cursor
+set clipboard=unnamed   " yank to the system clipboard
 
 set tabstop=4           " default tabstop of 4 spaces
 set shiftwidth=4        " default shiftwidth of 4 spaces
 set expandtab           " use spaces instead of tabs
 set smarttab
+
 
 " TODO: regrok this
 set selectmode=key      " MS Windows style shifted-movement SELECT mode
