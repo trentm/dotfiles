@@ -636,15 +636,6 @@ test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
 
 test -r $HOME/.bash_localenv && source $HOME/.bash_localenv
 
-# RVM
-# - <http://rvm.beginrescueend.com/rvm/install/> says:
-#   "Ensure that rvm is the last thing sourced in all of your shell
-#   profiles - e.g. it is sourced in the user specific profile after any
-#   environment variables, especially PATH are set. Otherwise, the values you set
-#   be trampled when you switch rubies."
-# - self-update periodically via: `rvm update --head && rvm reload`
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

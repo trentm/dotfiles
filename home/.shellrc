@@ -9,6 +9,15 @@ if [[ $UNAME == "SunOS" ]]; then
 fi
 PATH="/usr/local/go/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
+if [[ $UNAME == "Darwin" ]]; then
+    # Use brew's ruby.
+    #
+    # If I care about multiple per-project ruby versions then consider rbenv.
+    #
+    # Install a gem via:
+    #   gem install --user-install GEM1 GEM2 ...
+    PATH="/usr/local/opt/ruby/bin:$HOME/.gem/ruby/2.7.0/bin:$PATH"
+fi
 PATH="$HOME/opt/node-10/bin:$PATH"
 if [[ -d /Library/Frameworks/Python.framework/Versions/3.8/bin ]]; then
     PATH=/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH

@@ -38,6 +38,17 @@ unsetopt nomatch # avoid: 'zsh: no matches found: <something with glob chars>'
 # Shell history tweaks. See 'emulate -lLR zsh | grep hist' for other opts.
 setopt appendhistory
 
+# kill-word (Ctrl+W)
+# The scenario:
+#       word1 ~/a/b/c | <|>
+# Without the following, in zsh, a Ctrl+W will kill all the way back to:
+#       word1
+# With bash, it will kill back to:
+#       word1 ~/a/b/c
+# which is what I'm used to.
+autoload -U select-word-style
+select-word-style shell
+
 
 # ---- Prompt
 # - git status, see:
@@ -148,6 +159,11 @@ if [[ -n "$ITERM_SESSION_ID" ]]; then
     _iterm_title_update
     chpwd_functions+=(_iterm_title_update)
 fi
+
+# rbenv/ruby-build/ruby note from Homebrew:
+#   To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the
+#   following to your ~/.zshrc:
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 
 _trace "end"
