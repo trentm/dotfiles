@@ -47,9 +47,13 @@ fi
 export PAGER="less -iRwX"
 export MANPAGER="less -iRswX"
 
-export MANTASH_PS1='[\u@\H \w]$ '
 export GOPATH=$HOME/go  # same as Go1.8 default
 test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
+
+# rbenv/ruby-build/ruby note from Homebrew:
+#   To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the
+#   following to your ~/.zshrc:
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 
 # ---- Aliases and functions
@@ -93,14 +97,21 @@ alias eol="python $HOME/tm/eol/lib/eol.py"
 alias j="jekyll && (cd _site && staticserve)"
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias rgall='rg -g "*" -a'
+function rgless() {
+    rg --heading -n --color ansi "$@" | less -R
+}
+
 alias gtd="python ~/Dropbox/gtd/bin/gtd.py"
 alias note="python ~/Dropbox/gtd/bin/gtd.py note"
 
 # Shuffle lines (from <http://stackoverflow.com/a/6511327>)
 alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
 
+alias js2json='node -e '\''s=""; process.stdin.resume(); process.stdin.on("data",function(c){s+=c}); process.stdin.on("end",function(){o=eval("("+s+")");console.log(JSON.stringify(o)); });'\'''
+
 alias isotime='node -e "console.log(new Date().toISOString())"'
 alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
+alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
 alias crontab='VIM_CRONTAB=true crontab'
@@ -165,7 +176,36 @@ function hi() {
     perl -pe "s/$1/\e[1;31;43m$&\e[0m/g"
 }
 
+# Highlight chars beyond 80 columns.
+function col80() {
+    perl -pe 's/^(.{80})(.*?)$/$1\e[1;31;43m$2\e[0m/';
+}
+
 function fn() { find . -iname "*$@*"; }
+
+# From Pedro (https://gist.github.com/c19e71b17ca1de05000f)
+# `brew install rlwrap` to get `rlwrap`.
+function parse_git_branch {
+   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+   echo "("${ref#refs/heads/}")"
+}
+alias noderepl='env NODE_NO_READLINE=1 rlwrap -p Red -S "$(parse_git_branch) node> " node'
+
+alias bumpver='json -I -f package.json -e "v = this.version.split(/\./g); if (v.length !== 3 || isNaN(Number(v[2]))) throw new Error(\"wtf semver\"); v[2]=Number(v[2])+1; this.version = v.join(\".\")"'
+
+alias date-for-date='echo "# Run the following on target machine to set to same date as here." && echo "date $(date -u "+%m%d%H%M%Y.%S")"'
+alias date-from-timestamp='node -p -e "(new Date(Number(process.argv[1]))).toISOString()"'
+
+alias docker-ip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+alias docker-name="docker inspect --format '{{ .Name }}'"
+function docker-port {
+    # The first host:port in NetworkSettings.Ports
+    # Q: Does this correspond to the first '-p N:M' in 'docker run' args?
+    docker inspect $1 | json -a -e '
+        ports=this.NetworkSettings.Ports;
+        first=ports[Object.keys(ports)[0]][0];
+        this._ = first.HostIp + ":" + first.HostPort' _
+}
 
 if [[ $UNAME == "Darwin" ]]; then
     alias ldd='otool -L'

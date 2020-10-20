@@ -32,11 +32,12 @@ fi
 # List all opts via 'emulate -lLR zsh'. <shrug/>
 
 setopt autocd  # can 'cd DIR' with just the 'DIR'
-
 unsetopt nomatch # avoid: 'zsh: no matches found: <something with glob chars>'
+setopt interactivecomments
 
 # Shell history tweaks. See 'emulate -lLR zsh | grep hist' for other opts.
 setopt appendhistory
+
 
 # kill-word (Ctrl+W)
 # The scenario:
@@ -159,11 +160,5 @@ if [[ -n "$ITERM_SESSION_ID" ]]; then
     _iterm_title_update
     chpwd_functions+=(_iterm_title_update)
 fi
-
-# rbenv/ruby-build/ruby note from Homebrew:
-#   To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the
-#   following to your ~/.zshrc:
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-
 
 _trace "end"
