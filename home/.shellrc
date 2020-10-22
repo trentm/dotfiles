@@ -30,6 +30,7 @@ fi
 PATH="$HOME/bin:$PATH"
 export PATH
 
+
 # TODO: should we lock to en_US.UTF-8?
 ## enable en_US locale w/ utf-8 encodings if not already configured
 #: ${LANG:="en_US.UTF-8"}
@@ -39,7 +40,7 @@ export PATH
 #export LANG LANGUAGE LC_CTYPE LC_ALL
 
 if [[ -n "$(command -v vim)" ]]; then
-    export EDITOR=vim 
+    export EDITOR=vim
     alias vi=vim
 else
     export EDITOR=vi
@@ -51,9 +52,12 @@ export GOPATH=$HOME/go  # same as Go1.8 default
 test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
 
 # rbenv/ruby-build/ruby note from Homebrew:
-#   To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the
-#   following to your ~/.zshrc:
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+# To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the
+# following to your ~/.zshrc:
+#       export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+# Note: For speed, I'm avoiding execing brew for every new shell.
+# Presumably this path isn't going to change.
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/opt/openssl@1.1"
 
 
 # ---- Aliases and functions
@@ -264,5 +268,4 @@ function pics-set-createdate {
     echo "# exiftool '-CreateDate=$exifDate' $files"
     exiftool "-CreateDate=$exifDate" $files
 }
-
 

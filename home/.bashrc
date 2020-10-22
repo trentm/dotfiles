@@ -1,15 +1,26 @@
 #!/bin/bash
 
+# Internal trace logging of this script.
+_TRACE=0
+case "$0" in
+    -*) _LOGINSHELL=1 ;;
+    *)  unset _LOGINSHELL ;;
+esac
+if [[ $_TRACE == 1 && $_LOGINSHELL == 1 ]]; then
+    function _trace {
+        echo "[$(date "+%Y-%m-%dT%H:%M:%SZ")] .zshrc: trace: $*" >&2
+        return 0
+    }
+else
+    alias _trace=true
+fi
+_trace ".bashrc: start"
+
+
 # the basics
 : ${HOME=~}
 : ${LOGNAME=$(id -un)}
-: ${UNAME=$(uname)}
 
-# complete hostnames from this file
-: ${HOSTFILE=~/.ssh/known_hosts}
-
-# readline config
-: ${INPUTRC=~/.inputrc}
 
 # ----------------------------------------------------------------------
 #  SHELL OPTIONS

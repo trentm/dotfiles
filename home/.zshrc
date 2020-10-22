@@ -12,19 +12,26 @@ if [[ $_TRACE == 1 && $_LOGINSHELL == 1 ]]; then
         return 0
     }
 else
-    function _trace {}
+    alias _trace=true
 fi
-_trace start
+_trace ".zshrc: start"
 
 
 # Shared-with-bash config.
 if [[ -e ~/.shellrc ]]; then
     source ~/.shellrc
+    _trace "loaded .shellrc"
 else
     echo "warn: no ~/.shellrc" >&2
 fi
-[[ -e ~/.shellrc.private ]] && source ~/.shellrc.private
-[[ -e ~/.shellrc.local ]] && source ~/.shellrc.local
+if [[ -e ~/.shellrc.private ]]; then
+    source ~/.shellrc.private
+    _trace "loaded .shellrc.private"
+fi
+if [[ -e ~/.shellrc.local ]]; then
+    source ~/.shellrc.local
+    _trace "loaded .shellrc.local"
+fi
 
 
 # ---- Zsh shell options
@@ -60,6 +67,7 @@ select-word-style shell
 #   a nice example using unicode black circle with coloring for the badges.
 # - TODO: consider dropping username and hostname for local usage
 #   (use SSH_CLIENT presence for remote sessions)
+_trace "setting up prompt"
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git*' formats "%s:%b"
@@ -161,4 +169,4 @@ if [[ -n "$ITERM_SESSION_ID" ]]; then
     chpwd_functions+=(_iterm_title_update)
 fi
 
-_trace "end"
+_trace ".zshrc: end"
