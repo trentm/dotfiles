@@ -3,8 +3,12 @@
 # Install:
 #   cat ~/tm/dotfiles/vscode.extensions | grep -v '^#' | while read ext; do code --install-extension $ext; done
 #
+asciidoctor.asciidoctor-vscode
 bungcip.better-toml
 dbaeumer.vscode-eslint
+golang.go
+ms-azuretools.vscode-docker
 ms-python.python
 rust-lang.rust
+ryanblock.architect
 vscodevim.vim

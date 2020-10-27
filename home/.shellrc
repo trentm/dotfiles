@@ -21,8 +21,10 @@ fi
 PATH="$HOME/opt/node-10/bin:$PATH"
 if [[ -d /Library/Frameworks/Python.framework/Versions/3.8/bin ]]; then
     PATH=/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH
+elif [[ -d /Library/Frameworks/Python.framework/Versions/3.9/bin ]]; then
+    PATH=/Library/Frameworks/Python.framework/Versions/3.9/bin:$PATH
 elif [[ "$UNAME" == "Darwin" ]]; then
-    echo ".shellrc: warning: no python.org install of Python 3 is available" >&2
+    echo ".shellrc: warning: no python.org install of Python 3.8 or 3.9 is available" >&2
 fi
 if [[ -d "$HOME/.local/bin" ]]; then
     PATH="$HOME/.local/bin:$PATH"

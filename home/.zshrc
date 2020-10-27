@@ -142,7 +142,7 @@ autoload -Uz compinit && compinit
 # node-cmdln.
 autoload bashcompinit && bashcompinit
 
-source ~/.nvm/bash_completion
+[ -s ~/.nvm/bash_completion ] && source ~/.nvm/bash_completion
 
 if [[ -d ~/tm/dotfiles/zsh-completion ]]; then
     ls ~/tm/dotfiles/zsh-completion/*.zsh | while read f; do
