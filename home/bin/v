@@ -67,13 +67,19 @@ else
     fi
 
     set_base_url_from_dir "$dir"
-    branch=$(git -C "$dir" symbolic-ref HEAD | cut -d/ -f3-)
+    if [[ -n "$(git -C "$dir" symbolic-ref HEAD 2>/dev/null || true)" ]]; then
+        # We are on a branch.
+        treename=$(git -C "$dir" symbolic-ref HEAD | cut -d/ -f3-)
+    else
+        # Otherwise, hopefully we are on a tag.
+        treename=$(git describe --exact-match --tags HEAD)
+    fi
     subdir=$(git -C "$dir" rev-parse --show-prefix)
 
     if [[ -z "$base" ]]; then
-        url=$base_url/tree/${branch}/${subdir}
+        url=$base_url/tree/${treename}/${subdir}
     else
-        url=$base_url/blob/${branch}/${subdir}${base}
+        url=$base_url/blob/${treename}/${subdir}${base}
 
         if [[ "$anchor" =~ ^[0-9]+$ ]]; then
             url+="#L${anchor}"
