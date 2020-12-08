@@ -10,7 +10,7 @@
         80,
         100
     ],
-    "workbench.startupEditor": "welcomePage",
+    "workbench.startupEditor": "newUntitledFile",
 
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
@@ -31,5 +31,9 @@
     "go.useLanguageServer": true,
     "workbench.editor.enablePreviewFromQuickOpen": false,
     "vim.useSystemClipboard": true,
-    "editor.minimap.enabled": false
+    "editor.minimap.enabled": false,
+    "vim.overrideCopy": false,
+    "editor.cursorSurroundingLines": 5,
+    "files.insertFinalNewline": true,
+    "editor.scrollBeyondLastLine": false
 }
