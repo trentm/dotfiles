@@ -102,6 +102,7 @@ alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
 alias eol="python $HOME/tm/eol/lib/eol.py"
 alias j="jekyll && (cd _site && staticserve)"
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
+alias rg='rg -M300'
 alias rgall='rg -g "*" -a'
 function rgless() {
     rg --heading -n --color ansi "$@" | less -R
@@ -141,26 +142,44 @@ function pomo() {
 
 # Select a node $ver either at ~/opt/node-$ver or via 'nvm use $ver'.
 # Set NODE_PROFILE for my PS1.
+# Usage:
+#   node-select         # list avail versions and set NODE_PROFILE
+#   node-select VER
 function node-select {
     local ver dir firstpath
     ver=$1
-    dir=$HOME/opt/node-$ver/bin
-    if [[ ! -d $dir ]]; then
-        if which nvm >/dev/null 2>/dev/null; then
-            if ! nvm use $ver; then
+
+    # Handle no arg.
+    if [[ -z "$ver" ]]; then
+        dirs=$(ls -1d $HOME/opt/node-* 2>/dev/null)
+        if [[ -z "$dirs" ]]; then
+            nvm list
+        else
+            for d in $dirs; do
+                echo $(basename $d | cut -d- -f2)
+            done
+        fi
+        ver=$(node --version 2>/dev/null)
+    else
+        dir=$HOME/opt/node-$ver/bin
+        if [[ ! -d $dir ]]; then
+            if which nvm >/dev/null 2>/dev/null; then
+                if ! nvm use $ver; then
+                    return
+                fi
+            else
+                echo "node-select: error: no '$dir' and no nvm" >&2
                 return
             fi
         else
-            echo "node-select: error: no '$dir' and no nvm" >&2
-            return
-        fi
-    else
-        echo "select node $($dir/node --version) at $dir"
-        firstpath=$(echo "$PATH" | cut -d: -f1)
-        if [[ -n "$(echo "$firstpath" | grep "^$HOME/opt/node-.*/bin" 2>/dev/null)" ]]; then
-            export PATH=$(echo "$PATH" | sed -e "s#$firstpath:#$dir:#")
-        else
-            export PATH=$dir:$PATH
+            # Legacy from when I used to build my own Node versions.
+            echo "select node $($dir/node --version) at $dir"
+            firstpath=$(echo "$PATH" | cut -d: -f1)
+            if [[ -n "$(echo "$firstpath" | grep "^$HOME/opt/node-.*/bin" 2>/dev/null)" ]]; then
+                export PATH=$(echo "$PATH" | sed -e "s#$firstpath:#$dir:#")
+            else
+                export PATH=$dir:$PATH
+            fi
         fi
     fi
     export NODE_PROFILE=$ver
