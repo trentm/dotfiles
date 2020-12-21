@@ -4,3 +4,6 @@
 [submodule "home/.vim/pack/leafgarland/start/typescript-vim"]
 	path = home/.vim/pack/leafgarland/start/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim.git
+[submodule "home/.vim/pack/editorconfig/start/editorconfig-vim"]
+	path = home/.vim/pack/editorconfig/start/editorconfig-vim
+	url = https://github.com/editorconfig/editorconfig-vim.git
