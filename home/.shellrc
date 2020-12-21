@@ -123,6 +123,14 @@ alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
 alias crontab='VIM_CRONTAB=true crontab'
 
+# Python virtual envs for Python >=3.3, else you can try virtualenv.
+# - Create a new venv: 'venv .venv'
+# - Activate it: 'source ./.venv/bin/activate'
+# - It should show as "venv:$name" in PS1.
+# - Deactivate it: 'deactivate'
+# https://docs.python.org/3/tutorial/venv.html
+alias venv='python3 -m venv'
+
 # Bash shell driver for 'go' (https://github.com/trentm/go-tool).
 #export PATH=$HOME/tm/go-tool/lib:$PATH
 function g {

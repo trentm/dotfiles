@@ -84,6 +84,14 @@ function precmd() {
     if [[ -n "$NODE_PROFILE" ]]; then
         extras+=("n:$NODE_PROFILE")
     fi
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        local venvName
+        venvName=$(basename "$VIRTUAL_ENV")
+        if [[ $venvName == ".venv" ]]; then
+            venvName=$(basename $(dirname "$VIRTUAL_ENV"))
+        fi
+        extras+=("venv:$venvName")
+    fi
 
     vcs_info
     if [[ -n "$vcs_info_msg_0_" ]]; then
