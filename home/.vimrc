@@ -24,6 +24,10 @@ set shiftwidth=4        " default shiftwidth of 4 spaces
 set expandtab           " use spaces instead of tabs
 set smarttab
 
+" Set modelines back to default 5 after being set to 0 by the "commentary"
+" plugin. See https://github.com/tpope/vim-commentary/issues/26
+set modelines=5
+
 
 " TODO: regrok this
 set selectmode=key      " MS Windows style shifted-movement SELECT mode

@@ -35,5 +35,6 @@
     "vim.overrideCopy": false,
     "editor.cursorSurroundingLines": 5,
     "files.insertFinalNewline": true,
-    "editor.scrollBeyondLastLine": false
+    "editor.scrollBeyondLastLine": false,
+    "workbench.settings.openDefaultKeybindings": true
 }
