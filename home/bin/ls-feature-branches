@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Show the dir and feature branch for each subdir that is a git clone not
+# on branch "master".
+#
+
+if [[ -n "$TRACE" ]]; then
+    # BASHSTYLED
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+if [[ $# -ne 0 ]]; then
+    echo "$0: unexpected args" >&2
+    exit 1
+fi
+
+TARG=$1
+if [[ -z "$TARG" ]]; then
+    TARG="*"
+fi
+
+ls -1d $TARG/.git | while read gitdir; do
+    dir=$(dirname $gitdir)
+    ref=$(git -C "$dir" symbolic-ref HEAD)
+    branch=${ref:11}   # drop the leading 'refs/heads/'
+    if [[ $branch != "master" ]]; then
+        echo "$dir: $branch"
+    fi
+done
