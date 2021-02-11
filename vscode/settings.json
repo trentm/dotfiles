@@ -36,5 +36,6 @@
     "editor.cursorSurroundingLines": 5,
     "files.insertFinalNewline": true,
     "editor.scrollBeyondLastLine": false,
-    "workbench.settings.openDefaultKeybindings": true
+    "workbench.settings.openDefaultKeybindings": true,
+    "workbench.statusBar.visible": true
 }

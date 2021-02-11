@@ -1,0 +1,10 @@
+{
+	"log.Printf XXX": {
+		"prefix": "xxx",
+		"body": [
+			"log.Printf(\"XXX %#v\\n\", $1)",
+			"$0"
+		],
+		"description": "log.Printf with an XXX"
+	}
+}
