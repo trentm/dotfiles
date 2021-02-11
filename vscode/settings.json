@@ -24,8 +24,6 @@
     "editor.acceptSuggestionOnEnter": "off",
     "editor.tabCompletion": "on",
     "editor.parameterHints.enabled": false,
-
-    "window.zoomLevel": 0,
     "go.formatTool": "goimports",
     // https://github.com/microsoft/vscode-go/wiki/Go-modules-support-in-Visual-Studio-Code
     "go.useLanguageServer": true,
@@ -38,4 +36,11 @@
     "editor.scrollBeyondLastLine": false,
     "workbench.settings.openDefaultKeybindings": true,
     "workbench.statusBar.visible": true
+    // Turning on standardjs autoFixOnSave results in unresolvable
+    // fighting on some stylings: VSCode save will do `function foo()`
+    // and then the style checking and `npx standard` will complain
+    // that it wants `function foo ()`. Lovely. It would be nice to
+    // resolve this.
+    // "editor.formatOnSave": true,
+    // "standard.autoFixOnSave": true
 }

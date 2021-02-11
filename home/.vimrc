@@ -146,6 +146,8 @@ if has("autocmd") && !exists("autocommands_loaded")
   autocmd BufLeave      *.c,*.cpp,*.cxx,*.cc,*.h,*.hpp,*.hxx,*.idl*.c,*.h,*.cc,*.cxx,*.hxx,*.hpp,*.cpp,*.idl        set formatoptions=tcql nocindent comments& textwidth=0
   autocmd BufEnter      *.sh,*.py*,*.pl set formatoptions=crql comments=:# textwidth=72
   autocmd BufLeave      *.sh,*.py*,*.pl set formatoptions=tcql comments& textwidth=0
+
+  autocmd BufNewFile,BufRead *.cjs,*.mjs set filetype=javascript
 endif
 
 

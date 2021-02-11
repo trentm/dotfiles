@@ -15,9 +15,9 @@
 	"console XXX": {
 		"prefix": "xxx",
 		"body": [
-			"console.log('XXX $1', $2);",
-			"$0"
+			"console.warn('XXX $1', $2)",
+			// "$0"
 		],
-		"description": "console log with an XXX"
+		"description": "console warn with an XXX"
 	}
 }

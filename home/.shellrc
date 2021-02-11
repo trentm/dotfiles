@@ -90,7 +90,16 @@ alias gc='git checkout'
 alias gl='git log --stat'
 alias glp='git log -p'
 alias gl1='git log -1'
-alias giddyup='git fetch --tags --prune --prune-tags -a origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
+# Updating a local clone is hard (TM). I'm not confident in my current
+# commands to first update (possibly changed tags), then fetch, then rebase,
+# then submodule update. Having 3 commands is slow and lame.
+# - 'git fetch' requires '--tags' or an explicit refspec including 'refs/tags'
+#   to fetch all tags. However '--prune' and '--prune-tags' gets interesting.
+# - git version 2.20 changed behaviour such that changed tags require
+#   '--force' to be updated. 'git fetch --tags ...' will *exit non-zero* if
+#   there is a changed tag. Sigh. See this for an example I hit:
+#   https://github.com/elastic/apm-pipeline-library/issues/905
+alias giddyup='git fetch --force --prune origin "refs/tags/*:refs/tags/*" && git fetch --prune --append origin && git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) && git submodule update --init'
 #alias prit='hub pull-request -p -a trentm'
 alias prit='gh pr create --fill'
 
@@ -123,7 +132,7 @@ alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
 alias crontab='VIM_CRONTAB=true crontab'
 
-# Python virtual envs for Python >=3.3, else you can try virtualenv.
+# Python virtual envs (pyenv) for Python >=3.3, else you can try virtualenv.
 # - Create a new venv: 'venv .venv'
 # - Activate it: 'source ./.venv/bin/activate'
 # - It should show as "venv:$name" in PS1.
