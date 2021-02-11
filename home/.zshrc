@@ -42,8 +42,23 @@ setopt autocd  # can 'cd DIR' with just the 'DIR'
 unsetopt nomatch # avoid: 'zsh: no matches found: <something with glob chars>'
 setopt interactivecomments
 
-# Shell history tweaks. See 'emulate -lLR zsh | grep hist' for other opts.
+# History
+# See: https://superuser.com/questions/232457/zsh-output-whole-history
+# on 'history [start] [end]', 'fc -l', etc.
+#
+# Shell history config. See 'emulate -lLR zsh | grep hist' for other opts.
 setopt appendhistory
+function hist {
+    if [[ -z "$1" ]]; then
+        # list all history
+        #echo "no arg 1: '$1'"
+        fc -l 1
+    else
+        # grep all history
+        fc -lm "*$@*" 1
+        #echo "arg 1: '$1', and @: '$@'"
+    fi
+}
 
 
 # kill-word (Ctrl+W)
