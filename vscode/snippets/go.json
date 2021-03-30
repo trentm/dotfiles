@@ -1,10 +1,15 @@
 {
-	"log.Printf XXX": {
+	"xxx": {
 		"prefix": "xxx",
 		"body": [
-			"log.Printf(\"XXX %#v\\n\", $1)",
-			"$0"
+			"log.Printf(\"XXX %#v\\n\", $0)"
 		],
-		"description": "log.Printf with an XXX"
+		"description": "log.Printf XXX"
+	},
+	"xxx-word-under-cursor": {
+		"body": [
+			"log.Printf(\"XXX $CLIPBOARD: %#v\\n\", $CLIPBOARD)$0"
+		],
+		"description": "log.Printf XXX word under cursor"
 	}
 }

@@ -1,3 +1,39 @@
 // Place your key bindings in this file to override the defaults
 [
+    // https://stackoverflow.com/questions/53599250/how-can-i-insert-a-snippet-on-a-new-line-with-vscode
+    {
+        "key": "cmd+k x",
+        "when": "editorTextFocus && !editorHasSelection",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "editor.action.smartSelect.expand",
+                "editor.action.clipboardCopyAction",
+                "editor.action.insertLineAfter",
+                {
+                    "command": "editor.action.insertSnippet",
+                    "args": {
+                        "name": "xxx-word-under-cursor"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "key": "cmd+k x",
+        "when": "editorTextFocus && editorHasSelection",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "editor.action.clipboardCopyAction",
+                "editor.action.insertLineAfter",
+                {
+                    "command": "editor.action.insertSnippet",
+                    "args": {
+                        "name": "xxx-word-under-cursor"
+                    }
+                }
+            ]
+        }
+    }
 ]

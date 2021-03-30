@@ -35,7 +35,19 @@
     "files.insertFinalNewline": true,
     "editor.scrollBeyondLastLine": false,
     "workbench.settings.openDefaultKeybindings": true,
-    "workbench.statusBar.visible": true
+    "workbench.statusBar.visible": true,
+    "workbench.editorAssociations": [
+        {
+            "viewType": "jupyter.notebook.ipynb",
+            "filenamePattern": "*.ipynb"
+        },
+        {
+            "viewType": "jupyter-notebook",
+            "filenamePattern": "*.ipynb"
+        }
+    ],
+    "go.toolsManagement.autoUpdate": true,
+    "vim.ignorecase": false
     // Turning on standardjs autoFixOnSave results in unresolvable
     // fighting on some stylings: VSCode save will do `function foo()`
     // and then the style checking and `npx standard` will complain
