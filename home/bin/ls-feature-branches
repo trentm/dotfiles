@@ -19,7 +19,7 @@ fi
 # echo "TARGS: $TARGS"
 
 for targ in $TARGS; do
-    ls -1d $targ/.git 2>/dev/null | while read gitdir; do
+    (ls -1d $targ/.git 2>/dev/null || true) | while read gitdir; do
         dir=$(dirname $gitdir)
         ref=$(git -C "$dir" symbolic-ref HEAD 2>/dev/null || true)
         if [[ -z "$ref" ]]; then
