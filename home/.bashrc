@@ -122,7 +122,9 @@ prompt_compact() {
 
 __prompt_extra_info() {
     local branch
-    branch=`__git_ps1 "%s"`
+    if command -v __git_ps1; then
+        branch=`__git_ps1 "%s"`
+    fi
     local content
     content=
 
@@ -164,7 +166,7 @@ prompt_color() {
 HAVE_KEYCHAIN=$(command -v keychain)
 test -n "$INTERACTIVE" -a -n "$LOGIN" -a -f $HOME/.ssh/trusted -a -n "$HAVE_KEYCHAIN" && {
     ls -1 $HOME/.ssh/*.id_rsa | grep -v '\.pub' | grep -v '\.ppk' \
-        | xargs keychain --quick --quiet --lockwait 120
+        | xargs keychain --quick --quiet
     [[ -f $HOME/.keychain/$HOSTNAME-sh ]] && source $HOME/.keychain/$HOSTNAME-sh
     [[ -f $HOME/.keychain/$HOSTNAME-sh-gpg ]] && source  $HOME/.keychain/$HOSTNAME-sh-gpg
 }
@@ -251,5 +253,9 @@ export NVM_DIR="$HOME/.nvm"
 # Hub completion (https://github.com/github/hub/tree/master/etc)
 [ -s /usr/local/etc/bash_completion.d/hub.bash_completion.sh ] \
     && source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
+
+# Silence macos warning about switch to zsh
+# https://apple.stackexchange.com/a/371998
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # vim: ts=4 sts=4 shiftwidth=4 expandtab

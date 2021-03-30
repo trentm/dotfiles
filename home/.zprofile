@@ -10,9 +10,14 @@ test -x $HOME/bin/keychain && KEYCHAIN=$HOME/bin/keychain || KEYCHAIN=$(command 
 if [[ -n "$KEYCHAIN" && -f $HOME/.ssh/trusted ]]; then
     if [[ $(uname) == "Darwin" ]]; then
         # '--inherit any' to inherit any ssh passphrases from macOS Keychain.
-        eval $($KEYCHAIN --quick --quiet --lockwait 120 --eval --agents ssh --inherit any id_rsa)
+        eval $($KEYCHAIN --quick --quiet --eval --agents ssh --inherit any id_rsa)
     else
-        eval $($KEYCHAIN --quick --quiet --lockwait 120 --eval --agents ssh id_rsa)
+        eval $($KEYCHAIN --quick --quiet --eval --agents ssh id_rsa)
     fi
 fi
 
+
+# Setting PATH for Python 3.9
+# The original version is saved in .zprofile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.9/bin:${PATH}"
+export PATH
