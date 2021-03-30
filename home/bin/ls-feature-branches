@@ -12,21 +12,23 @@ fi
 set -o errexit
 set -o pipefail
 
-if [[ $# -ne 0 ]]; then
-    echo "$0: unexpected args" >&2
-    exit 1
+TARGS="$@"
+if [[ -z "$TARGS" ]]; then
+    TARGS="*"
 fi
+# echo "TARGS: $TARGS"
 
-TARG=$1
-if [[ -z "$TARG" ]]; then
-    TARG="*"
-fi
-
-ls -1d $TARG/.git | while read gitdir; do
-    dir=$(dirname $gitdir)
-    ref=$(git -C "$dir" symbolic-ref HEAD)
-    branch=${ref:11}   # drop the leading 'refs/heads/'
-    if [[ $branch != "master" ]]; then
-        echo "$dir: $branch"
-    fi
+for targ in $TARGS; do
+    ls -1d $targ/.git 2>/dev/null | while read gitdir; do
+        dir=$(dirname $gitdir)
+        ref=$(git -C "$dir" symbolic-ref HEAD 2>/dev/null || true)
+        if [[ -z "$ref" ]]; then
+            echo "ls-feature-branches: warn: 'git symbolic-ref HEAD' in '$dir' failed" >&2
+            continue
+        fi
+        branch=${ref:11}   # drop the leading 'refs/heads/'
+        if [[ $branch != "master" ]]; then
+            echo "$dir: $branch"
+        fi
+    done
 done
