@@ -1,0 +1,15 @@
+{
+	"xxx": {
+		"prefix": "xxx",
+		"body": [
+			"echo \"XXX $0\" >&2"
+		],
+		"description": "echo XXX"
+	},
+	"xxx-word-under-cursor": {
+		"body": [
+			"echo \"XXX $CLIPBOARD: \\$$CLIPBOARD$0\" >&2"
+		],
+		"description": "echo XXX word under cursor"
+	}
+}
