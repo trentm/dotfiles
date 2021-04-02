@@ -7,7 +7,7 @@
         "command": "extension.multiCommand.execute",
         "args": {
             "sequence": [
-                "editor.action.smartSelect.expand",
+                "editor.action.addSelectionToNextFindMatch",
                 "editor.action.clipboardCopyAction",
                 "editor.action.insertLineAfter",
                 {
