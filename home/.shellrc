@@ -111,7 +111,7 @@ alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
 alias eol="python $HOME/tm/eol/lib/eol.py"
 alias j="jekyll && (cd _site && staticserve)"
 alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
-alias rg='rg --hidden -M300'
+alias rg='rg --hidden -M1024'
 alias rgall='rg -g "*" -a'
 function rgless() {
     rg --heading -n --color ansi "$@" | less -R
