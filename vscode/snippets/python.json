@@ -1,0 +1,15 @@
+{
+	"xxx": {
+		"prefix": "xxx",
+		"body": [
+			"print('XXX', $0)"
+		],
+		"description": "print XXX"
+	},
+	"xxx-word-under-cursor": {
+		"body": [
+			"print('XXX $CLIPBOARD:', $CLIPBOARD)$0"
+		],
+		"description": "print XXX word under cursor"
+	}
+}

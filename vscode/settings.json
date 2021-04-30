@@ -45,20 +45,18 @@
     "workbench.statusBar.visible": true,
     "workbench.editorAssociations": [
         {
-            "viewType": "jupyter.notebook.ipynb",
-            "filenamePattern": "*.ipynb"
-        },
-        {
             "viewType": "jupyter-notebook",
             "filenamePattern": "*.ipynb"
         }
     ],
     "workbench.startupEditor": "newUntitledFile",
 
-    "window.newWindowDimensions": "offset",
     "window.title": "${activeEditorLong}${separator}${rootName}",
+    // AFAICT `newWindowDimensions` does not work.
+    "window.newWindowDimensions": "offset",
 
     "vim.useSystemClipboard": true,
     "vim.overrideCopy": false,
-    "vim.ignorecase": false
+    "vim.ignorecase": false,
+    "editor.tabSize": 8
 }
