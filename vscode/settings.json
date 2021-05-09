@@ -14,6 +14,12 @@
         "source.fixAll.eslint": true
     },
 
+    // Font
+    // https://github.com/tonsky/FiraCode/wiki/VS-Code-Instructions
+    "editor.fontSize": 13,
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": false,
+
     // Hover tips (can get in the way sometimes)
     "editor.hover.enabled": true,
 

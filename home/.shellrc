@@ -6,6 +6,9 @@ UNAME=$(uname)
 
 if [[ $UNAME == "SunOS" ]]; then
     PATH="/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:$PATH"
+elif [[ "$UNAME" == "Darwin" ]]; then
+    # Homebrew
+    PATH="/opt/local/sbin:/opt/local/bin:$PATH"
 fi
 PATH="/usr/local/go/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
