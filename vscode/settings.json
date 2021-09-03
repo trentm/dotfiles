@@ -49,12 +49,9 @@
     "workbench.colorTheme": "Default Light+",
     "workbench.settings.openDefaultKeybindings": true,
     "workbench.statusBar.visible": true,
-    "workbench.editorAssociations": [
-        {
-            "viewType": "jupyter-notebook",
-            "filenamePattern": "*.ipynb"
-        }
-    ],
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
     "workbench.startupEditor": "newUntitledFile",
 
     "window.title": "${activeEditorLong}${separator}${rootName}",
@@ -64,5 +61,16 @@
     "vim.useSystemClipboard": true,
     "vim.overrideCopy": false,
     "vim.ignorecase": false,
-    "editor.tabSize": 8
+    "editor.cursorBlinking": "solid",
+    "workbench.editor.untitled.hint": "hidden",
+    "editor.tabSize": 8,
+    "editor.cursorStyle": "line",
+    "editor.insertSpaces": false,
+    "editor.lineNumbers": "on",
+    "editor.wordSeparators": "/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-",
+    "editor.wordWrap": "off",
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.editor.enablePreview": false,
+    "python.analysis.autoSearchPaths": false,
+    "python.languageServer": "None"
 }
