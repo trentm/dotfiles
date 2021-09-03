@@ -107,6 +107,9 @@ function precmd() {
         fi
         extras+=("venv:$venvName")
     fi
+    if [[ -n "$AWS_REGION" ]]; then
+        extras+=("aws:$AWS_REGION")
+    fi
 
     vcs_info
     if [[ -n "$vcs_info_msg_0_" ]]; then
@@ -128,7 +131,7 @@ function precmd() {
 # https://gist.github.com/rtfpessoa/811701ed8fa642f60e411aef04b2b64a
 
 # Note: Keep this in sync with nvm default.
-export PATH="/Users/trentm/.nvm/versions/node/v12.22.1/bin:$PATH"
+export PATH="/Users/trentm/.nvm/versions/node/v12.22.6/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet

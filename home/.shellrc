@@ -135,6 +135,9 @@ alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
 alias crontab='VIM_CRONTAB=true crontab'
 
+# standardjs is silent to a fault. This'll tell you which files it is linting.
+alias standard-verbose='DEBUG=eslint:cli-engine npx standard'
+
 # Python virtual envs (pyenv) for Python >=3.3, else you can try virtualenv.
 # - Create a new venv: 'venv .venv'
 # - Activate it: 'source ./.venv/bin/activate'
