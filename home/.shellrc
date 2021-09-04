@@ -21,7 +21,6 @@ if [[ $UNAME == "Darwin" ]]; then
     #   gem install --user-install GEM1 GEM2 ...
     PATH="/usr/local/opt/ruby/bin:$HOME/.gem/ruby/2.7.0/bin:$PATH"
 fi
-PATH="$HOME/opt/node-10/bin:$PATH"
 if [[ -d /Library/Frameworks/Python.framework/Versions/3.8/bin ]]; then
     PATH=/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH
 elif [[ -d /Library/Frameworks/Python.framework/Versions/3.9/bin ]]; then
