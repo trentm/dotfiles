@@ -282,37 +282,4 @@ function flickr-open {
         open -a Firefox "https://www.flickr.com/photos/trento/$id/in/photostream/"
     fi
 }
-function pics-set-createdate {
-    local exifDate
-    local isoDate
-    local files
-
-    isoDate="$1"
-    shift
-    files="$@"
-
-    if [[ -z "$isoDate" ]]; then
-        echo "pics-set-createdate: error: missing ISODATE argument" >&2
-        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
-        return 1
-    elif ! echo "$isoDate" | egrep '^\d{8}T\d{6}$' >/dev/null; then
-        echo "pics-set-createdate: error: '$isoDate' is not of the form 'YYYYmmddTHHMMSS'" >&2
-        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
-        return 1
-    elif [[ -z "$files" ]]; then
-        echo "pics-set-createdate: error: missing FILE argument(s)" >&2
-        echo "usage: pics-set-createdata YYYYmmddTHHMMSS FILE..." >&2
-        return 1
-    fi
-
-    # "YYYYmmddTHHMMSS" -> "YYYY:mm:dd HH:MM:SS"
-    exifDate=$(echo "$isoDate" \
-        | awk '{print substr($0,0,4) ":" substr($0,5,2) ":" substr($0,7,2) " " substr($0,10,2) ":" substr($0,12,2) ":" substr($0,14,2)}')
-    #echo "exifDate: $exifDate"
-    #echo "files: $files"
-
-    # exiftool [OPTIONS] -TAG[+-<]=[VALUE]... FILE...
-    echo "# exiftool '-CreateDate=$exifDate' $files"
-    exiftool "-CreateDate=$exifDate" $files
-}
 
