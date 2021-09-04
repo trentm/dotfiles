@@ -117,6 +117,7 @@ function precmd() {
     fi
 
     if [[ -n "$extras" ]]; then
+        # TODO hiblue = 94, how to get that (works better on dark)
         PS1="[%F{blue}%* %n@%m:%~ (${extras}%(?.. %F{red}rv:%?%F{blue}))]
 %#%f "
     else
