@@ -56,7 +56,9 @@ anchor="$2"
 # If "path" is a number, open that issue/pr.
 if [[ "$path" =~ ^[0-9]+$ ]]; then
     set_base_url_from_dir "."
-    url=$base_url/issues/$path
+    # Redir from "/issues/num" to "/pull/num" is broken in new GitHub issues.
+    # See https://github.com/github/feedback/discussions/8623
+    url=$base_url/pull/$path
 else
     if [[ -d "$path" ]]; then
         dir="$path"
