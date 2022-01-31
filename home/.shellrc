@@ -63,6 +63,9 @@ test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
 # Presumably this path isn't going to change.
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/opt/openssl@1.1"
 
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-telemetry.html
+export SAM_CLI_TELEMETRY=0
+
 
 # ---- Aliases and functions
 
@@ -264,3 +267,9 @@ if [[ $UNAME == "Darwin" ]]; then
         uuidgen | tr A-Z a-z  # mac has `uuidgen`
     }
 fi
+
+
+# Elastic-work related
+alias equiet='ELASTIC_APM_CLOUD_PROVIDER=none ELASTIC_APM_CENTRAL_CONFIG=false ELASTIC_APM_METRICS_INTERVAL=0s ELASTIC_APM_CAPTURE_EXCEPTIONS=false ELASTIC_APM_CAPTURE_SPAN_STACK_TRACES=false'
+alias everbose='ELASTIC_APM_LOG_LEVEL=trace'
+

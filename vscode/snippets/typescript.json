@@ -1,0 +1,16 @@
+{
+	// https://code.visualstudio.com/docs/editor/userdefinedsnippets
+	"xxx": {
+		"prefix": "xxx",
+		"body": [
+			"console.warn('XXX ', $0)"
+		],
+		"description": "console warn XXX"
+	},
+	"xxx-word-under-cursor": {
+		"body": [
+			"console.warn('XXX $CLIPBOARD: ', $CLIPBOARD)$0"
+		],
+		"description": "console.warn XXX word under cursor"
+	}
+}
