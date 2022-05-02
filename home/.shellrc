@@ -21,12 +21,19 @@ if [[ $UNAME == "Darwin" ]]; then
     #   gem install --user-install GEM1 GEM2 ...
     PATH="/usr/local/opt/ruby/bin:$HOME/.gem/ruby/2.7.0/bin:$PATH"
 fi
-if [[ -d /Library/Frameworks/Python.framework/Versions/3.8/bin ]]; then
-    PATH=/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH
-elif [[ -d /Library/Frameworks/Python.framework/Versions/3.9/bin ]]; then
-    PATH=/Library/Frameworks/Python.framework/Versions/3.9/bin:$PATH
-elif [[ "$UNAME" == "Darwin" ]]; then
-    echo ".shellrc: warning: no python.org install of Python 3.8 or 3.9 is available" >&2
+# https://www.python.org/downloads/ lists active releases
+if [[ "$UNAME" == "Darwin" ]]; then
+    if [[ -d /Library/Frameworks/Python.framework/Versions/3.10/bin ]]; then
+        PATH=/Library/Frameworks/Python.framework/Versions/3.10/bin:$PATH
+    elif [[ -d /Library/Frameworks/Python.framework/Versions/3.9/bin ]]; then
+        PATH=/Library/Frameworks/Python.framework/Versions/3.9/bin:$PATH
+    elif [[ -d /Library/Frameworks/Python.framework/Versions/3.8/bin ]]; then
+        PATH=/Library/Frameworks/Python.framework/Versions/3.8/bin:$PATH
+    elif [[ -d /Library/Frameworks/Python.framework/Versions/3.7/bin ]]; then
+        PATH=/Library/Frameworks/Python.framework/Versions/3.7/bin:$PATH
+    else
+        echo ".shellrc: warning: no python.org install of Python 3.10, 3.9, 3.8, or 3.7 install was found (install from https://www.python.org/downloads/macos/)" >&2
+    fi
 fi
 if [[ -d "$HOME/.local/bin" ]]; then
     PATH="$HOME/.local/bin:$PATH"
@@ -155,7 +162,7 @@ alias venv-deactivate='deactivate'
 #export PATH=$HOME/tm/go-tool/lib:$PATH
 function g {
     export GO_SHELL_SCRIPT=$HOME/.__tmp_go.sh
-    PYTHONPATH=$HOME/tm/go-tool/lib:$PYTHONPATH python -m go $*
+    PYTHONPATH=$HOME/tm/go-tool/lib:$PYTHONPATH python3 -m go $*
     if [ -f $GO_SHELL_SCRIPT ] ; then
         source $GO_SHELL_SCRIPT
     fi
