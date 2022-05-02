@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Popup notification reminder for a certain time.
@@ -50,7 +50,7 @@ assert sys.platform == "darwin", "this only works on Mac (uses Growl)"
 
 #---- globals
 
-TRACE = os.environ.has_key("TRACE")
+TRACE = 'TRACE' in os.environ
 REMINDERS_PATH = os.path.expanduser('~/.reminders.json')
 
 
@@ -65,7 +65,7 @@ class ReminderError(Exception):
 #---- support stuff
 
 def usage():
-    print __doc__
+    print(__doc__)
 
 #var endPattern = /^([1-9]\d*)([mhd])$/;
 def timeFromArg(arg, now):
@@ -132,7 +132,7 @@ def timeFromArg(arg, now):
     return t
 
 def get_rid():
-    h = hashlib.sha1(str(random.random()))
+    h = hashlib.sha1(str(random.random()).encode('utf8'))
     return h.hexdigest()[:7]
 
 # http://stackoverflow.com/questions/455580/json-datetime-between-python-and-javascript
@@ -147,7 +147,7 @@ class ReminderJSONEncoder(json.JSONEncoder):
             return super(json.JSONEncoder, self).default(obj)
 
 def decode_reminder(o):
-    if o.has_key("rid"):
+    if "rid" in o:
         o["time"] = datetime.datetime.strptime(
             o["time"], '%Y-%m-%dT%H:%M:%SZ')
         return o
@@ -199,10 +199,10 @@ def main(argv):
 def main_reminders(argv):
     reminders = get_reminders()
     template = "%-7s  %-23s  %s"
-    print template % ("ID", "TIME", "MESSAGE")
+    print(template % ("ID", "TIME", "MESSAGE"))
     for r in reminders:
-        print template % (r["rid"],
-            r["time"].strftime("%a, %b %d at %I:%M %p"), r["msg"])
+        print(template % (r["rid"],
+            r["time"].strftime("%a, %b %d at %I:%M %p"), r["msg"]))
 
 def main_reminder(argv):
     if len(argv) < 2:
@@ -287,10 +287,10 @@ done
     # Run it.
     os.system('cd /var/tmp && nohup bash "%s" 2>/dev/null &' % path)
     date_str = t.strftime("%a, %b %d at ") + t_str
-    print "Reminder set for %s." % date_str
+    print("Reminder set for %s." % date_str)
     if TRACE:
-        print "-- (time: %s, delta: %s)" % (t, delta)
-        print '\n'.join(script)
+        print("-- (time: %s, delta: %s)" % (t, delta))
+        print('\n'.join(script))
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
