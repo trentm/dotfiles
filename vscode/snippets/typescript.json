@@ -3,14 +3,14 @@
 	"xxx": {
 		"prefix": "xxx",
 		"body": [
-			"console.warn('XXX ', $0)"
+			"console.log('XXX ', $0)"
 		],
-		"description": "console warn XXX"
+		"description": "console log XXX"
 	},
 	"xxx-word-under-cursor": {
 		"body": [
-			"console.warn('XXX $CLIPBOARD: ', $CLIPBOARD)$0"
+			"console.log('XXX $CLIPBOARD: ', $CLIPBOARD)$0"
 		],
-		"description": "console.warn XXX word under cursor"
+		"description": "console.log XXX word under cursor"
 	}
 }

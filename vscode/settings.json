@@ -46,7 +46,6 @@
     "go.toolsManagement.autoUpdate": true,
 
     "workbench.editor.enablePreviewFromQuickOpen": false,
-    "workbench.colorTheme": "Default Light+",
     "workbench.settings.openDefaultKeybindings": true,
     "workbench.statusBar.visible": true,
     "workbench.editorAssociations": {
@@ -80,5 +79,6 @@
         "**/.project": true,
         "**/.settings": true,
         "**/.factorypath": true
-    }
+    },
+    "workbench.colorTheme": "Default Light+"
 }
