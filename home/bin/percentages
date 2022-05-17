@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Take input like this:
 #       13406 docker-compose/1.11
@@ -26,7 +26,7 @@ def main(argv):
     total = sum([n for n, data in rows])
 
     for n, data in rows:
-        print "  %4.1f%%  %s" % (n * 100.0 / total, data)
+        print("  %4.1f%%  %s" % (n * 100.0 / total, data))
 
 if __name__ == "__main__":
     main(sys.argv)
