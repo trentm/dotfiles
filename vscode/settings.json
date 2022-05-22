@@ -80,5 +80,9 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "workbench.colorTheme": "Default Light+"
+    "workbench.colorTheme": "Default Light+",
+    "svelte.enable-ts-plugin": true,
+    "[svelte]": {
+     "editor.defaultFormatter": "svelte.svelte-vscode"
+    }
 }
