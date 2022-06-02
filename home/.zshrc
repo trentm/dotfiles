@@ -132,7 +132,7 @@ function precmd() {
 # https://gist.github.com/rtfpessoa/811701ed8fa642f60e411aef04b2b64a
 
 # Note: Keep this in sync with nvm default.
-export PATH="/Users/trentm/.nvm/versions/node/v16.15.0/bin:$PATH"
+export PATH="/Users/trentm/.nvm/versions/node/v16.15.1/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet
