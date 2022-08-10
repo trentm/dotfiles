@@ -119,18 +119,18 @@ alias prit='gh pr create --fill'
 alias k='open -a "Komodo IDE 8"'
 alias code="'/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'"
 alias c=code  # vscode
-alias markdown2="python ~/tm/python-markdown2/lib/markdown2.py"
-alias eol="python $HOME/tm/eol/lib/eol.py"
+alias markdown2="python3 ~/tm/python-markdown2/lib/markdown2.py"
+alias eol="python3 $HOME/tm/eol/lib/eol.py"
 alias j="jekyll && (cd _site && staticserve)"
-alias mtime='python -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
+alias mtime='python3 -c "import os,sys,stat; print(os.stat(sys.argv[1]).st_mtime)"'
 alias rg='rg --hidden -M1024'
 alias rgall='rg -g "*" -a'
 function rgless() {
     rg --heading -n --color ansi "$@" | less -R
 }
 
-alias gtd="python ~/Dropbox/gtd/bin/gtd.py"
-alias note="python ~/Dropbox/gtd/bin/gtd.py note"
+alias gtd="python3 ~/Dropbox/gtd/bin/gtd.py"
+alias note="python3 ~/Dropbox/gtd/bin/gtd.py note"
 
 # Shuffle lines (from <http://stackoverflow.com/a/6511327>)
 alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
@@ -138,7 +138,7 @@ alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
 alias js2json='node -e '\''s=""; process.stdin.resume(); process.stdin.on("data",function(c){s+=c}); process.stdin.on("end",function(){o=eval("("+s+")");console.log(JSON.stringify(o)); });'\'''
 
 alias isotime='node -e "console.log(new Date().toISOString())"'
-alias lower='python -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
+alias lower='python3 -c "import sys; sys.stdout.write(sys.stdin.read().lower())"'
 alias ips="ifconfig -a | grep 'inet ' | awk '{print \$2}'"
 
 # http://drawohara.com/post/6344279/crontab-temp-file-must-be-edited-in-place
@@ -228,7 +228,7 @@ function staticserve() {
     for ip in `ifconfig -a | grep "inet " | awk '{print $2}'`; do
         echo "# http://${ip}:8000"
     done
-    python -m SimpleHTTPServer
+    python3 -m SimpleHTTPServer
 }
 
 # Highlight the given term. Usage: ... | hi foo
