@@ -84,5 +84,10 @@
     "svelte.enable-ts-plugin": true,
     "[svelte]": {
      "editor.defaultFormatter": "svelte.svelte-vscode"
-    }
+    },
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "rest-client.previewResponseInUntitledDocument": true,
+    "rest-client.previewResponsePanelTakeFocus": false,
+    "rest-client.previewOption": "exchange",
+    "rest-client.enableTelemetry": false
 }
