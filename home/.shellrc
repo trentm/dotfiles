@@ -276,8 +276,45 @@ if [[ $UNAME == "Darwin" ]]; then
 fi
 
 
+function node6() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v6 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node8() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v8 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node10() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v10 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node12() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v12 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node14() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v14 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node16() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v16 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node18() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v18 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+
+
 # Elastic-work related
-alias equiet='ELASTIC_APM_CLOUD_PROVIDER=none ELASTIC_APM_CENTRAL_CONFIG=false ELASTIC_APM_METRICS_INTERVAL=0s ELASTIC_APM_CAPTURE_EXCEPTIONS=false ELASTIC_APM_CAPTURE_SPAN_STACK_TRACES=false'
+alias equiet='ELASTIC_APM_CLOUD_PROVIDER=none ELASTIC_APM_CENTRAL_CONFIG=false ELASTIC_APM_METRICS_INTERVAL=0s ELASTIC_APM_CAPTURE_EXCEPTIONS=false ELASTIC_APM_SPAN_STACK_TRACE_MIN_DURATION=-1s'
 alias everbose='ELASTIC_APM_LOG_LEVEL=trace'
 alias eotel='ELASTIC_APM_OPENTELEMETRY_BRIDGE_ENABLED=true'
 
