@@ -35,5 +35,40 @@
                 }
             ]
         }
+    },
+    {
+        "key": "cmd+k v",
+        "when": "editorTextFocus && !editorHasSelection",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "editor.action.addSelectionToNextFindMatch",
+                "editor.action.clipboardCopyAction",
+                "editor.action.insertLineAfter",
+                {
+                    "command": "editor.action.insertSnippet",
+                    "args": {
+                        "name": "xxx-word-under-cursor-verbose"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "key": "cmd+k v",
+        "when": "editorTextFocus && editorHasSelection",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "editor.action.clipboardCopyAction",
+                "editor.action.insertLineAfter",
+                {
+                    "command": "editor.action.insertSnippet",
+                    "args": {
+                        "name": "xxx-word-under-cursor-verbose"
+                    }
+                }
+            ]
+        }
     }
 ]

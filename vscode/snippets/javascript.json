@@ -12,5 +12,11 @@
 			"console.log('XXX $CLIPBOARD: ', $CLIPBOARD)$0"
 		],
 		"description": "console.log XXX word under cursor"
+	},
+	"xxx-word-under-cursor-verbose": {
+		"body": [
+			"console.dir($CLIPBOARD, { depth: 5 }) // XXX$0"
+		],
+		"description": "console.log XXX word under cursor verbose"
 	}
 }

@@ -89,5 +89,8 @@
     "rest-client.previewResponseInUntitledDocument": true,
     "rest-client.previewResponsePanelTakeFocus": false,
     "rest-client.previewOption": "exchange",
-    "rest-client.enableTelemetry": false
+    "rest-client.enableTelemetry": false,
+    "svelte.enable-ts-plugin": true,
+    "svelte.plugin.svelte.note-new-transformation": false,
+    "redhat.telemetry.enabled": false
 }
