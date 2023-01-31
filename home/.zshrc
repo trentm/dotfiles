@@ -130,14 +130,16 @@ function precmd() {
 # ---- nvm lazy load
 # Because nvm takes waaay too long to load. Adapted from:
 # https://gist.github.com/rtfpessoa/811701ed8fa642f60e411aef04b2b64a
+# - faster alternative to 'xargs -n1 basename': sed 's/.*\///'
+_trace ".zshrc: nvm lazy load: start"
 
 # Note: Keep this in sync with nvm default.
-export PATH="/Users/trentm/.nvm/versions/node/v16.17.1/bin:$PATH"
+export PATH="/Users/trentm/.nvm/versions/node/v16.19.0/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet
 if [ -d $NVM_DIR/versions/node ]; then
-    NODE_GLOBALS=(`find $NVM_DIR/versions/node -maxdepth 3 \( -type l -o -type f \) -wholename '*/bin/*' | xargs -n1 basename | sort | uniq`)
+    NODE_GLOBALS=(`find $NVM_DIR/versions/node -maxdepth 3 \( -type l -o -type f \) -wholename '*/bin/*' | sed 's/.*\///' | sort | uniq`)
 fi
 NODE_GLOBALS+=("nvm")
 
@@ -158,6 +160,7 @@ for cmd in "${NODE_GLOBALS[@]}"; do
     eval "${cmd}() { unset -f ${cmd} &>/dev/null; [ -z \${NVM_LOADED+x} ] && load_nvm; ${cmd} \$@; }"
   fi
 done
+_trace ".zshrc: nvm lazy load: end"
 
 
 # ---- Completion
