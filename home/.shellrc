@@ -73,6 +73,10 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/opt/openssl@1.1"
 # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-telemetry.html
 export SAM_CLI_TELEMETRY=0
 
+# Turn off telemetry from Azure Functions cli tools
+# (from 'brew install azure-functions-core-tools')
+export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
+
 
 # ---- Aliases and functions
 

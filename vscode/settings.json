@@ -92,5 +92,7 @@
     "rest-client.enableTelemetry": false,
     "svelte.enable-ts-plugin": true,
     "svelte.plugin.svelte.note-new-transformation": false,
-    "redhat.telemetry.enabled": false
+    "redhat.telemetry.enabled": false,
+    "editor.copyWithSyntaxHighlighting": false,
+    "azureFunctions.showProjectWarning": false
 }
