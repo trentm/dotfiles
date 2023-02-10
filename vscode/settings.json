@@ -94,5 +94,6 @@
     "svelte.plugin.svelte.note-new-transformation": false,
     "redhat.telemetry.enabled": false,
     "editor.copyWithSyntaxHighlighting": false,
-    "azureFunctions.showProjectWarning": false
+    "azureFunctions.showProjectWarning": false,
+    "git.openRepositoryInParentFolders": "never"
 }
