@@ -80,10 +80,13 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "workbench.colorTheme": "Default Light+",
+    "workbench.colorTheme": "Default Light Modern",
     "svelte.enable-ts-plugin": true,
     "[svelte]": {
      "editor.defaultFormatter": "svelte.svelte-vscode"
+    },
+    "[yaml]": {
+        "workbench.editor.languageDetection": false
     },
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "rest-client.previewResponseInUntitledDocument": true,
