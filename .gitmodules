@@ -7,6 +7,6 @@
 [submodule "home/.vim/pack/editorconfig/start/editorconfig-vim"]
 	path = home/.vim/pack/editorconfig/start/editorconfig-vim
 	url = https://github.com/editorconfig/editorconfig-vim.git
-[submodule "home/.vim/pack/jremmen/start/vim-ripgrap"]
-	path = home/.vim/pack/jremmen/start/vim-ripgrap
+[submodule "home/.vim/pack/jremmen/start/vim-ripgrep"]
+	path = home/.vim/pack/jremmen/start/vim-ripgrep
 	url = https://github.com/jremmen/vim-ripgrep.git
