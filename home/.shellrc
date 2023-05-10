@@ -123,6 +123,7 @@ alias prit='gh pr create --fill'
 alias k='open -a "Komodo IDE 8"'
 alias code="'/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'"
 alias c=code  # vscode
+alias c.="code ."  # vscode the current dir
 alias markdown2="python3 ~/tm/python-markdown2/lib/markdown2.py"
 alias eol="python3 $HOME/tm/eol/lib/eol.py"
 alias j="jekyll && (cd _site && staticserve)"
@@ -285,6 +286,11 @@ function node6() {
     latestVer=$(nvm ls --no-colors v6 | tail -1 | cut -c 3- | awk '{print $1}')
     $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
 }
+function node86() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v8.6 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
 function node8() {
     local latestVer
     latestVer=$(nvm ls --no-colors v8 | tail -1 | cut -c 3- | awk '{print $1}')
@@ -313,6 +319,16 @@ function node16() {
 function node18() {
     local latestVer
     latestVer=$(nvm ls --no-colors v18 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node19() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v19 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node20() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v20 | tail -1 | cut -c 3- | awk '{print $1}')
     $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
 }
 
