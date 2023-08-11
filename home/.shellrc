@@ -133,6 +133,9 @@ alias rgall='rg -g "*" -a'
 function rgless() {
     rg --heading -n --color ansi "$@" | less -R
 }
+if [[ "$UNAME" == "Darwin" ]]; then
+    alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+fi
 
 alias gtd="python3 ~/Dropbox/gtd/bin/gtd.py"
 alias note="python3 ~/Dropbox/gtd/bin/gtd.py note"

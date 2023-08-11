@@ -98,5 +98,16 @@
     "redhat.telemetry.enabled": false,
     "editor.copyWithSyntaxHighlighting": false,
     "azureFunctions.showProjectWarning": false,
-    "git.openRepositoryInParentFolders": "never"
+    "git.openRepositoryInParentFolders": "never",
+
+    // https://github.com/tailscale/hujson#visual-studio-code-association
+    "files.associations": {
+        "*.hujson": "jsonc"
+    },
+    "json.schemas": [{
+        "fileMatch": ["*.hujson"],
+        "schema": {
+            "allowTrailingCommas": true
+        }
+    }]
 }
