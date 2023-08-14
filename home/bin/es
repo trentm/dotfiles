@@ -46,7 +46,8 @@ if [[ -z "$ES_URL" ]]; then
 fi
 
 #CURL_ARGS="-sS -i -H accept:application/json -H content-type:application/json"
-CURL_ARGS="-sS -i"
+#CURL_ARGS="-sS -i"
+CURL_ARGS="-sS"
 if [[ -n "$ES_AUTH" ]]; then
     CURL_ARGS+=" -u $ES_AUTH"
 fi
