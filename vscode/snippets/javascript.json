@@ -3,19 +3,19 @@
 	"xxx": {
 		"prefix": "xxx",
 		"body": [
-			"console.log('XXX ', $0)"
+			"console.log('XXX ', $0);"
 		],
 		"description": "console log XXX"
 	},
 	"xxx-word-under-cursor": {
 		"body": [
-			"console.log('XXX $CLIPBOARD: ', $CLIPBOARD)$0"
+			"console.log('XXX $CLIPBOARD: ', $CLIPBOARD);$0"
 		],
 		"description": "console.log XXX word under cursor"
 	},
 	"xxx-word-under-cursor-verbose": {
 		"body": [
-			"console.log('XXX $CLIPBOARD:'); console.dir($CLIPBOARD, { depth: 5 })$0"
+			"console.log('XXX $CLIPBOARD:'); console.dir($CLIPBOARD, { depth: 5 }); // XXX$0"
 		],
 		"description": "console.log XXX word under cursor verbose"
 	}
