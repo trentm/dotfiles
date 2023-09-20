@@ -28,13 +28,29 @@ function fatal {
     exit 1
 }
 
-function set_base_url_from_dir {
+# Usage: set_base_url(DIR[, TRY_FORK_ORIGINS])
+function set_base_url {
     local dir
+    local try_fork_origins
+    local remote
     local repo_name
 
     dir="$1"
+    try_fork_origins="$2"
 
-    remote_url=$(git -C "$dir" config remote.origin.url || true)
+    if [[ "$try_fork_origins" == "true" ]]; then
+        # Try to use an "upstream" (common) or "fork" (used by 'backport' tool)
+        # remote instead of the typical "origin".
+        remote=$(git -C "$dir" remote show | grep ^upstream$ || true)
+        if [[ -z "$remote" ]]; then
+            remote=$(git -C "$dir" remote show | grep ^fork$ || true)
+        fi
+    fi
+    if [[ -z "$remote" ]]; then
+        remote=origin
+    fi
+
+    remote_url=$(git -C "$dir" config "remote.$remote.url" || true)
     [[ -n "$remote_url" ]] || fatal "'$dir' is not in a git clone"
 
     if [[ "$remote_url" =~ ^https://.* ]]; then
@@ -55,7 +71,7 @@ anchor="$2"
 
 # If "path" is a number, open that issue/pr.
 if [[ "$path" =~ ^[0-9]+$ ]]; then
-    set_base_url_from_dir "."
+    set_base_url "." true
     # Redir from "/issues/num" to "/pull/num" is broken in new GitHub issues.
     # See https://github.com/github/feedback/discussions/8623
     url=$base_url/pull/$path
@@ -68,7 +84,7 @@ else
         base=$(basename "$path")
     fi
 
-    set_base_url_from_dir "$dir"
+    set_base_url "$dir" false
     if [[ -n "$(git -C "$dir" symbolic-ref HEAD 2>/dev/null || true)" ]]; then
         # We are on a branch.
         treename=$(git -C "$dir" symbolic-ref HEAD | cut -d/ -f3-)
