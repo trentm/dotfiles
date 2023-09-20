@@ -137,6 +137,10 @@ if [[ "$UNAME" == "Darwin" ]]; then
     alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 fi
 
+function asdf() {
+    . ~/bin/asdf-reset.sh
+}
+
 alias gtd="python3 ~/Dropbox/gtd/bin/gtd.py"
 alias note="python3 ~/Dropbox/gtd/bin/gtd.py note"
 
