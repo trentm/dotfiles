@@ -138,7 +138,8 @@ if [[ "$UNAME" == "Darwin" ]]; then
 fi
 
 function asdf() {
-    . ~/bin/asdf-reset.sh
+    ~/bin/asdf-reset.sh
+    cd ~/tmp/asdf
 }
 
 alias gtd="python3 ~/Dropbox/gtd/bin/gtd.py"
