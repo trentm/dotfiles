@@ -160,14 +160,14 @@ alias crontab='VIM_CRONTAB=true crontab'
 alias standard-verbose='DEBUG=eslint:cli-engine npx standard'
 
 # Python virtual envs (pyenv) for Python >=3.3, else you can try virtualenv.
-# - Create a new venv: 'venv .venv'
-# - Activate it: 'source ./.venv/bin/activate'
+# - Create a new venv: 'venv venv'
+# - Activate it: 'source ./venv/bin/activate'
 # - It should show as "venv:$dirname" in PS1 (see .zshrc)
 # - Deactivate it: 'deactivate'
 # https://docs.python.org/3/tutorial/venv.html
 alias venv='python3 -m venv'
-alias venv-create='venv ./.venv'  # suggest always call it .venv in a given dir
-alias venv-activate='source ./.venv/bin/activate'
+alias venv-create='venv ./venv'  # suggest always call it "venv" in a given dir
+alias venv-activate='source ./venv/bin/activate'
 alias venv-deactivate='deactivate'
 
 # Bash shell driver for 'go' (https://github.com/trentm/go-tool).

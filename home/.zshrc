@@ -102,7 +102,7 @@ function precmd() {
     if [[ -n "$VIRTUAL_ENV" ]]; then
         local venvName
         venvName=$(basename "$VIRTUAL_ENV")
-        if [[ $venvName == ".venv" ]]; then
+        if [[ $venvName == ".venv" || $venvName == "venv" ]]; then
             venvName=$(basename $(dirname "$VIRTUAL_ENV"))
         fi
         extras+=("venv:$venvName")
