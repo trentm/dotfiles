@@ -31,7 +31,7 @@ set modelines=5
 " Enable use of mouse. https://superuser.com/a/1698717
 " (Note: I'm not entirely sure this doesn't cause other issues, e.g. with
 " Copy/Paste.)
-set mouse=a
+"set mouse=a
 
 
 " TODO: regrok this
