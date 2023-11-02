@@ -133,8 +133,8 @@ function precmd() {
 # - faster alternative to 'xargs -n1 basename': sed 's/.*\///'
 _trace ".zshrc: nvm lazy load: start"
 
-# Note: Keep this in sync with nvm default.
-export PATH="/Users/trentm/.nvm/versions/node/v16.20.2/bin:$PATH"
+# Note: Keep this in sync with nvm default: nvm alias default v1.2.3
+export PATH="/Users/trentm/.nvm/versions/node/v18.18.2/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet
