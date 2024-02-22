@@ -110,5 +110,11 @@
             "allowTrailingCommas": true
         }
     }
-]
+],
+"editor.acceptSuggestionOnCommitCharacter": false,
+"editor.quickSuggestions": {
+    "other": "off"
+},
+"editor.inlineSuggest.enabled": false,
+"editor.quickSuggestionsDelay": 200
 }

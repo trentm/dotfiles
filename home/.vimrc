@@ -218,3 +218,9 @@ if &t_Co > 2 || has("gui_running")
     set t_Sb=[4%dm
   endif
 endif
+
+
+" Current local hacks to just get by for now. 2023-10
+set tabstop=2
+set shiftwidth=2
+

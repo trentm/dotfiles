@@ -62,6 +62,10 @@ export MANPAGER="less -iRswX"
 export GOPATH=$HOME/go  # same as Go1.8 default
 test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
 
+# GPG git signing setup
+# https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
+export GPG_TTY=$(tty)
+
 # rbenv/ruby-build/ruby note from Homebrew:
 # To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the
 # following to your ~/.zshrc:
@@ -329,14 +333,14 @@ function node18() {
     latestVer=$(nvm ls --no-colors v18 | tail -1 | cut -c 3- | awk '{print $1}')
     $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
 }
-function node19() {
-    local latestVer
-    latestVer=$(nvm ls --no-colors v19 | tail -1 | cut -c 3- | awk '{print $1}')
-    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
-}
 function node20() {
     local latestVer
     latestVer=$(nvm ls --no-colors v20 | tail -1 | cut -c 3- | awk '{print $1}')
+    $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
+}
+function node21() {
+    local latestVer
+    latestVer=$(nvm ls --no-colors v21 | tail -1 | cut -c 3- | awk '{print $1}')
     $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
 }
 
