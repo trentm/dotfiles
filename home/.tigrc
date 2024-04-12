@@ -1,7 +1,0 @@
-# http://jonas.nitro.dk/tig/tigrc.5.html
-set author-width = 8
-set show-rev-graph = yes
-set show-date = relative
-set show-refs = yes
-#set show-line-numbers = yes
-set split-view-height = 80%

@@ -1,1 +1,0 @@
-/change (\d+)/i    http://p4.activestate.com/p4db/changeView.cgi?CH=\1
