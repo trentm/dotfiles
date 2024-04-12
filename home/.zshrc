@@ -90,12 +90,6 @@ zstyle ':vcs_info:git*' actionformats "%s:%b|%a"
 function precmd() {
     local extras=()
 
-    if [[ -n "$TRITON_PROFILE" ]]; then
-        extras+=("t:$TRITON_PROFILE")
-    fi
-    if [[ -n "$MANTA_PROFILE" ]]; then
-        extras+=("m:$MANTA_PROFILE")
-    fi
     if [[ -n "$NODE_PROFILE" ]]; then
         extras+=("n:$NODE_PROFILE")
     fi
