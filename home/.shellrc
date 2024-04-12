@@ -344,6 +344,22 @@ function node21() {
     $NVM_DIR/versions/node/${latestVer}/bin/node "$@"
 }
 
+# Run something with a matching version of node.
+# This intentionally avoids calling 'nvm' because it partially borks in npm workspaces.
+#
+# Usage: n <version-prefix> <args...>
+# E.g.:  n 20 --version; n 18.18 --version
+function n() {
+    local v
+    local ver
+    v=$1
+    shift
+    # This selects *a* version, depending on 'echo' glob ordering.
+    ver=$(echo $NVM_DIR/versions/node/v${v}* | xargs basename | tail -1)
+    echo "$NVM_DIR/versions/node/${ver}/bin/node $@" >&2
+    $NVM_DIR/versions/node/${ver}/bin/node "$@"
+}
+
 
 # Elastic-work related
 alias equiet='ELASTIC_APM_CLOUD_PROVIDER=none ELASTIC_APM_CENTRAL_CONFIG=false ELASTIC_APM_METRICS_INTERVAL=0s ELASTIC_APM_LOG_UNCAUGHT_EXCEPTIONS=true ELASTIC_APM_SPAN_STACK_TRACE_MIN_DURATION=-1s'
