@@ -177,11 +177,6 @@ else
     echo ".zshrc: warning: no ~/tm/dotfiles/zsh-completion" >&2
 fi
 
-# TODO: verify this
-# Hub completion (https://github.com/github/hub/tree/master/etc)
-[ -s /usr/local/etc/bash_completion.d/hub.bash_completion.sh ] \
-    && source /usr/local/etc/bash_completion.d/hub.bash_completion.sh
-
 
 # ---- Other
 
