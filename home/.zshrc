@@ -93,6 +93,9 @@ function precmd() {
     if [[ -n "$NODE_PROFILE" ]]; then
         extras+=("n:$NODE_PROFILE")
     fi
+    if [[ -n "$PYTHON_PROFILE" ]]; then
+        extras+=("py:$PYTHON_PROFILE")
+    fi
     if [[ -n "$VIRTUAL_ENV" ]]; then
         local venvName
         venvName=$(basename "$VIRTUAL_ENV")
@@ -127,7 +130,8 @@ function precmd() {
 # - faster alternative to 'xargs -n1 basename': sed 's/.*\///'
 _trace ".zshrc: nvm lazy load: start"
 
-# Note: Keep this in sync with nvm default: nvm alias default v1.2.3
+# My default node version.
+# Keep this in sync with nvm default: 'nvm alias default v1.2.3'
 export PATH="/Users/trentm/.nvm/versions/node/v18.18.2/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
@@ -166,7 +170,7 @@ autoload -Uz compinit && compinit
 # node-cmdln.
 autoload bashcompinit && bashcompinit
 
-[ -s ~/.nvm/bash_completion ] && source ~/.nvm/bash_completion
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 if [[ -d ~/tm/dotfiles/zsh-completion ]]; then
     ls ~/tm/dotfiles/zsh-completion/*.zsh | while read f; do

@@ -25,6 +25,8 @@ fi
 PATH="$HOME/.cargo/bin:$PATH"
 
 # https://www.python.org/downloads/ lists active releases
+# Also have 'pyenv' installed (https://github.com/pyenv/pyenv#how-it-works)
+eval "$(pyenv init -)"
 if [[ "$UNAME" == "Darwin" ]]; then
     if [[ -d /Library/Frameworks/Python.framework/Versions/3.13/bin ]]; then
         PATH=/Library/Frameworks/Python.framework/Versions/3.13/bin:$PATH
@@ -45,6 +47,7 @@ if [[ "$UNAME" == "Darwin" ]]; then
     fi
 fi
 if [[ -d "$HOME/.local/bin" ]]; then
+    # TODO: is this still relevant?
     PATH="$HOME/.local/bin:$PATH"
 fi
 
@@ -245,6 +248,23 @@ function node-select {
         fi
     fi
     export NODE_PROFILE=$ver
+}
+
+# Select a Python $ver either via pyenv.
+# Usage:
+#   python-select                  # list avail versions
+#   python-select VER [VER2 ...]   # pyenv help global
+function python-select {
+    local ver dir firstpath
+    ver=$1
+
+    if [[ -z "$ver" ]]; then
+        pyenv versions
+    else
+        pyenv global $@
+    fi
+    ver=$(pyenv version | cut -d' ' -f1)
+    export PYTHON_PROFILE=$ver
 }
 
 function mkcd() {
