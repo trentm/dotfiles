@@ -26,7 +26,9 @@ PATH="$HOME/.cargo/bin:$PATH"
 
 # https://www.python.org/downloads/ lists active releases
 # Also have 'pyenv' installed (https://github.com/pyenv/pyenv#how-it-works)
-eval "$(pyenv init -)"
+if [[ -n "$(command -v pyenv)" ]]; then
+    eval "$(pyenv init -)"
+fi
 if [[ "$UNAME" == "Darwin" ]]; then
     if [[ -d /Library/Frameworks/Python.framework/Versions/3.13/bin ]]; then
         PATH=/Library/Frameworks/Python.framework/Versions/3.13/bin:$PATH
@@ -373,6 +375,10 @@ function n() {
     local v
     local ver
     v=$1
+    if [[ -z "$v" ]]; then
+        echo "usage: n NODEVER [ARGS...]" >&2
+        return 1
+    fi
     shift
     # This selects *a* version, depending on 'echo' glob ordering.
     ver=$(echo $NVM_DIR/versions/node/v${v}* | xargs basename | tail -1)
