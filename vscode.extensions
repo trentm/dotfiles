@@ -4,15 +4,17 @@
 #   cat ~/tm/dotfiles/vscode.extensions | grep -v '^#' | while read ext; do code --install-extension $ext; done
 #
 asciidoctor.asciidoctor-vscode
-bungcip.better-toml
-chenxsan.vscode-standardjs
 dbaeumer.vscode-eslint
-EditorConfig.EditorConfig
+editorconfig.editorconfig
 golang.go
+humao.rest-client
 ms-azuretools.vscode-docker
+ms-python.debugpy
 ms-python.python
-rust-lang.rust
+ms-python.vscode-pylance
+rust-lang.rust-analyzer
 ryanblock.architect
 ryuta46.multi-command
+standard.vscode-standard
+tamasfe.even-better-toml
 vscodevim.vim
-humao.rest-client
