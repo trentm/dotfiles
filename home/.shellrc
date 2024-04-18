@@ -161,10 +161,6 @@ function asdf() {
     cd ~/tmp/asdf
 }
 
-alias gtd="python3 ~/Dropbox/gtd/bin/gtd.py"
-alias note="python3 ~/Dropbox/gtd/bin/gtd.py note"
-alias s='vi ~/Dropbox/scratch.txt'
-
 # Shuffle lines (from <http://stackoverflow.com/a/6511327>)
 alias shuf="perl -MList::Util=shuffle -e 'print shuffle(<STDIN>);'"
 
