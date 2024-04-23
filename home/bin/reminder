@@ -52,6 +52,7 @@ assert sys.platform == "darwin", "this only works on Mac (uses Growl)"
 
 TRACE = 'TRACE' in os.environ
 REMINDERS_PATH = os.path.expanduser('~/.reminders.json')
+TERMINAL_NOTIFIER = (os.environ['HOMEBREW_PREFIX'] or '/usr/local') + '/bin/terminal-notifier'
 
 
 
@@ -224,10 +225,9 @@ def main_reminder(argv):
         msg_arg = " -message '%s'" % msg
     else:
         msg_arg = ""
-    terminal_notifier = '/usr/local/bin/terminal-notifier'
 
-    if not os.path.exists(terminal_notifier):
-        sys.stderr.write("'%s' not found.\n" % terminal_notifier)
+    if not os.path.exists(TERMINAL_NOTIFIER):
+        sys.stderr.write("'%s' not found.\n" % TERMINAL_NOTIFIER)
         sys.stderr.write("You must install this manually: `brew install terminal-notifier`\n");
         sys.stderr.write("See <https://github.com/julienXX/terminal-notifier> for details.\n")
         return 1
@@ -247,7 +247,7 @@ function cleanup() {
     fi
 }
 trap 'cleanup' EXIT
-""" % (terminal_notifier, t_str, msg)]
+""" % (TERMINAL_NOTIFIER, t_str, msg)]
     t_unix = time.mktime(t.timetuple())
     script.append("""
 TARGET=%d
@@ -272,7 +272,7 @@ done
     #script.append("growlnotify -s -t 'Reminder at %s' -a iCal %s"
     #    % (t_str, msg_arg))
     script.append("%s -sound Glass -title 'Reminder at %s' %s"
-        % (terminal_notifier, t_str, msg_arg))
+        % (TERMINAL_NOTIFIER, t_str, msg_arg))
 
     rid = get_rid()
     fd, path = tempfile.mkstemp(prefix='reminder-%s-tmp' % rid)
