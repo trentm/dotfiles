@@ -118,5 +118,7 @@
     "editor.inlineSuggest.enabled": false,
     "editor.quickSuggestionsDelay": 200,
     "workbench.editor.empty.hint": "hidden",
-    "editor.stickyScroll.enabled": false
+    "editor.stickyScroll.enabled": false,
+    "window.commandCenter": false,
+    "workbench.layoutControl.enabled": false
 }

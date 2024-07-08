@@ -22,7 +22,7 @@ fi
 # to $HOMEBREW_PREFIX.
 #PATH="/usr/local/go/bin:$PATH"
 
-PATH="$HOME/.cargo/bin:$PATH"
+source "$HOME/.cargo/env"
 
 # https://www.python.org/downloads/ lists active releases
 # Also have 'pyenv' installed (https://github.com/pyenv/pyenv#how-it-works)
@@ -378,7 +378,7 @@ function n() {
     fi
     shift
     # This selects *a* version, depending on 'echo' glob ordering.
-    ver=$(echo $NVM_DIR/versions/node/v${v}* | xargs basename | tail -1)
+    ver=$(echo $NVM_DIR/versions/node/v${v}* | xargs -n1 basename | tail -1)
     echo "$NVM_DIR/versions/node/${ver}/bin/node $@" >&2
     $NVM_DIR/versions/node/${ver}/bin/node "$@"
 }
