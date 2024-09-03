@@ -55,7 +55,8 @@ function set_base_url {
 
     if [[ "$remote_url" =~ ^https://.* ]]; then
         base_url=$(echo "$remote_url" | sed 's/\.git$//')
-    elif [[ "$remote_url" =~ ^git@github.com: ]]; then
+      elif [[ "$remote_url" =~ ^(git|org-[0-9]+)@github.com: ]]; then
+        # E.g.: 'org-14957082@github.com:openai/openai-python.git'
         repo_name=$(echo "$remote_url" | cut -d ':' -f 2 | sed 's/\.git$//')
         base_url="https://github.com/$repo_name"
     else

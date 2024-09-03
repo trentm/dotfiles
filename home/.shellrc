@@ -386,3 +386,9 @@ function n() {
 alias tav='./node_modules/.bin/tav'
 alias kc=kubectl
 
+# Load a .env file (comments and blank lines removed).
+# From https://stackoverflow.com/a/20909045
+# - Limitations: Cannot handle spaces in values.
+# - Note: I couldn't quickly get a version that works with spaces in values.
+#   E.g. start with: alias withenv='env "$(rg -v '\''^#'\'' .env | sed '\''/^$/d'\'' | xargs -0)"'
+alias withenv='env $(rg -v '^#' .env | sed '/^$/d' | xargs -0)'
