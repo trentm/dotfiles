@@ -24,6 +24,12 @@ fi
 
 source "$HOME/.cargo/env"
 
+# Ruby (setup advice from https://jekyllrb.com/docs/installation/macos/)
+if [[ -f "/opt/homebrew/opt/chruby/share/chruby/chruby.sh" ]]; then
+    source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+    chruby ruby-3.3.5
+fi
+
 # https://www.python.org/downloads/ lists active releases
 # Also have 'pyenv' installed (https://github.com/pyenv/pyenv#how-it-works)
 if [[ -n "$(command -v pyenv)" ]]; then
@@ -151,6 +157,21 @@ alias rg='rg --hidden -M1024'
 alias rgall='rg -g "*" -a'
 function rgless() {
     rg --heading -n --color ansi "$@" | less -R
+}
+# A grep for full `import ... from '$1'` in JS/TS code.
+# (Some of the regex complexity is because non-greedy .*? doesn't seem to
+# work for me with rg.)
+function rgimport() {
+  local name
+  name="$1"
+  shift
+  rg --multiline --multiline-dotall "import \{?[^{]* from '[^']*${name}[^']*'" $@
+}
+function rgrequire() {
+  local name
+  name="$1"
+  shift
+  rg --multiline --multiline-dotall "require\('[^']*${name}[^']*'\)" $@
 }
 if [[ "$UNAME" == "Darwin" ]]; then
     alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
