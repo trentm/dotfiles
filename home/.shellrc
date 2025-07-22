@@ -31,10 +31,6 @@ if [[ -f "/opt/homebrew/opt/chruby/share/chruby/chruby.sh" ]]; then
 fi
 
 # https://www.python.org/downloads/ lists active releases
-# Also have 'pyenv' installed (https://github.com/pyenv/pyenv#how-it-works)
-if [[ -n "$(command -v pyenv)" ]]; then
-    eval "$(pyenv init -)"
-fi
 if [[ "$UNAME" == "Darwin" ]]; then
     if [[ -d /Library/Frameworks/Python.framework/Versions/3.13/bin ]]; then
         PATH=/Library/Frameworks/Python.framework/Versions/3.13/bin:$PATH
@@ -53,6 +49,10 @@ if [[ "$UNAME" == "Darwin" ]]; then
     else
         echo ".shellrc: warning: no python.org install of Python 3.13...3.7 install was found (install from https://www.python.org/downloads/macos/)" >&2
     fi
+fi
+# Also have 'pyenv' installed (https://github.com/pyenv/pyenv#how-it-works)
+if [[ -n "$(command -v pyenv)" ]]; then
+    eval "$(pyenv init -)"
 fi
 if [[ -d "$HOME/.local/bin" ]]; then
     # TODO: is this still relevant?
@@ -81,6 +81,7 @@ export PAGER="less -iRwX"
 export MANPAGER="less -iRswX"
 
 export GOPATH=$HOME/go  # same as Go1.8 default
+export PATH=$PATH:$HOME/go/bin
 test -r $HOME/.pythonstartuprc && export PYTHONSTARTUP=$HOME/.pythonstartuprc
 
 # Java, Maven
@@ -413,3 +414,7 @@ alias kc=kubectl
 # - Note: I couldn't quickly get a version that works with spaces in values.
 #   E.g. start with: alias withenv='env "$(rg -v '\''^#'\'' .env | sed '\''/^$/d'\'' | xargs -0)"'
 alias withenv='env $(rg -v '^#' .env | sed '/^$/d' | xargs -0)'
+
+# OTel dev-related things
+alias gen-semconv-ts=~/src/opentelemetry-js-contrib/scripts/gen-semconv-ts.js
+
