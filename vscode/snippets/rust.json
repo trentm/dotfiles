@@ -1,0 +1,16 @@
+{
+	// https://code.visualstudio.com/docs/editor/userdefinedsnippets
+	"xxx": {
+		"prefix": "xxx",
+		"body": [
+			"println!(\"XXX {:#?}\", $0);"
+		],
+		"description": "println! XXX"
+	},
+	"xxx-word-under-cursor": {
+		"body": [
+			"println!(\"XXX $CLIPBOARD: {:#?}\", $CLIPBOARD);$0"
+		],
+		"description": "println! XXX word under cursor"
+	}
+}

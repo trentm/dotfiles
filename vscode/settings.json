@@ -1,6 +1,5 @@
 {
     "telemetry.enableTelemetry": false,
-
     "editor.renderWhitespace": "all",
     "editor.find.autoFindInSelection": "multiline",
     "editor.rulers": [
@@ -10,27 +9,22 @@
     "editor.scrollBeyondLastLine": false,
     "editor.minimap.enabled": false,
     "editor.cursorSurroundingLines": 5,
-
     // https://code.visualstudio.com/docs/languages/javascript#_code-actions-on-save
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
     },
-
     // Font
     // https://github.com/tonsky/FiraCode/wiki/VS-Code-Instructions
     "editor.fontSize": 13,
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": false,
-
     // Hover tips (can get in the way sometimes)
     "editor.hover.enabled": true,
-
     // Intellisense
     // https://code.visualstudio.com/docs/editor/intellisense
     "editor.acceptSuggestionOnEnter": "off",
     "editor.tabCompletion": "on",
     "editor.parameterHints.enabled": false,
-
     // Turning on standardjs autoFixOnSave results in unresolvable
     // fighting on some stylings: VSCode save will do `function foo()`
     // and then the style checking and `npx standard` will complain
@@ -38,15 +32,12 @@
     // resolve this.
     // "editor.formatOnSave": true,
     // "standard.autoFixOnSave": true
-
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
-
     "go.formatTool": "goimports",
     // https://github.com/microsoft/vscode-go/wiki/Go-modules-support-in-Visual-Studio-Code
     "go.useLanguageServer": true,
     "go.toolsManagement.autoUpdate": true,
-
     "workbench.editor.enablePreviewFromQuickOpen": false,
     "workbench.settings.openDefaultKeybindings": true,
     "workbench.statusBar.visible": true,
@@ -54,11 +45,9 @@
         "*.ipynb": "jupyter-notebook"
     },
     "workbench.startupEditor": "newUntitledFile",
-
     "window.title": "${activeEditorLong}${separator}${rootName}",
     // AFAICT `newWindowDimensions` does not work.
     "window.newWindowDimensions": "offset",
-
     "vim.useSystemClipboard": true,
     "vim.overrideCopy": false,
     "vim.ignorecase": false,
@@ -84,7 +73,7 @@
     "workbench.colorTheme": "Default Light Modern",
     "svelte.enable-ts-plugin": true,
     "[svelte]": {
-     "editor.defaultFormatter": "svelte.svelte-vscode"
+        "editor.defaultFormatter": "svelte.svelte-vscode"
     },
     "[yaml]": {
         "workbench.editor.languageDetection": false
@@ -100,17 +89,20 @@
     "editor.copyWithSyntaxHighlighting": false,
     "azureFunctions.showProjectWarning": false,
     "git.openRepositoryInParentFolders": "never",
-
     // https://github.com/tailscale/hujson#visual-studio-code-association
     "files.associations": {
         "*.hujson": "jsonc"
     },
-    "json.schemas": [{
-        "fileMatch": ["*.hujson"],
-        "schema": {
-            "allowTrailingCommas": true
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "*.hujson"
+            ],
+            "schema": {
+                "allowTrailingCommas": true
+            }
         }
-    }],
+    ],
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.quickSuggestions": {
         "other": "off"
@@ -120,5 +112,14 @@
     "workbench.editor.empty.hint": "hidden",
     "editor.stickyScroll.enabled": false,
     "window.commandCenter": false,
-    "workbench.layoutControl.enabled": false
+    "workbench.layoutControl.enabled": false,
+    "chat.commandCenter.enabled": false,
+    "search.smartCase": true,
+    "search.useParentIgnoreFiles": true,
+    "search.searchEditor.reusePriorSearchConfiguration": true,
+    "chat.agent.enabled": false,
+    "telemetry.feedback.enabled": false,
+    "accessibility.verbosity.inlineChat": false,
+    "inlineChat.holdToSpeech": false,
+    "inlineChat.lineNaturalLanguageHint": false
 }
