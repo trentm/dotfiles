@@ -166,7 +166,7 @@ function rgimport() {
   local name
   name="$1"
   shift
-  rg --multiline --multiline-dotall "import \{?[^{]* from '[^']*${name}[^']*'" $@
+  rg --multiline --multiline-dotall "import(\s+type)? (\{?[^{;]*|\*\s+as\s+\w+) from '[^']*${name}[^']*'" $@
 }
 function rgrequire() {
   local name
