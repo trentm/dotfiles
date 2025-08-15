@@ -1,0 +1,37 @@
+{
+	// https://code.visualstudio.com/docs/editing/userdefinedsnippets
+	// Possible variables are: $1, $2 for tab stops, $0 for the final cursor
+	// position, and ${1:label}, ${2:another} for placeholders.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	"TODAY": {
+		"prefix": "TODAY",
+		"body": [
+			"$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE"
+		],
+		"description": "Enter today's date"
+	},
+	"TIME": {
+		"prefix": "TIME",
+		"body": [
+			"$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND"
+		],
+		"description": "Enter the current time of day"
+	},
+	"NOW": {
+		"prefix": "NOW",
+		"body": [
+			"$CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND$CURRENT_TIMEZONE_OFFSET"
+		],
+		"description": "Enter a timestamp"
+	},
+}
