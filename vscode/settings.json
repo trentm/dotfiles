@@ -121,5 +121,6 @@
     "telemetry.feedback.enabled": false,
     "accessibility.verbosity.inlineChat": false,
     "inlineChat.holdToSpeech": false,
-    "inlineChat.lineNaturalLanguageHint": false
+    "inlineChat.lineNaturalLanguageHint": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
