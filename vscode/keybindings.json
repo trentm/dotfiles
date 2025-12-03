@@ -125,5 +125,20 @@
         "key": "cmd+i",
         "command": "-search.action.searchWithAI",
         "when": "hasAIResultProviderKey && searchViewletFocus"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-inlineChat.start",
+        "when": "editorFocus && inlineChatHasEditsAgent && inlineChatPossible && !editorReadonly && !editorSimpleInput && activeEditor != 'workbench.editor.notebook' || editorFocus && inlineChatHasNotebookAgent && inlineChatPossible && !editorReadonly && !editorSimpleInput && activeEditor == 'workbench.editor.notebook' || editorFocus && inlineChatHasNotebookInline && inlineChatPossible && !editorReadonly && !editorSimpleInput && activeEditor == 'workbench.editor.notebook' || editorFocus && inlineChatHasProvider && inlineChatPossible && !editorReadonly && !editorSimpleInput && activeEditor != 'workbench.editor.notebook'"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-inlineChat.startWithCurrentLine",
+        "when": "inlineChatHasNotebookInline && inlineChatShowingHint && !editorReadonly && !inlineChatVisible && activeEditor == 'workbench.editor.notebook' || inlineChatHasProvider && inlineChatShowingHint && !editorReadonly && !inlineChatVisible && activeEditor != 'workbench.editor.notebook'"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-settings.action.toggleAiSearch",
+        "when": "aiSettingResultsAvailable && inSettingsEditor"
     }
 ]

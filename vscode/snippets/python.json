@@ -11,5 +11,11 @@
 			"print('XXX $CLIPBOARD:', $CLIPBOARD)$0"
 		],
 		"description": "print XXX word under cursor"
+	},
+	"xxx-word-under-cursor-verbose": {
+		"body": [
+			"print('XXX $CLIPBOARD:'); pprint($CLIPBOARD) #XXX$0"
+		],
+		"description": "pprint XXX word under cursor"
 	}
 }
