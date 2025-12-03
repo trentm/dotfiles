@@ -1,23 +1,29 @@
 #!/usr/bin/env python
 
 """
-Convert [tables](https://github.com/trentm/python-markdown2/wiki/tables)
-a given Markdown document such that columns are aligned.
+Align(*) columns in Markdown tables.
+
+Usage:
+    tables-align-columns.py foo.md   # Writes updated file to stdout.
+
+Notes:
+- `Align(*)`ing of columns currently treats the *last* column specially. It uses
+  a "min-width", set to the width of the header cell or its underline. This
+  allows tables that a last column that contains a sometimes-long description
+  to not force all other cells in that column to be that full width.
 
 Limitations:
 - Can't handle tables where cells have a pipe.
-
-TODO:
-- doctests
-- Add CLI option to have a relaxed last column. See https://github.com/DavidAnson/markdownlint/issues/1818 discussion.
-  My `relaxed_last_column` current implementation will use the longer of the
-  width of that column in the first *two* rows -- i.e. the column label or
-  its underline. That means the underline can manually be made longer to
-  extend the min-width.
+- Currently the underline row is hardcoded to use `| ---- |`-spacing. It
+  doesn't support `|------|`-spacing.
 """
 
-__version__ = "1.0.0"
+# TODO:
+# - doctests
 
+__version__ = "1.3.0"
+
+import argparse
 import codecs
 import re
 import sys
@@ -52,7 +58,10 @@ def tables_align_columns(text, relaxed_last_column=False):
             # table width is >77 cols or whatever.
             width_from_col_idx[len(data_rows[0]) - 1] = max(
                 len(data_rows[0][-1]), # the column label
-                len(underline.strip('|').split('|')[-1]) # the unstripped underline
+                # The underline. Need to `-2` because this script assumes
+                # underline style with spaces between the pipes: `| ---- |`,
+                # rather than `|-----|`.
+                len(underline.rstrip('\n').strip('|').split('|')[-1]) - 2
             )
 
         # Determine aligns for columns.
@@ -139,19 +148,32 @@ def tables_align_columns(text, relaxed_last_column=False):
     return table_re.sub(_table_sub, text)
 
 
-
-
 #---- mainline
 
 def main(argv):
-    for path in argv[1:]:
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument('--in-place', '-I', action='store_true', help='Edit the given FILES *in-place*.')
+    parser.add_argument('-r', action='store_true', help='Relaxed width on last column.')
+    parser.add_argument('paths', nargs='*', metavar='PATHS', help='Paths to .md files to process.')
+    args = parser.parse_args()
+
+    for path in args.paths:
         if path == '-':
-            text = sys.stdin.read()
+            if args.in_place:
+                raise RuntimeError('cannot use --in-place option with "-" (stdin) path')
+            orig = sys.stdin.read()
         else:
-            text = codecs.open(path, 'rb', 'utf8').read()
-        # TODO: make relax_last_column optional
-        text = tables_align_columns(text, relaxed_last_column=True)
-        sys.stdout.write(text)
+            orig = codecs.open(path, 'rb', 'utf8').read()
+        text = tables_align_columns(orig, relaxed_last_column=args.r)
+        if args.in_place:
+            if text == orig:
+                print(f'tables-align-columns: no change in "{path}"')
+            else:
+                codecs.open(path, 'wb', 'utf8').write(text)
+                print(f'tables-align-columns: wrote "{path}"')
+
+        else:
+            sys.stdout.write(text)
 
 if __name__ == "__main__":
     sys.exit( main(sys.argv) )
