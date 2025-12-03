@@ -7,10 +7,11 @@ Usage:
     tables-align-columns.py foo.md   # Writes updated file to stdout.
 
 Notes:
-- `Align(*)`ing of columns currently treats the *last* column specially. It uses
-  a "min-width", set to the width of the header cell or its underline. This
-  allows tables that a last column that contains a sometimes-long description
-  to not force all other cells in that column to be that full width.
+- If the `-r` option is given, `align(*)`ing of columns currently treats the
+  *last* column specially. It uses a "min-width", set to the width of the header
+  cell or its underline. This allows tables that a last column that contains a
+  sometimes-long description to not force all other cells in that column to be
+  that full width.
 
 Limitations:
 - Can't handle tables where cells have a pipe.
