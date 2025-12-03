@@ -166,8 +166,8 @@ function rgimport() {
   local name
   name="$1"
   shift
-  rg --multiline --multiline-dotall "import(\s+type)? (\{?[^{;]*|\*\s+as\s+\w+) from '[^']*${name}[^']*'" $@
-  rg --multiline --multiline-dotall "require\('[^']*${name}[^']*'\)" $@
+  rg --multiline --multiline-dotall "import(\s+type)? (\{?[^{;]*|\*\s+as\s+\w+) from ('|\")[^\"']*${name}[^\"']*('|\")" $@
+  rg --multiline --multiline-dotall "require\(('|\")[^\"']*${name}[^\"']*('|\")\)" $@
   true
 }
 if [[ "$UNAME" == "Darwin" ]]; then
