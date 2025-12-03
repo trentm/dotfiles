@@ -3,6 +3,7 @@ My zsh completion files.
 - go.zsh - from https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/golang/golang.plugin.zsh edited to remove the silly `alias`s
 - gh.zsh from `gh completion --shell zsh > ~/tm/dotfiles/zsh-completion/gh.zsh`
 - gcloud from "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc" after `brew install --cask google-cloud-sdk`
+- hx from "/opt/homebrew/Cellar/helix/25.07.1/share/zsh/site-functions" after `brew install helix`
 
 Bad:
 
