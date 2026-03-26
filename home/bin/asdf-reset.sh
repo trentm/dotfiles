@@ -25,6 +25,7 @@ ln -s ~/tmp/asdf.$TIMESTAMP ~/tmp/asdf
 
 cd ~/tmp/asdf
 echo package-lock=false >.npmrc
+echo ignore-scripts=true >>.npmrc
 source ~/.nvm/nvm.sh
 npm init -y
 

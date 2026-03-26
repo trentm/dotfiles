@@ -395,8 +395,8 @@ function n() {
         return 1
     fi
     shift
-    # This selects *a* version, depending on 'echo' glob ordering.
-    ver=$(echo $NVM_DIR/versions/node/v${v}* | xargs -n1 basename | tail -1)
+    # Using gsort on macOS requires 'brew install coreutils'.
+    ver=$(echo $NVM_DIR/versions/node/v${v}* | xargs -n1 basename | gsort -V | tail -1)
     echo "$NVM_DIR/versions/node/${ver}/bin/node $@" >&2
     $NVM_DIR/versions/node/${ver}/bin/node "$@"
 }
