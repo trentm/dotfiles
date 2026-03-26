@@ -10,16 +10,17 @@
     "editor.minimap.enabled": false,
     "editor.cursorSurroundingLines": 5,
     // https://code.visualstudio.com/docs/languages/javascript#_code-actions-on-save
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    },
+    // XXX
+    // "editor.codeActionsOnSave": {
+    //     "source.fixAll.eslint": "explicit"
+    // },
     // Font
     // https://github.com/tonsky/FiraCode/wiki/VS-Code-Instructions
     "editor.fontSize": 13,
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": false,
     // Hover tips (can get in the way sometimes)
-    "editor.hover.enabled": true,
+    "editor.hover.enabled": "on",
     // Intellisense
     // https://code.visualstudio.com/docs/editor/intellisense
     "editor.acceptSuggestionOnEnter": "off",
@@ -70,7 +71,7 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "workbench.colorTheme": "Default Light Modern",
+    "workbench.colorTheme": "Light Modern",
     "svelte.enable-ts-plugin": true,
     "[svelte]": {
         "editor.defaultFormatter": "svelte.svelte-vscode"
@@ -127,5 +128,14 @@
     "chat.sendElementsToChat.attachCSS": false,
     "chat.sendElementsToChat.attachImages": false,
     "chat.sendElementsToChat.enabled": false,
-    "update.mode": "manual"
+    "update.mode": "manual",
+    "chat.agentSessionsViewLocation": "disabled",
+    "chat.checkpoints.enabled": false,
+    "chat.detectParticipant.enabled": false,
+    "chat.tools.edits.autoApprove": {
+        "**/*": false
+    },
+    "chat.tools.terminal.enableAutoApprove": false,
+    "chat.tools.todos.showWidget": false,
+    "chat.useCloudButtonV2": false
 }
