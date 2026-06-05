@@ -137,5 +137,7 @@
     },
     "chat.tools.terminal.enableAutoApprove": false,
     "chat.tools.todos.showWidget": false,
-    "chat.useCloudButtonV2": false
+    "chat.useCloudButtonV2": false,
+    "docker.extension.dockerEngineAvailabilityPrompt": false,
+    "chat.disableAIFeatures": true
 }
