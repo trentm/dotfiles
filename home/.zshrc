@@ -72,6 +72,10 @@ function hist {
 autoload -U select-word-style
 select-word-style shell
 
+# direnv
+# https://direnv.net/docs/hook.html
+eval "$(direnv hook zsh)"
+
 
 # ---- Prompt
 # - git status, see:
@@ -132,7 +136,7 @@ _trace ".zshrc: nvm lazy load: start"
 
 # My default node version.
 # Keep this in sync with nvm default: 'nvm alias default v1.2.3'
-export PATH="/Users/trentm/.nvm/versions/node/v24.16.0/bin:$PATH"
+export PATH="/Users/trentm/.nvm/versions/node/v24.18.0/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet
