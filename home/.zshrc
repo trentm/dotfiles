@@ -136,7 +136,7 @@ _trace ".zshrc: nvm lazy load: start"
 
 # My default node version.
 # Keep this in sync with nvm default: 'nvm alias default v1.2.3'
-export PATH="/Users/trentm/.nvm/versions/node/v24.18.0/bin:$PATH"
+export PATH="/Users/trentm/.nvm/versions/node/v24.22.1/bin:$PATH"
 
 NVM_DIR="$HOME/.nvm"
 # Skip adding binaries if there is no node version installed yet

@@ -1,3 +1,7 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/trentm/.docker/bin"
+# End of Docker Desktop section.
+
 # Trent's zsh config for login shells. See .zshrc for the rest.
 #
 # Explanation of login vs. interactive vs. not shells:

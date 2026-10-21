@@ -61,7 +61,7 @@
     "security.workspace.trust.untrustedFiles": "open",
     "workbench.editor.enablePreview": false,
     "python.analysis.autoSearchPaths": false,
-    "python.languageServer": "None",
+    "python.languageServer": "Default",
     "editor.suggestSelection": "first",
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
     "editor.bracketPairColorization.enabled": true,

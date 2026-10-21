@@ -131,7 +131,8 @@ alias gs='git status'
 alias gb='git branch'
 alias gc='git checkout'
 alias gl='git log --stat'
-alias glp='git log -p'
+# --simplify-merges, AFAICT, *adds* diffs from merges
+alias glp='git log -p --simplify-merges'
 alias gl1='git log -1'
 # Updating a local clone is hard (TM). I'm not confident in my current
 # commands to first update (possibly changed tags), then fetch, then rebase,
